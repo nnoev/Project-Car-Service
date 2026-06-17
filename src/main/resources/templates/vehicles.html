@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicles - Car Service</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar-logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #666;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #667eea;
+    }
+
+    .btn-logout {
+      background: #e74c3c;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: #333;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .vehicles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .vehicle-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+    }
+
+    .vehicle-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .vehicle-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .vehicle-icon {
+      font-size: 40px;
+      margin-right: 15px;
+    }
+
+    .vehicle-name h3 {
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .vehicle-name p {
+      color: #999;
+      font-size: 12px;
+    }
+
+    .vehicle-details {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .detail-label {
+      color: #999;
+      font-weight: 600;
+    }
+
+    .detail-value {
+      color: #333;
+    }
+
+    .vehicle-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-sm {
+      padding: 8px 12px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .btn-info {
+      background: #3498db;
+      color: white;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-info:hover {
+      background: #2980b9;
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .empty-state-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+
+    .empty-state h2 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      color: #999;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-logo">🚗 Car Service</div>
+  <div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/vehicles">Vehicles</a>
+    <a href="/service-records">Service Records</a>
+    <a href="/reminders">Reminders</a>
+    <a href="/profile">Profile</a>
+    <form action="/logout" method="post" style="display: inline;">
+      <button type="submit" class="btn-logout">Logout</button>
+    </form>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="header">
+    <h1>My Vehicles</h1>
+    <a href="/vehicles/add" class="btn btn-primary">+ Add New Vehicle</a>
+  </div>
+
+  <div class="vehicles-grid" th:if="${!vehicles.isEmpty()}">
+    <div class="vehicle-card" th:each="vehicle : ${vehicles}">
+      <div class="vehicle-header">
+        <div class="vehicle-icon">🚗</div>
+        <div class="vehicle-name">
+          <h3 th:text="${vehicle.year} + ' ' + ${vehicle.make}"></h3>
+          <p th:text="${vehicle.model}"></p>
+        </div>
+      </div>
+
+      <div class="vehicle-details">
+        <div class="detail-item">
+          <span class="detail-label">VIN:</span>
+          <span class="detail-value" th:text="${vehicle.}"></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Mileage:</span>
+          <span class="detail-value" th:text="${vehicle.mileage} + ' miles'"></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Service Records:</span>
+          <span class="detail-value" th:text="${vehicle.serviceRecords.size()}"></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Reminders:</span>
+          <span class="detail-value" th:text="${vehicle.serviceReminders.size()}"></span>
+        </div>
+      </div>
+
+      <div class="vehicle-actions">
+        <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn btn-sm btn-info">View</a>
+        <a th:href="@{/vehicles/{id}/edit(id=${vehicle.id})}" class="btn btn-sm btn-info">Edit</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" th:if="${vehicles.isEmpty()}">
+    <div class="empty-state-icon">🚗</div>
+    <h2>No vehicles yet</h2>
+    <p>Start managing your vehicles by adding your first one</p>
+    <a href="/vehicles/add" class="btn btn-primary">Add Your First Vehicle</a>
+  </div>
+</div>
+</body>
+</html>
