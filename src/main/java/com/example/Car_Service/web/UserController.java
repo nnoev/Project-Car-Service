@@ -2,6 +2,7 @@ package com.example.Car_Service.web;
 
 import com.example.Car_Service.user.model.User;
 import com.example.Car_Service.user.service.UserService;
+import com.example.Car_Service.web.dtos.ChangePasswordRequest;
 import com.example.Car_Service.web.dtos.LoginRequest;
 import com.example.Car_Service.web.dtos.UserRegistration;
 import jakarta.servlet.http.HttpSession;
@@ -74,6 +75,7 @@ public class UserController {
         Object userId = session.getAttribute("userId");
         User user = userService.getById((UUID) userId);
         modelAndView.addObject("user", user);
+        modelAndView.addObject("changePassword", new ChangePasswordRequest());
         return modelAndView;
     }
 

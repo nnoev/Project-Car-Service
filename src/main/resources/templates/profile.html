@@ -441,7 +441,7 @@
     <!-- Edit Profile Tab -->
     <div id="edit-profile" class="tab-content">
         <h2 class="form-title">Edit Profile</h2>
-        <form action="/profile/edit" method="post">
+        <form th:action="@{/profile/edit}" method="post">
             <div class="form-row">
                 <div class="form-group">
                     <label for="firstName">First Name *</label>
@@ -469,16 +469,6 @@
                        th:value="${user.email}" required>
             </div>
 
-            <div class="form-group">
-                <label for="classType">Class Type</label>
-                <select id="classType" name="classType">
-                    <option value="">-- Select Class --</option>
-                    <option value="BASIC" th:selected="${user.classType == 'BASIC'}">Basic</option>
-                    <option value="PREMIUM" th:selected="${user.classType == 'PREMIUM'}">Premium</option>
-                    <option value="ENTERPRISE" th:selected="${user.classType == 'ENTERPRISE'}">Enterprise</option>
-                </select>
-            </div>
-
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
                 <button type="button" class="btn btn-secondary" onclick="location.reload()">Cancel</button>
@@ -489,29 +479,26 @@
     <!-- Change Password Tab -->
     <div id="change-password" class="tab-content">
         <h2 class="form-title">Change Password</h2>
-        <form action="/profile/change-password" method="post">
+        <form th:action="@{/profile/change-password}" method="post" th:object="${changePassword}">
             <div class="form-group">
                 <label for="currentPassword">Current Password *</label>
-                <input type="password" id="currentPassword" name="currentPassword" required>
+                <input type="password" id="currentPassword" name="currentPassword" required th:field="*{currentPassword}">
             </div>
 
             <div class="form-group">
                 <label for="newPassword">New Password *</label>
-                <input type="password" id="newPassword" name="newPassword" required>
+                <input type="password" id="newPassword" name="newPassword" required th:field="*{newPassword}">
                 <div class="password-requirements">
                     <strong>Password Requirements:</strong>
                     <ul>
-                        <li>At least 8 characters long</li>
-                        <li>Contains at least one uppercase letter</li>
-                        <li>Contains at least one lowercase letter</li>
-                        <li>Contains at least one number</li>
+                        <li>Min 6 Max 20 characters long</li>
                     </ul>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="confirmPassword">Confirm New Password *</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <input type="password" id="confirmPassword" name="confirmPassword" required th:field="*{confirmPassword}">
             </div>
 
             <div class="form-actions">

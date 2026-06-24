@@ -73,4 +73,8 @@ public class UserService {
      return    userRepository.findById(id).orElseThrow(()->new RuntimeException("User does not exist"));
     }
 
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
 }
