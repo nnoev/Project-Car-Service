@@ -1,13 +1,15 @@
 package com.example.Car_Service.web;
 
-
 import com.example.Car_Service.user.model.User;
 import com.example.Car_Service.user.property.UserProperties;
 import com.example.Car_Service.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.UUID;
 
 @Controller
 public class IndexController {
@@ -29,28 +31,14 @@ public class IndexController {
         return modelAndView;
     }
 
-    @GetMapping("/login")
-    public ModelAndView getLogin() {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("login");
-        return modelAndView;
-    }
-
-    @GetMapping("/register")
-    public ModelAndView getRegister() {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("register");
-        return modelAndView;
-    }
-
     @GetMapping("/dashboard")
-    public ModelAndView getDashboard() {
+    public ModelAndView getDashboard(HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("dashboard");
-        User user = userService.getByUserName(userProperties.getDefaultUser().getUsername());
+        UUID userId = (UUID) session.getAttribute("userId");
+        User user = userService.getById(userId);
         if (user != null) {
-
-        modelAndView.addObject("user", user);
+            modelAndView.addObject("user", user);
         }
         return modelAndView;
     }

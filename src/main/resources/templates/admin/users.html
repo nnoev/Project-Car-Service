@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin – Users</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .btn-logout {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* PAGE LAYOUT */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        /* TABLE CARD */
+        .table-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            text-align: left;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f0f2ff;
+        }
+
+        /* BUTTONS */
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-role {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-role:hover {
+            background: #5563d6;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="navbar-logo">🚗 Admin Panel</div>
+
+    <div class="nav-links">
+        <a href="/admin">Dashboard</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/vehicles">Vehicles</a>
+        <a href="/admin/services">Services</a>
+        <a href="/admin/reminders">Reminders</a>
+        <a href="/admin/logs">Logs</a>
+
+        <form action="/logout" method="post" style="display:inline;">
+            <button class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<div class="container">
+    <h1>All Users</h1>
+    <p>Manage user accounts, roles, and access permissions.</p>
+
+    <div class="table-card">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Enabled</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="u : ${users}">
+                <td th:text="${u.id}"></td>
+                <td th:text="${u.username}"></td>
+                <td th:text="${u.email}"></td>
+                <td th:text="${u.role}"></td>
+                <td th:text="${u.enabled ? 'Yes' : 'No'}"></td>
+
+                <td>
+                    <form th:action="@{/admin/users/delete/{id}(id=${u.id})}" method="post" style="display:inline;">
+                        <button class="btn-danger" type="submit">Delete</button>
+                    </form>
+
+                    <form th:action="@{/admin/users/toggle-role/{id}(id=${u.id})}" method="post" style="display:inline;">
+                        <button class="btn-role" type="submit">Toggle Role</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

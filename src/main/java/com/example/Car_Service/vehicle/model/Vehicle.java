@@ -4,10 +4,7 @@ import com.example.Car_Service.service_record.model.ServiceRecord;
 import com.example.Car_Service.service_reminder.model.ServiceReminder;
 import com.example.Car_Service.user.model.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "vehicles")
 public class Vehicle {
 
@@ -32,7 +30,7 @@ public class Vehicle {
     private String make;
 
     @Column(nullable = false)
-        private int year;
+    private int year;
 
     @Column(nullable = false)
     private String vin;
@@ -44,10 +42,12 @@ public class Vehicle {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @OneToMany(mappedBy = "vehicle",fetch = FetchType.EAGER)
+    @Builder.Default
+    @OneToMany(mappedBy = "vehicle", fetch = FetchType.EAGER)
     private List<ServiceRecord> serviceRecords = new ArrayList<>();
 
-    @OneToMany(mappedBy = "vehicle",fetch = FetchType.EAGER)
+    @Builder.Default
+    @OneToMany(mappedBy = "vehicle", fetch = FetchType.EAGER)
     private List<ServiceReminder> serviceReminders = new ArrayList<>();
 
 }

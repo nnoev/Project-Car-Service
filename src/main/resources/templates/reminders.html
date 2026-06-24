@@ -257,7 +257,7 @@
         <a href="/reminders/add" class="btn btn-primary">+ Add Reminder</a>
     </div>
 
-    <div class="reminders-grid" th:if="${!reminders.isEmpty()}">
+    <div class="reminders-grid" th:if="${!user.getServiceReminders().isEmpty()}">
         <div class="reminder-card" th:each="reminder : ${reminders}" th:classappend="${reminder.completed ? 'completed' : ''}">
             <h3 class="reminder-title" th:text="${reminder.title}"></h3>
             <p class="reminder-vehicle" th:text="${reminder.vehicle.year} + ' ' + ${reminder.vehicle.make} + ' ' + ${reminder.vehicle.model}"></p>
@@ -284,7 +284,7 @@
         </div>
     </div>
 
-    <div class="empty-state" th:if="${reminders.isEmpty()}">
+    <div class="empty-state" th:if="${user.getServiceReminders().isEmpty()}">
         <div class="empty-state-icon">⏰</div>
         <h2>No reminders set</h2>
         <p>Create reminders to stay on top of your vehicle maintenance</p>

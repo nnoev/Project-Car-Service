@@ -239,7 +239,7 @@
         <a href="/service-records/add" class="btn btn-primary">+ Add Record</a>
     </div>
 
-    <div class="table-container" th:if="${!serviceRecords.isEmpty()}">
+    <div class="table-container" th:if="${!user.getServiceRecords().isEmpty()}">
         <table>
             <thead>
             <tr>
@@ -279,7 +279,7 @@
         </table>
     </div>
 
-    <div class="empty-state" th:if="${serviceRecords.isEmpty()}">
+    <div class="empty-state" th:if="${user.getServiceRecords().isEmpty()}">
         <div class="empty-state-icon">🔧</div>
         <h2>No service records yet</h2>
         <p>Track your vehicle maintenance by adding your first service record</p>

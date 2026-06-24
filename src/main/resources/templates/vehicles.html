@@ -243,12 +243,12 @@
     <a href="/vehicles/add" class="btn btn-primary">+ Add New Vehicle</a>
   </div>
 
-  <div class="vehicles-grid" th:if="${!vehicles.isEmpty()}">
-    <div class="vehicle-card" th:each="vehicle : ${vehicles}">
+  <div class="vehicles-grid" th:if="${!user.getVehicles().isEmpty()}">
+    <div class="vehicle-card" th:each="vehicle : ${user.getVehicles()}">
       <div class="vehicle-header">
         <div class="vehicle-icon">🚗</div>
         <div class="vehicle-name">
-          <h3 th:text="${vehicle.year} + ' ' + ${vehicle.make}"></h3>
+          <h3 th:text="${vehicle.year + ' ' + vehicle.make}"></h3>
           <p th:text="${vehicle.model}"></p>
         </div>
       </div>
@@ -256,7 +256,7 @@
       <div class="vehicle-details">
         <div class="detail-item">
           <span class="detail-label">VIN:</span>
-          <span class="detail-value" th:text="${vehicle.}"></span>
+          <span class="detail-value" th:text="${vehicle.vin}"></span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Mileage:</span>
@@ -279,7 +279,7 @@
     </div>
   </div>
 
-  <div class="empty-state" th:if="${vehicles.isEmpty()}">
+  <div class="empty-state" th:if="${user.getVehicles().isEmpty()}">
     <div class="empty-state-icon">🚗</div>
     <h2>No vehicles yet</h2>
     <p>Start managing your vehicles by adding your first one</p>

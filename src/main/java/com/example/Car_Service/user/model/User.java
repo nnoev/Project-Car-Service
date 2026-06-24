@@ -6,6 +6,7 @@ import com.example.Car_Service.vehicle.model.Vehicle;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,13 +51,22 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserClass classType;
 
+    @Builder.Default
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     private List<Vehicle> vehicles = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<ServiceRecord> serviceRecords = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<ServiceReminder> serviceReminders = new ArrayList<>();
+
+    public BigDecimal getTotalCost() {
+        return serviceRecords.stream()
+                .map(ServiceRecord::getCost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
 }
