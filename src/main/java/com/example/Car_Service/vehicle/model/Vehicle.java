@@ -43,11 +43,11 @@ public class Vehicle {
     private User owner;
 
     @Builder.Default
-    @OneToMany(mappedBy = "vehicle", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "vehicle")
     private List<ServiceRecord> serviceRecords = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "vehicle", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "vehicle")
     private List<ServiceReminder> serviceReminders = new ArrayList<>();
 
 }

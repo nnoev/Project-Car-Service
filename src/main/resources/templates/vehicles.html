@@ -182,6 +182,12 @@
       border: none;
       cursor: pointer;
     }
+    .alert.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
 
     .btn-info:hover {
       background: #2980b9;
@@ -242,6 +248,10 @@
     <h1>My Vehicles</h1>
     <a href="/vehicles/add" class="btn btn-primary">+ Add New Vehicle</a>
   </div>
+  <div class="alert success" th:if="${message}">
+    <strong>Success!</strong>
+    <span th:text="${message}"></span>
+  </div>
 
   <div class="vehicles-grid" th:if="${!user.getVehicles().isEmpty()}">
     <div class="vehicle-card" th:each="vehicle : ${user.getVehicles()}">
@@ -273,8 +283,10 @@
       </div>
 
       <div class="vehicle-actions">
-        <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn btn-sm btn-info">View</a>
-        <a th:href="@{/vehicles/{id}/edit(id=${vehicle.id})}" class="btn btn-sm btn-info">Edit</a>
+        <a th:href="@{/vehicles/edit/{id}(id=${vehicle.id})}" class="btn btn-sm btn-info">Edit</a>
+        <form th:action="@{/vehicles/delete/{id}(id=${vehicle.id})}" method="post">
+          <button type="submit">Delete</button>
+        </form>
       </div>
     </div>
   </div>

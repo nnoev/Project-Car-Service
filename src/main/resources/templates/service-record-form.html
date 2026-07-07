@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${serviceRecord.id != null ? 'Edit' : 'Add'} + ' Service Record - Car Service'"></title>
+    <title th:text="${isEdit ? 'Edit' : 'Add'} + ' Service Record'"></title>
     <style>
         * {
             margin: 0;
@@ -192,15 +192,15 @@
 
 <div class="container">
     <div class="form-container">
-        <h1 class="form-title" th:text="${serviceRecord.id != null ? 'Edit Service Record' : 'Add New Service Record'}"></h1>
+        <h1 class="form-title">Add New Service Record</h1>
 
-        <form th:action="${serviceRecord.id != null ? '/service-records/' + serviceRecord.id + '/edit' : '/service-records/add'}"
+        <form th:action="${'/service-records/add'}"
               method="post"
               th:object="${serviceRecord}">
 
             <div class="form-group">
                 <label for="vehicle">Vehicle *</label>
-                <select id="vehicle" name="vehicle.id" th:field="*{vehicle.id}" required>
+                <select id="vehicle" th:field="*{vehicleId}" required>
                     <option value="">-- Select Vehicle --</option>
                     <option th:each="vehicle : ${vehicles}"
                             th:value="${vehicle.id}"
@@ -211,38 +211,34 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="serviceDate">Service Date *</label>
-                    <input type="date" id="serviceDate" name="serviceDate" th:field="*{serviceDate}" required>
+                    <input type="date" id="serviceDate" th:field="*{date}" required>
                 </div>
 
                 <div class="form-group">
                     <label for="serviceType">Service Type *</label>
-                    <input type="text" id="serviceType" name="serviceType" th:field="*{serviceType}"
-                           placeholder="e.g., Oil Change, Tire Rotation" required>
+                    <input type="text" id="serviceType" th:field="*{serviceType}" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea id="description" name="description" th:field="*{description}"
-                          placeholder="Additional details about the service..."></textarea>
+                <textarea id="description" th:field="*{description}"></textarea>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="cost">Cost *</label>
-                    <input type="number" id="cost" name="cost" th:field="*{cost}"
-                           min="0" step="0.01" placeholder="0.00" required>
+                    <input type="number" id="cost" th:field="*{cost}" min="0" step="0.01" required>
                 </div>
 
                 <div class="form-group">
                     <label for="mileageAtService">Mileage at Service *</label>
-                    <input type="number" id="mileageAtService" name="mileageAtService"
-                           th:field="*{mileageAtService}" min="0" required>
+                    <input type="number" id="mileageAtService" th:field="*{mileageAtService}" min="0" required>
                 </div>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary" th:text="${serviceRecord.id != null ? 'Update Record' : 'Add Record'}"></button>
+                <button type="submit" class="btn btn-primary" th:text = "${isEdit ? 'Edit' : 'Add'} + ' Service Record'">Add Record</button>
                 <a href="/service-records" class="btn btn-secondary">Cancel</a>
             </div>
         </form>

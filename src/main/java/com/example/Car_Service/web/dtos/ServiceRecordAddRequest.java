@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,7 +19,7 @@ import java.time.LocalDate;
 public class ServiceRecordAddRequest {
 
     @NotNull(message = "Vehicle is required")
-    private Long vehicleId;
+    private UUID vehicleId;
 
     @NotNull(message = "Date is required")
     private LocalDate date;
@@ -28,7 +30,7 @@ public class ServiceRecordAddRequest {
     private String description;
 
     @Positive(message = "Cost must be positive")
-    private double cost;
+    private BigDecimal cost;
 
     @Positive(message = "Mileage must be positive")
     private int mileageAtService;

@@ -51,16 +51,19 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserClass classType;
 
+    @Column
+    private boolean active;
+
     @Builder.Default
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "owner")
     private List<Vehicle> vehicles = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user")
     private List<ServiceRecord> serviceRecords = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user")
     private List<ServiceReminder> serviceReminders = new ArrayList<>();
 
     public BigDecimal getTotalCost() {

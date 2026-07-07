@@ -6,33 +6,28 @@ import com.example.Car_Service.vehicle.model.Vehicle;
 import com.example.Car_Service.vehicle.repo.VehicleRepository;
 import com.example.Car_Service.web.dtos.VehicleAddRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
-@Slf4j
+
 @Service
 public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
+
     private final UserService userService;
 
     @Autowired
-    public VehicleService(VehicleRepository vehicleRepository , UserService userService) {
+    public VehicleService(VehicleRepository vehicleRepository, UserService userService) {
         this.vehicleRepository = vehicleRepository;
         this.userService = userService;
     }
 
-    public void addVehicle (VehicleAddRequest vehicleAddRequest, HttpSession session) {
-        Object userId = session.getAttribute("userId");
-        User user = userService.getById((UUID) userId);
-        Optional<Vehicle> byVin = vehicleRepository.findByVin(vehicleAddRequest.getVin());
-        if (byVin.isPresent()) {
-            throw new RuntimeException("A vehicle with this VIN already exists");
+    public void addVehicle(VehicleAddRequest vehicleAddRequest, User user) {
+        if (vehicleRepository.findByVin(vehicleAddRequest.getVin()).isPresent()) {
+            throw new RuntimeException("Vehicle already exists");
         }
-
         Vehicle vehicle = Vehicle.builder()
                 .model(vehicleAddRequest.getModel())
                 .make(vehicleAddRequest.getMake())
@@ -42,8 +37,18 @@ public class VehicleService {
                 .owner(user)
                 .build();
         vehicleRepository.save(vehicle);
-        log.info("User %s added vehicle %s %s".formatted(user.getUsername(), vehicle.getMake(), vehicle.getModel()));
 
+    }
+    public void deleteVehicle(Vehicle vehicle) {
+        vehicleRepository.delete(vehicle);
+    }
+
+    public Vehicle getById(UUID id) {
+        return vehicleRepository.findById(id).orElseThrow(()->new RuntimeException("Vehicle does not exist"));
+    }
+
+    public void save(Vehicle vehicle) {
+        vehicleRepository.save(vehicle);
     }
 
 }

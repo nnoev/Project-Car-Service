@@ -6,6 +6,7 @@ import com.example.Car_Service.user.model.UserRole;
 import com.example.Car_Service.user.repo.UserRepository;
 import com.example.Car_Service.web.dtos.LoginRequest;
 import com.example.Car_Service.web.dtos.UserRegistration;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class UserService {
         if (!passwordEncoder.matches(loginRequest.getPassword(), optionalUser.get().getPassword())) {
             throw new RuntimeException("Password is incorrect");
         }
+        if (!optionalUser.get().isActive()) {
+            throw new RuntimeException("Account is not active");
+        }
         return optionalUser.get();
     }
 
@@ -59,7 +63,8 @@ public class UserService {
                 .email(userRegistration.getEmail())
                 .role(UserRole.USER)
                 .createdAt(LocalDate.now())
-                .classType(UserClass.NEW).build();
+                .classType(UserClass.NEW)
+                .active(true).build();
         userRepository.save(user);
         log.info("User [%s] registered successfully".formatted(userRegistration.getUsername()));
     }
@@ -77,4 +82,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public User getUserBySession(HttpSession session) {
+        return userRepository.findById((UUID) session.getAttribute("userId")).orElseThrow(()->new RuntimeException("User does not exist"));
+    }
 }

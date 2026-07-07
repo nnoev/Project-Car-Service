@@ -238,6 +238,16 @@
             font-size: 60px;
             margin-bottom: 15px;
         }
+
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card-link .card {
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
@@ -263,27 +273,30 @@
     </div>
 
     <div class="dashboard-grid">
-        <div class="card">
-            <div class="card-icon">🚗</div>
-            <div class="card-title">Total Vehicles</div>
-            <div class="card-value" th:text="${user.getVehicles().size()}">0</div>
-            <div class="card-description">Vehicles in your account</div>
-        </div>
-
-        <div class="card">
-            <div class="card-icon">🔧</div>
-            <div class="card-title">Service Records</div>
-            <div class="card-value" th:text="${user.getServiceRecords().size()}">0</div>
-            <div class="card-description">Total maintenance records</div>
-        </div>
-
-        <div class="card">
-            <div class="card-icon">⏰</div>
-            <div class="card-title">Pending Reminders</div>
-            <div class="card-value" th:text="${user.getServiceReminders().size()}">0</div>
-            <div class="card-description">Service reminders due</div>
-        </div>
-
+        <a href="/vehicles" class="card-link">
+            <div class=" card">
+                <div class="card-icon">🚗</div>
+                <div class="card-title">Total Vehicles</div>
+                <div class="card-value" th:text="${user.getVehicles().size()}">0</div>
+                <div class="card-description">Vehicles in your account</div>
+            </div>
+        </a>
+        <a href="/service-records" class="card-link">
+            <div class="card">
+                <div class="card-icon">🔧</div>
+                <div class="card-title">Service Records</div>
+                <div class="card-value" th:text="${user.getServiceRecords().size()}">0</div>
+                <div class="card-description">Total maintenance records</div>
+            </div>
+        </a>
+        <a href="/reminders" class="card-link">
+            <div class="card">
+                <div class="card-icon">⏰</div>
+                <div class="card-title">Reminders</div>
+                <div class="card-value" th:text="${user.getServiceReminders().size()}">0</div>
+                <div class="card-description">Service reminders due</div>
+            </div>
+        </a>
         <div class="card">
             <div class="card-icon">💰</div>
             <div class="card-title">Total Spent</div>
@@ -312,19 +325,6 @@
                     <h3 th:text="${v.make + ' ' + v.model}"></h3>
                     <p th:text="'Year: ' + ${v.year}"></p>
                     <p th:text="'Mileage: ' + ${v.mileage} + ' km'"></p>
-                </div>
-
-                <div class="vehicle-actions">
-                    <a th:href="@{/vehicles/{id}(id=${v.id})}" class="btn btn-sm btn-info">View</a>
-                    <a th:href="@{/vehicles/edit/{id}(id=${v.id})}" class="btn btn-sm btn-secondary">Edit</a>
-
-                    <!-- Delete button -->
-                    <form th:action="@{/vehicles/delete/{id}(id=${v.id})}" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-sm btn-danger"
-                                onclick="return confirm('Are you sure you want to delete this vehicle?');">
-                            Delete
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>

@@ -3,10 +3,7 @@ package com.example.Car_Service.service_record.model;
 import com.example.Car_Service.user.model.User;
 import com.example.Car_Service.vehicle.model.Vehicle;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "service_records")
+@Builder
 public class ServiceRecord {
 
     @Id
