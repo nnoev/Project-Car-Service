@@ -325,58 +325,57 @@
             </span>
 
                 </div>
+
             </div>
 
+
+            <div class="reminder-actions">
+
+
+                <form th:action="@{/reminders/toggle/{id}(id=${reminder.id})}"
+                      method="post"
+                      style="display:flex; align-items:center; gap:6px;">
+
+                    <input type="hidden"
+                           name="completed"
+                           th:value="${!reminder.completed}">
+
+                    <label>
+                        <input type="checkbox"
+                               th:checked="${reminder.completed}"
+                               onchange="this.form.submit()">
+                    </label>
+
+                    <label style="font-size:13px; font-weight:600;">
+                        Completed
+                    </label>
+
+                </form>
+
+
+                <form th:action="@{/reminders/delete/{id}(id=${reminder.id})}"
+                      method="post">
+                    <button class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this reminder?')">
+                        Delete
+                    </button>
+
+
+                </form>
+
+            </div>
+
+
         </div>
-
-
-        <div class="reminder-actions">
-
-
-            <form th:action="@{/reminders/toggle/{id}(id=${reminder.id})}"
-                  method="post"
-                  style="display:flex; align-items:center; gap:6px;">
-
-                <input type="hidden"
-                       name="completed"
-                       th:value="${!reminder.completed}">
-
-                <label>
-                    <input type="checkbox"
-                           th:checked="${reminder.completed}"
-                           onchange="this.form.submit()">
-                </label>
-
-                <label style="font-size:13px; font-weight:600;">
-                    Completed
-                </label>
-
-            </form>
-
-
-            <form th:action="@{/reminders/delete/{id}(id=${reminder.id})}"
-                  method="post">
-                <button class="btn btn-sm btn-danger"
-                        onclick="return confirm('Delete this reminder?')">
-                    Delete
-                </button>
-
-
-            </form>
-
-        </div>
-
 
     </div>
 
+    <div class="empty-state" th:if="${user.getServiceReminders().isEmpty()}">
+        <div class="empty-state-icon">⏰</div>
+        <h2>No reminders set</h2>
+        <p>Create reminders to stay on top of your vehicle maintenance</p>
+        <a href="/reminders/add" class="btn btn-primary">Add Your First Reminder</a>
+    </div>
 </div>
-
-<div class="empty-state" th:if="${user.getServiceReminders().isEmpty()}">
-    <div class="empty-state-icon">⏰</div>
-    <h2>No reminders set</h2>
-    <p>Create reminders to stay on top of your vehicle maintenance</p>
-    <a href="/reminders/add" class="btn btn-primary">Add Your First Reminder</a>
-</div>
-
 </body>
 </html>

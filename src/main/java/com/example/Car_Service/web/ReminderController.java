@@ -77,7 +77,7 @@ public class ReminderController {
         ServiceReminder serviceReminder = serviceReminderService.getById(id);
         serviceReminderService.deleteServiceRecord(serviceReminder);
         redirectAttributes.addFlashAttribute("message", "Service Reminder deleted successfully");
-        return new ModelAndView("redirect:/service-records");
+        return new ModelAndView("redirect:/reminders");
     }
 @PostMapping("/reminders/toggle/{id}")
 public String toggleReminder(@PathVariable UUID id,
