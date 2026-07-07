@@ -22,14 +22,11 @@ public class ProfileController {
 
     private final UserService UserService;
 
-    private final UserProperties userProperties;
-
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ProfileController(UserService userService, UserProperties userProperties, PasswordEncoder passwordEncoder) {
+    public ProfileController(UserService userService, PasswordEncoder passwordEncoder) {
         UserService = userService;
-        this.userProperties = userProperties;
         this.passwordEncoder = passwordEncoder;
     }
 

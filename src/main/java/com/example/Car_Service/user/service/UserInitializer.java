@@ -30,7 +30,7 @@ public class UserInitializer implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         Optional<User> optionalUser = userRepository.findByUsername(userProperties.getDefaultUser().getUsername());
         if (!optionalUser.isPresent()) {
             UserRegistration userRegistration = UserRegistration.builder().

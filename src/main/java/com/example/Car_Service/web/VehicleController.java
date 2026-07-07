@@ -68,7 +68,7 @@ public class VehicleController {
         return new ModelAndView("redirect:/vehicles");
     }
     @GetMapping("/vehicles/edit/{id}")
-    public ModelAndView addVehicle(@PathVariable UUID id) {
+    public ModelAndView editVehicle(@PathVariable UUID id) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("vehicle-form");
         Vehicle vehicle = vehicleService.getById(id);

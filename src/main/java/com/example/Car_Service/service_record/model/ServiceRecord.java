@@ -30,8 +30,8 @@ public class ServiceRecord {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
-    private LocalDate serviceDate;
+    @Column
+    private LocalDate date;
 
     @Column(nullable = false)
     private String serviceType;

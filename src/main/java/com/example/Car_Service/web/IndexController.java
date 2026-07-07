@@ -16,12 +16,9 @@ public class IndexController {
 
     private final UserService userService;
 
-    private final UserProperties userProperties;
-
     @Autowired
-    public IndexController(UserService userService, UserProperties userProperties) {
+    public IndexController(UserService userService) {
         this.userService = userService;
-        this.userProperties = userProperties;
     }
 
     @GetMapping("/")

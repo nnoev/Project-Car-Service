@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class VehicleAddRequest {
+
     @NotBlank(message = "Make is required")
     private String make;
 
@@ -25,4 +26,5 @@ public class VehicleAddRequest {
     @NotBlank(message = "VIN is required")
     @Size(min = 17, max = 17, message = "VIN must be exactly 17 characters")
     private String vin;
+
 }

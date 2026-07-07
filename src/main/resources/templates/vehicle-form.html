@@ -177,10 +177,11 @@
 </nav>
 
 <div class="container">
+    <!--suppress Annotator -->
     <div class="form-container">
-        <h1 class="form-title"
-            th:text="${isEdit ? 'Edit Vehilce' : 'Add New Vehicle'}">
-        </h1>
+            <h1 class="form-title"
+                th:text="${isEdit ? 'Edit Vehilce' : 'Add New Vehicle'}">
+            </h1>
 
 
         <form th:if="${isEdit}"
@@ -300,7 +301,7 @@
                 <button type="submit" class="btn btn-primary" th:text="${isEdit? 'Edit':'Add'}">Add Vehicle</button>
                 <a href="/vehicles" class="btn btn-secondary">Cancel</a>
             </div>
-
+        </form>
     </div>
 </div>
 </body>

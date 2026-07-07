@@ -43,11 +43,11 @@ public class Vehicle {
     private User owner;
 
     @Builder.Default
-    @OneToMany(mappedBy = "vehicle")
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
     private List<ServiceRecord> serviceRecords = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "vehicle")
+    @OneToMany(mappedBy = "vehicle" , cascade = CascadeType.ALL)
     private List<ServiceReminder> serviceReminders = new ArrayList<>();
 
 }

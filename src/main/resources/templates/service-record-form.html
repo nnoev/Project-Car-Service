@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${isEdit ? 'Edit' : 'Add'} + ' Service Record'"></title>
+    <title th:text="${isEdit} ? 'Edit Service Record' : 'Add Service Record'"></title>
     <style>
         * {
             margin: 0;
@@ -168,11 +168,6 @@
             background: #d5dbdb;
         }
 
-        .error-message {
-            color: #e74c3c;
-            font-size: 13px;
-            margin-top: 5px;
-        }
     </style>
 </head>
 <body>
@@ -192,9 +187,12 @@
 
 <div class="container">
     <div class="form-container">
-        <h1 class="form-title">Add New Service Record</h1>
+        <h1 class="form-title"
+            th:text="${isEdit ? 'Edit Service Record' : 'Add New Service Record'}">
+        </h1>
 
-        <form th:action="${'/service-records/add'}"
+        <form th:if="${!isEdit}"
+              th:action="@{'/service-records/add'}"
               method="post"
               th:object="${serviceRecord}">
 
@@ -210,8 +208,8 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="serviceDate">Service Date *</label>
-                    <input type="date" id="serviceDate" th:field="*{date}" required>
+                    <label for="serviceDate">Service Date</label>
+                    <input type="date" id="serviceDate" th:field="*{date}">
                 </div>
 
                 <div class="form-group">
@@ -242,6 +240,66 @@
                 <a href="/service-records" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
+        <form th:if="${isEdit}"
+              th:action="@{'/service-records/edit/' + ${serviceRecord.getId()}}"
+              method="post"
+              th:object="${serviceRecord}">
+
+            <div class="form-group">
+                <div>
+                    <label>Vehicle</label>
+
+                    <label>
+                        <input type="text"
+                               th:value="|${vehicle.year} ${vehicle.make} ${vehicle.model}|"
+                               readonly>
+                    </label>
+
+                    <input type="hidden"
+                           th:field="*{vehicleId}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="serviceDate">Service Date</label>
+                    <input type="date" id="serviceDate" th:field="*{date}">
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceType">Service Type *</label>
+                    <input type="text" id="serviceType" th:field="*{serviceType}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cost">Cost *</label>
+                    <input type="number" id="cost" th:field="*{cost}" min="0" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="mileageAtService">Mileage at Service *</label>
+                    <input type="number" id="mileageAtService" th:field="*{mileageAtService}" min="0" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit"
+                        class="btn btn-primary"
+                        th:text="${isEdit} ? 'Edit Service Record' : 'Add Service Record'">
+                </button>
+
+                <a href="/service-records" class="btn btn-secondary">Cancel</a>
+            </div>
+
+        </form>
+
     </div>
 </div>
 </body>

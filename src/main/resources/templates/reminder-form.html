@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${reminder.id != null ? 'Edit' : 'Add'} + ' Reminder - Car Service'"></title>
+    <title th:text="${'Add Reminder - Car Service'}"></title>
     <style>
         * {
             margin: 0;
@@ -113,13 +113,6 @@
             box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
         }
 
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
         .checkbox-group input[type="checkbox"] {
             width: auto;
             cursor: pointer;
@@ -192,9 +185,9 @@
 
 <div class="container">
     <div class="form-container">
-        <h1 class="form-title" th:text="${reminder.id != null ? 'Edit Reminder' : 'Add New Reminder'}"></h1>
+        <h1 class="form-title">Add New Reminder</h1>
 
-        <form th:action="${reminder.id != null ? '/reminders/' + reminder.id + '/edit' : '/reminders/add'}"
+        <form th:action="${'/reminders/add'}"
               method="post"
               th:object="${reminder}">
 
@@ -203,8 +196,8 @@
                 <select id="vehicle" name="vehicle.id" th:field="*{vehicle.id}" required>
                     <option value="">-- Select Vehicle --</option>
                     <option th:each="vehicle : ${vehicles}"
-                            th:value="${vehicle.id}"
-                            th:text="|${vehicle.year} ${vehicle.make} ${vehicle.model}|"></option>
+                            th:value="${vehicle.getId()}"
+                            th:text="|${vehicle.getYear()} ${vehicle.getMake()} ${vehicle.getModel()}|"></option>
                 </select>
             </div>
 
@@ -226,14 +219,8 @@
                 <div class="help-text">Set when this service is due by mileage (in miles)</div>
             </div>
 
-            <div class="checkbox-group">
-                <input type="hidden" name="completed" value="false">
-                <input type="checkbox" id="completed" name="completed" value="true" th:field="*{completed}">
-                <label for="completed">Mark as Completed</label>
-            </div>
-
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary" th:text="${reminder.id != null ? 'Update Reminder' : 'Add Reminder'}"></button>
+                <button type="submit" class="btn btn-primary">Add Record</button>
                 <a href="/reminders" class="btn btn-secondary">Cancel</a>
             </div>
         </form>

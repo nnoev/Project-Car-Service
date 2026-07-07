@@ -65,7 +65,7 @@ public class UserController {
             return new ModelAndView("register");
         }
         userService.registerUser(userRegistration);
-        User user = userService.getByUserName(userRegistration.getUsername());
+        userService.getByUserName(userRegistration.getUsername());
         return new ModelAndView("redirect:/login");
     }
 

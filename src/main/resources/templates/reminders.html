@@ -120,11 +120,6 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
         }
 
-        .reminder-card.completed {
-            border-left-color: #27ae60;
-            opacity: 0.7;
-        }
-
         .reminder-title {
             font-size: 18px;
             font-weight: 600;
@@ -190,17 +185,6 @@
             text-align: center;
         }
 
-        .btn-success {
-            background: #27ae60;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-success:hover {
-            background: #229954;
-        }
-
         .btn-danger {
             background: #e74c3c;
             color: white;
@@ -234,6 +218,14 @@
             color: #999;
             margin-bottom: 20px;
         }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
     </style>
 </head>
 <body>
@@ -256,40 +248,134 @@
         <h1>Service Reminders</h1>
         <a href="/reminders/add" class="btn btn-primary">+ Add Reminder</a>
     </div>
+    <div class="alert success" th:if="${message}">
+        <strong>Success!</strong>
+        <span th:text="${message}"></span>
+    </div>
 
     <div class="reminders-grid" th:if="${!user.getServiceReminders().isEmpty()}">
-        <div class="reminder-card" th:each="reminder : ${reminders}" th:classappend="${reminder.completed ? 'completed' : ''}">
-            <h3 class="reminder-title" th:text="${reminder.title}"></h3>
-            <p class="reminder-vehicle" th:text="${reminder.vehicle.year} + ' ' + ${reminder.vehicle.make} + ' ' + ${reminder.vehicle.model}"></p>
+        <div class="reminder-card"
+             th:each="reminder : ${user.getServiceReminders()}"
+             th:classappend="${reminder.completed ? 'completed' : ''}">
 
-            <span class="reminder-status"
-                  th:classappend="${reminder.completed ? 'status-completed' : 'status-pending'}"
-                  th:text="${reminder.completed ? 'Completed' : 'Pending'}"></span>
+            <h3 class="reminder-title" th:text="${reminder.title}">
+            </h3>
+
+
+            <p class="reminder-vehicle">
+                🚗
+                <span th:text="|${reminder.vehicle.year} ${reminder.vehicle.make} ${reminder.vehicle.model}|"></span>
+            </p>
+
+
+            <!-- Status -->
+            <span class="reminder-status status-completed"
+                  th:if="${reminder.completed}">
+        Completed
+    </span>
+
+            <span class="reminder-status status-overdue"
+                  th:if="${!reminder.completed
+          and reminder.dueDate != null
+          and reminder.dueDate.isBefore(T(java.time.LocalDate).now())}">
+        Overdue
+    </span>
+
+            <span class="reminder-status status-today"
+                  th:if="${!reminder.completed
+          and reminder.dueDate != null
+          and reminder.dueDate.equals(T(java.time.LocalDate).now())}">
+        Due Today
+    </span>
+
+            <span class="reminder-status status-pending"
+                  th:if="${!reminder.completed
+          and (reminder.dueDate == null
+          or reminder.dueDate.isAfter(T(java.time.LocalDate).now()))}">
+        Pending
+    </span>
+
 
             <div class="reminder-details">
-                <div class="detail-item" th:if="${reminder.dueDate}">
-                    <span class="detail-label">Due Date:</span>
-                    <span class="detail-value" th:text="${#temporals.format(reminder.dueDate, 'MMM dd, yyyy')}"></span>
+
+
+                <div class="detail-item"
+                     th:if="${reminder.dueDate}">
+
+            <span class="detail-label">
+                📅 Due Date:
+            </span>
+
+                    <span class="detail-value"
+                          th:text="${#temporals.format(reminder.dueDate, 'MMM dd, yyyy')}">
+            </span>
+
                 </div>
-                <div class="detail-item" th:if="${reminder.dueMileage}">
-                    <span class="detail-label">Due Mileage:</span>
-                    <span class="detail-value" th:text="${reminder.dueMileage} + ' miles'"></span>
+
+
+                <div class="detail-item"
+                     th:if="${reminder.dueMileage}">
+
+            <span class="detail-label">
+                🛣 Mileage:
+            </span>
+
+                    <span class="detail-value"
+                          th:text="${reminder.dueMileage + ' miles'}">
+            </span>
+
                 </div>
             </div>
 
-            <div class="reminder-actions">
-                <button class="btn btn-sm btn-success" th:if="${!reminder.completed}" th:onclick="|completeReminder('${reminder.id}')|">Mark Done</button>
-                <button class="btn btn-sm btn-danger" th:onclick="|deleteReminder('${reminder.id}')|">Delete</button>
-            </div>
         </div>
+
+
+        <div class="reminder-actions">
+
+
+            <form th:action="@{/reminders/toggle/{id}(id=${reminder.id})}"
+                  method="post"
+                  style="display:flex; align-items:center; gap:6px;">
+
+                <input type="hidden"
+                       name="completed"
+                       th:value="${!reminder.completed}">
+
+                <label>
+                    <input type="checkbox"
+                           th:checked="${reminder.completed}"
+                           onchange="this.form.submit()">
+                </label>
+
+                <label style="font-size:13px; font-weight:600;">
+                    Completed
+                </label>
+
+            </form>
+
+
+            <form th:action="@{/reminders/delete/{id}(id=${reminder.id})}"
+                  method="post">
+                <button class="btn btn-sm btn-danger"
+                        onclick="return confirm('Delete this reminder?')">
+                    Delete
+                </button>
+
+
+            </form>
+
+        </div>
+
+
     </div>
 
-    <div class="empty-state" th:if="${user.getServiceReminders().isEmpty()}">
-        <div class="empty-state-icon">⏰</div>
-        <h2>No reminders set</h2>
-        <p>Create reminders to stay on top of your vehicle maintenance</p>
-        <a href="/reminders/add" class="btn btn-primary">Add Your First Reminder</a>
-    </div>
+</div>
+
+<div class="empty-state" th:if="${user.getServiceReminders().isEmpty()}">
+    <div class="empty-state-icon">⏰</div>
+    <h2>No reminders set</h2>
+    <p>Create reminders to stay on top of your vehicle maintenance</p>
+    <a href="/reminders/add" class="btn btn-primary">Add Your First Reminder</a>
 </div>
 
 </body>

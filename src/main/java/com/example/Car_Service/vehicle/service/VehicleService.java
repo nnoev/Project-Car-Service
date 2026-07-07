@@ -16,12 +16,9 @@ public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
 
-    private final UserService userService;
-
     @Autowired
     public VehicleService(VehicleRepository vehicleRepository, UserService userService) {
         this.vehicleRepository = vehicleRepository;
-        this.userService = userService;
     }
 
     public void addVehicle(VehicleAddRequest vehicleAddRequest, User user) {
