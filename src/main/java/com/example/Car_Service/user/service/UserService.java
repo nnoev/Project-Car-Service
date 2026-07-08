@@ -68,8 +68,21 @@ public class UserService {
         userRepository.save(user);
         log.info("User [%s] registered successfully".formatted(userRegistration.getUsername()));
     }
+    @Transactional
+    public void createUser(User user) {
 
-    public User getByUserName(String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
+
+        if (optionalUser.isPresent()) {
+            return;
+        }
+
+        userRepository.save(user);
+
+        log.info("System user [{}] created successfully", user.getUsername());
+    }
+
+    public User getByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(()->new RuntimeException("Username does not exist"));
 
     }

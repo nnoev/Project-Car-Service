@@ -11,7 +11,7 @@ import java.util.Set;
 @Component
 public class SessionCheckInterceptor implements HandlerInterceptor {
 
-    public static final Set<String> NO_SESSION_REQUIRED_URLS = Set.of("/login", "/register", "/");
+    public static final Set<String> NO_SESSION_REQUIRED_URLS = Set.of("/login", "/register", "/","guest-login");
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

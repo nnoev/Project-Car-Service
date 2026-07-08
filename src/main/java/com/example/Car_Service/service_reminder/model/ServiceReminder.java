@@ -3,10 +3,7 @@ package com.example.Car_Service.service_reminder.model;
 import com.example.Car_Service.user.model.User;
 import com.example.Car_Service.vehicle.model.Vehicle;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -16,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "service_reminders")
 public class ServiceReminder {
 

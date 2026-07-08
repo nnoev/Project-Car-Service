@@ -2,7 +2,6 @@ package com.example.Car_Service.web.controllers;
 
 import com.example.Car_Service.user.model.User;
 import com.example.Car_Service.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,13 +38,11 @@ public class IndexController {
         }
         return modelAndView;
     }
+
     @GetMapping("/guest-login")
     public ModelAndView guestLogin(HttpSession session) {
-
-        User guest = userService.getByUserName("guest");
-
+        User guest = userService.getByUsername("guest");
         session.setAttribute("userId", guest.getId());
-
         return new ModelAndView("redirect:/dashboard");
     }
 

@@ -57,13 +57,7 @@ public class ReminderController {
         }
         User user = userService.getUserBySession(session);
         Vehicle vehicle = vehicleService.getById(reminderDto.getVehicleId());
-        ServiceReminder reminder = new ServiceReminder();
-        reminder.setUser(user);
-        reminder.setVehicle(vehicle);
-        reminder.setTitle(reminderDto.getTitle());
-        reminder.setDueDate(reminderDto.getDueDate());
-        reminder.setDueMileage(reminderDto.getDueMileage());
-        serviceReminderService.save(reminder);
+        serviceReminderService.addReminder(reminderDto,vehicle,user);
         redirectAttributes.addFlashAttribute("message", "Reminder added successfully");
         return new ModelAndView("redirect:/reminders");
     }

@@ -21,6 +21,9 @@ public class ServiceRecordService {
     }
 
     public void addService(ServiceRecordDto serviceRecordDto, Vehicle vehicle, User user) {
+        if(user.getUsername().equals("guest") && vehicle.getServiceRecords().size() >= 3 ){
+            throw new RuntimeException("Vehicle has reached maximum number of service records");
+        }
         ServiceRecord serviceRecord = ServiceRecord.builder()
                 .vehicle(vehicle)
                 .user(user)

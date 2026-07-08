@@ -25,6 +25,9 @@ public class VehicleService {
         if (vehicleRepository.findByVin(vehicleAddRequest.getVin()).isPresent()) {
             throw new RuntimeException("Vehicle already exists");
         }
+        if (user.getUsername().equals("guest") && user.getVehicles().size() >= 2) {
+            throw new RuntimeException("User has reached the maximum number of vehicles");
+        }
         Vehicle vehicle = Vehicle.builder()
                 .model(vehicleAddRequest.getModel())
                 .make(vehicleAddRequest.getMake())
