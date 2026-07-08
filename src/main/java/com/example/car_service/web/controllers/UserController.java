@@ -2,8 +2,6 @@ package com.example.car_service.web.controllers;
 
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.service.UserService;
-import com.example.car_service.web.dtos.ChangePassword;
-import com.example.car_service.web.dtos.ChangeProfile;
 import com.example.car_service.web.dtos.LoginRequest;
 import com.example.car_service.web.dtos.UserRegistration;
 import jakarta.servlet.http.HttpSession;
@@ -66,19 +64,6 @@ public class UserController {
         }
         userService.registerUser(userRegistration);
         return new ModelAndView("redirect:/login");
-    }
-
-    @GetMapping("/profile")
-    public ModelAndView getProfile(HttpSession session) {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("profile");
-        modelAndView.addObject("activeTab", "profile");
-        Object userId = session.getAttribute("userId");
-        User user = userService.getById((UUID) userId);
-        modelAndView.addObject("user", user);
-        modelAndView.addObject("changePassword", new ChangePassword());
-        modelAndView.addObject("changeProfile", new ChangeProfile());
-        return modelAndView;
     }
 
     @GetMapping("/vehicles")

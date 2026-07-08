@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -19,14 +20,36 @@ import java.util.UUID;
 @Controller
 public class ProfileController {
 
-    private final UserService UserService;
+    private final UserService userService;
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ProfileController(UserService userService, PasswordEncoder passwordEncoder) {
-        UserService = userService;
+    public ProfileController(UserService userService,PasswordEncoder passwordEncoder) {
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @GetMapping("/profile")
+    public ModelAndView getProfile(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView("profile");
+        User user = userService.getById((UUID) session.getAttribute("userId"));
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("changeProfile", new ChangeProfile());
+        modelAndView.addObject("changePassword", new ChangePassword());
+        modelAndView.addObject("activeTab", "overview");
+        return modelAndView;
+    }
+
+    @GetMapping("/profile/change-password")
+    public ModelAndView getChangePassword(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView("profile");
+        User user = userService.getById((UUID) session.getAttribute("userId"));
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("changePassword", new ChangePassword());
+        modelAndView.addObject("changeProfile", new ChangeProfile()); // REQUIRED
+        modelAndView.addObject("activeTab", "change-password");
+        return modelAndView;
     }
 
     @PostMapping("/profile/change-password")
@@ -38,25 +61,53 @@ public class ProfileController {
             ModelAndView modelAndView = new ModelAndView("profile");
             modelAndView.addObject("activeTab", "change-password");
             modelAndView.addObject("changeProfile", new ChangeProfile());
-            User user = UserService.getById((UUID) session.getAttribute("userId"));
+            User user = userService.getById((UUID) session.getAttribute("userId"));
             modelAndView.addObject("user", user);
             modelAndView.addObject("changePassword", changePassword);
             return modelAndView;
         }
         Object userId = session.getAttribute("userId");
-        User user = UserService.getById((UUID) userId);
+        User user = userService.getById((UUID) userId);
         if (!passwordEncoder.matches(changePassword.getCurrentPassword(), user.getPassword())) {
-            return new ModelAndView("profile");
+            ModelAndView modelAndView = new ModelAndView("profile");
+            modelAndView.addObject("activeTab", "change-password");
+            modelAndView.addObject("changePassword", changePassword);
+            modelAndView.addObject("changeProfile", new ChangeProfile());
+            modelAndView.addObject("user", user);
+            modelAndView.addObject("passwordError", "Current password is incorrect");
+            return modelAndView;
         }
         if (!changePassword.getNewPassword().equals(changePassword.getConfirmPassword())) {
-            return new ModelAndView("profile");
+            ModelAndView modelAndView = new ModelAndView("profile");
+            modelAndView.addObject("activeTab", "change-password");
+            modelAndView.addObject("changePassword", changePassword);
+            modelAndView.addObject("changeProfile", new ChangeProfile());
+            modelAndView.addObject("user", user);
+            modelAndView.addObject("passwordError", "Passwords do not match");
+            return modelAndView;
         }
         user.setPassword(passwordEncoder.encode(changePassword.getNewPassword()));
-        UserService.save(user);
+        userService.save(user);
         redirectAttributes.addFlashAttribute("message", "Password changed successfully");
         return new ModelAndView("redirect:/profile");
     }
-@PostMapping("/profile/edit")
+
+    @GetMapping("/profile/edit")
+    public ModelAndView getEditProfile(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView("profile");
+        User user = userService.getById((UUID) session.getAttribute("userId"));
+        ChangeProfile changeProfile = new ChangeProfile();
+        changeProfile.setFirstName(user.getFirstName());
+        changeProfile.setLastName(user.getLastName());
+        changeProfile.setEmail(user.getEmail());
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("changeProfile", changeProfile);
+        modelAndView.addObject("changePassword", new ChangePassword());
+        modelAndView.addObject("activeTab", "edit-profile");
+        return modelAndView;
+    }
+
+    @PostMapping("/profile/edit")
     public ModelAndView changeProfile(@Valid ChangeProfile changeProfile,
                                       BindingResult bindingResult,
                                       RedirectAttributes redirectAttributes,
@@ -65,17 +116,17 @@ public class ProfileController {
             ModelAndView modelAndView = new ModelAndView("profile");
             modelAndView.addObject("activeTab", "edit-profile");
             modelAndView.addObject("changeProfile", changeProfile);
-            User user = UserService.getById((UUID) session.getAttribute("userId"));
+            User user = userService.getById((UUID) session.getAttribute("userId"));
             modelAndView.addObject("user", user);
             modelAndView.addObject("changePassword", new ChangePassword());
             return modelAndView;
         }
         Object userId = session.getAttribute("userId");
-        User user = UserService.getById((UUID) userId);
+        User user = userService.getById((UUID) userId);
         user.setFirstName(changeProfile.getFirstName());
         user.setLastName(changeProfile.getLastName());
         user.setEmail(changeProfile.getEmail());
-        UserService.save(user);
+        userService.save(user);
         redirectAttributes.addFlashAttribute("message", "Profile updated successfully");
         return new ModelAndView("redirect:/profile");
     }

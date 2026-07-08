@@ -3,8 +3,10 @@ package com.example.car_service.web.dtos;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class ChangeProfile {
 
     @NotBlank(message = "First name is required")
