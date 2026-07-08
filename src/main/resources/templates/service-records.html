@@ -274,9 +274,9 @@
                 <td>
                     <span class="record-date" th:text="${#temporals.format(record.date, 'MMM dd, yyyy')}"></span>
                 </td>
-                <td th:text="${record.mileageAtService} + ' miles'"></td>
+                <td th:text="${record.mileageAtService} + ' kilometers'"></td>
                 <td>
-                    <span class="record-cost" th:text="'$' + ${#numbers.formatDecimal(record.cost, 1, 2)}"></span>
+                    <span class="record-cost" th:text="'€' + ${#numbers.formatDecimal(record.cost, 1, 2)}"></span>
                 </td>
                 <td th:text="${record.description}"></td>
                 <td>
