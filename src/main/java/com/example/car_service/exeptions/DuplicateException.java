@@ -1,0 +1,8 @@
+package com.example.car_service.exeptions;
+
+public class DuplicateException extends RuntimeException{
+    public DuplicateException(String message) {
+        super(message);
+    }
+
+}
