@@ -1,4 +1,4 @@
-package com.example.Car_Service.web;
+package com.example.Car_Service.web.controllers;
 
 import com.example.Car_Service.service_reminder.model.ServiceReminder;
 import com.example.Car_Service.service_reminder.service.ServiceReminderService;
@@ -12,10 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -25,6 +22,7 @@ import java.util.UUID;
 public class ReminderController {
 
     private final UserService userService;
+
     private final VehicleService vehicleService;
 
     private final ServiceReminderService serviceReminderService;
@@ -45,32 +43,30 @@ public class ReminderController {
         modelAndView.addObject("vehicles", user.getVehicles());
         return modelAndView;
     }
+
     @PostMapping("/reminders/add")
-    public ModelAndView addReminder(@Valid ServiceReminderDto reminderDto,
+    public ModelAndView addReminder(@Valid @ModelAttribute("reminder") ServiceReminderDto reminderDto,
                                     BindingResult bindingResult,
                                     RedirectAttributes redirectAttributes,
                                     HttpSession session) {
-
         if (bindingResult.hasErrors()) {
-            return new ModelAndView("reminder-form");
+            ModelAndView modelAndView = new ModelAndView("reminder-form");
+            modelAndView.addObject("vehicles",
+                    userService.getUserBySession(session).getVehicles());
+            return modelAndView;
         }
-
         User user = userService.getUserBySession(session);
-        Vehicle vehicle = vehicleService.getById(reminderDto.getVehicle().getId());
+        Vehicle vehicle = vehicleService.getById(reminderDto.getVehicleId());
         ServiceReminder reminder = new ServiceReminder();
         reminder.setUser(user);
         reminder.setVehicle(vehicle);
         reminder.setTitle(reminderDto.getTitle());
         reminder.setDueDate(reminderDto.getDueDate());
         reminder.setDueMileage(reminderDto.getDueMileage());
-        reminder.setCompleted(reminderDto.isCompleted());
-
         serviceReminderService.save(reminder);
-
         redirectAttributes.addFlashAttribute("message", "Reminder added successfully");
         return new ModelAndView("redirect:/reminders");
     }
-
 
     @PostMapping("/reminders/delete/{id}")
     public ModelAndView deleteVehicle(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
@@ -79,18 +75,16 @@ public class ReminderController {
         redirectAttributes.addFlashAttribute("message", "Service Reminder deleted successfully");
         return new ModelAndView("redirect:/reminders");
     }
-@PostMapping("/reminders/toggle/{id}")
-public String toggleReminder(@PathVariable UUID id,
-                             @RequestParam boolean completed,
-                             RedirectAttributes redirectAttributes) {
 
-    ServiceReminder reminder = serviceReminderService.getById(id);
-    reminder.setCompleted(completed);
-    serviceReminderService.save(reminder);
-
-    redirectAttributes.addFlashAttribute("message", "Reminder updated");
-    return "redirect:/reminders";
-}
-
+    @PostMapping("/reminders/toggle/{id}")
+    public String toggleReminder(@PathVariable UUID id,
+                                 @RequestParam boolean completed,
+                                 RedirectAttributes redirectAttributes) {
+        ServiceReminder reminder = serviceReminderService.getById(id);
+        reminder.setCompleted(completed);
+        serviceReminderService.save(reminder);
+        redirectAttributes.addFlashAttribute("message", "Reminder updated");
+        return "redirect:/reminders";
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.example.Car_Service.web;
+package com.example.Car_Service.web.controllers;
 
 import com.example.Car_Service.service_record.model.ServiceRecord;
 import com.example.Car_Service.service_record.service.ServiceRecordService;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -48,9 +49,18 @@ public class ServiceRecordController {
     }
 
     @PostMapping("/service-records/add")
-    public ModelAndView addServiceRecord(@Valid ServiceRecordDto serviceRecordDto, RedirectAttributes redirectAttributes, HttpSession session, BindingResult bindingResult) {
+    public ModelAndView addServiceRecord(@Valid @ModelAttribute("serviceRecord") ServiceRecordDto serviceRecordDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session) {
         if (bindingResult.hasErrors()) {
-            return new ModelAndView("service-record-form");
+            ModelAndView modelAndView = new ModelAndView("service-record-form");
+
+            modelAndView.addObject("isEdit", false);
+            modelAndView.addObject("serviceRecord", serviceRecordDto);
+
+
+            User user = userService.getUserBySession(session);
+            modelAndView.addObject("vehicles", user.getVehicles());
+
+            return modelAndView;
         }
         Vehicle vehicle = vehicleService.getById(serviceRecordDto.getVehicleId());
         User user = userService.getUserBySession(session);
@@ -79,9 +89,18 @@ public class ServiceRecordController {
     }
 
     @PostMapping("/service-records/edit/{id}")
-    public ModelAndView editVehicle(@PathVariable UUID id, @Valid ServiceRecordDto serviceRecordDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public ModelAndView editVehicle(@PathVariable UUID id, @Valid @ModelAttribute("serviceRecord")ServiceRecordDto serviceRecordDto, BindingResult bindingResult,HttpSession session, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return new ModelAndView("service-record-form");
+            ModelAndView modelAndView = new ModelAndView("service-record-form");
+
+            modelAndView.addObject("serviceRecord", serviceRecordDto);
+            modelAndView.addObject("isEdit", true);
+
+
+            Vehicle vehicle = vehicleService.getById(serviceRecordDto.getVehicleId());
+            modelAndView.addObject("vehicle", vehicle);
+
+            return modelAndView;
         }
         ServiceRecord serviceRecord = serviceRecordService.getById(id);
         serviceRecord.setServiceType(serviceRecordDto.getServiceType());

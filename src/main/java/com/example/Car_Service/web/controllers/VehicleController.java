@@ -1,4 +1,4 @@
-package com.example.Car_Service.web;
+package com.example.Car_Service.web.controllers;
 
 import com.example.Car_Service.user.model.User;
 import com.example.Car_Service.user.service.UserService;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,9 +41,16 @@ public class VehicleController {
     }
 
     @PostMapping("/vehicles/add")
-    public ModelAndView addVehicle(@Valid VehicleAddRequest vehicleAddRequest, BindingResult bindingResult, HttpSession session, RedirectAttributes redirectAttributes) {
+    public ModelAndView addVehicle(@Valid @ModelAttribute("vehicle") VehicleAddRequest vehicleAddRequest, BindingResult bindingResult, HttpSession session, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return new ModelAndView("vehicle-form");
+            ModelAndView modelAndView = new ModelAndView("vehicle-form");
+            modelAndView.addObject("vehicle", vehicleAddRequest);
+            modelAndView.addObject("isEdit", false);
+
+            User user = userService.getById((UUID) session.getAttribute("userId"));
+            modelAndView.addObject("vehicles", user.getVehicles());
+
+            return modelAndView;
         }
         UUID userId = (UUID) session.getAttribute("userId");
         User user = userService.getById(userId);
@@ -72,14 +80,28 @@ public class VehicleController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("vehicle-form");
         Vehicle vehicle = vehicleService.getById(id);
-        modelAndView.addObject("vehicle", vehicle);
+        VehicleAddRequest vehicleAddRequest = new VehicleAddRequest();
+        vehicleAddRequest.setModel(vehicle.getModel());
+        vehicleAddRequest.setMake(vehicle.getMake());
+        vehicleAddRequest.setYear(vehicle.getYear());
+        vehicleAddRequest.setMileage(vehicle.getMileage());
+        vehicleAddRequest.setVin(vehicle.getVin());
+        vehicleAddRequest.setId(vehicle.getId());
+        modelAndView.addObject("vehicle", vehicleAddRequest);
         modelAndView.addObject("isEdit",true);
         return modelAndView;
     }
     @PostMapping("/vehicles/edit/{id}")
-    public ModelAndView editVehicle(@PathVariable UUID id, @Valid  VehicleAddRequest vehicleAddRequest, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public ModelAndView editVehicle(@Valid @ModelAttribute("vehicle")VehicleAddRequest vehicleAddRequest, BindingResult bindingResult,@PathVariable UUID id,HttpSession session, RedirectAttributes redirectAttributes) {
         if(bindingResult.hasErrors()){
-            return new ModelAndView("vehicle-form");
+            ModelAndView modelAndView = new ModelAndView("vehicle-form");
+            modelAndView.addObject("vehicle", vehicleAddRequest);
+            modelAndView.addObject("isEdit", true);
+
+            User user = userService.getById((UUID) session.getAttribute("userId"));
+            modelAndView.addObject("vehicles", user.getVehicles());
+
+            return modelAndView;
         }
         Vehicle vehicle = vehicleService.getById(id);
         vehicle.setModel(vehicleAddRequest.getModel());

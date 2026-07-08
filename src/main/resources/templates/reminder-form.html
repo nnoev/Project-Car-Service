@@ -166,6 +166,11 @@
             color: #7f8c8d;
             margin-top: 5px;
         }
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -193,18 +198,26 @@
 
             <div class="form-group">
                 <label for="vehicle">Vehicle *</label>
-                <select id="vehicle" name="vehicle.id" th:field="*{vehicle.id}" required>
+                <select id="vehicle" th:field="*{vehicleId}">
                     <option value="">-- Select Vehicle --</option>
                     <option th:each="vehicle : ${vehicles}"
                             th:value="${vehicle.getId()}"
                             th:text="|${vehicle.getYear()} ${vehicle.getMake()} ${vehicle.getModel()}|"></option>
                 </select>
+                <div class="error-message"
+                     th:if="${#fields.hasErrors('vehicleId')}"
+                     th:errors="*{vehicleId}">
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="title">Reminder Title *</label>
                 <input type="text" id="title" name="title" th:field="*{title}"
-                       placeholder="e.g., Oil Change Due, Tire Rotation" required>
+                       placeholder="e.g., Oil Change Due, Tire Rotation">
+                <div class="error-message"
+                     th:if="${#fields.hasErrors('title')}"
+                     th:errors="*{title}">
+                </div>
             </div>
 
             <div class="form-group">

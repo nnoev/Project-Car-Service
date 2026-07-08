@@ -85,4 +85,5 @@ public class UserService {
     public User getUserBySession(HttpSession session) {
         return userRepository.findById((UUID) session.getAttribute("userId")).orElseThrow(()->new RuntimeException("User does not exist"));
     }
+
 }

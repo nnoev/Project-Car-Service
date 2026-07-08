@@ -1,8 +1,8 @@
-package com.example.Car_Service.web;
+package com.example.Car_Service.web.controllers;
 
 import com.example.Car_Service.user.model.User;
-import com.example.Car_Service.user.property.UserProperties;
 import com.example.Car_Service.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,6 +38,15 @@ public class IndexController {
             modelAndView.addObject("user", user);
         }
         return modelAndView;
+    }
+    @GetMapping("/guest-login")
+    public ModelAndView guestLogin(HttpSession session) {
+
+        User guest = userService.getByUserName("guest");
+
+        session.setAttribute("userId", guest.getId());
+
+        return new ModelAndView("redirect:/dashboard");
     }
 
 }

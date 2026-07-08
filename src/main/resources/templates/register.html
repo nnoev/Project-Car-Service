@@ -128,6 +128,24 @@
         .login-link a:hover {
             text-decoration: underline;
         }
+
+        .btn-guest {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            text-align: center;
+            text-decoration: none;
+            background: #ecf0f1;
+            color: #333;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-guest:hover {
+            background: #d5dbdb;
+        }
     </style>
 </head>
 <body>
@@ -138,8 +156,12 @@
     </div>
 
     <form th:action="@{/register}" th:method="post" th:object="${userRegistration}">
-        <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Please submit valid username and password</div>
-        <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Please submit valid username and password</div>
+        <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Please submit valid
+            username and password
+        </div>
+        <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Please submit valid
+            username and password
+        </div>
 
         <div class="form-row">
             <div class="form-group">
@@ -168,7 +190,13 @@
             <input type="password" id="password" name="password" required th:field="*{password}">
         </div>
 
-        <button type="submit" class="btn-register">Register</button>
+        <div class="form-actions">
+            <button type="submit" class="btn-register">Register</button>
+
+            <a th:href="@{/guest-login}" class="btn-guest">
+                Continue as Guest
+            </a>
+        </div>
 
         <div class="login-link">
             Already have an account? <a href="/login">Login here</a>

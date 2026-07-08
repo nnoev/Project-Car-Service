@@ -192,7 +192,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="make">Make *</label>
-                    <input type="text" id="make" name="make" th:field="*{make}" required>
+                    <input type="text" id="make" name="make" th:field="*{make}">
                     <div class="error-message"
                          th:if="${#fields.hasErrors('make')}"
                          th:errors="*{make}">
@@ -201,7 +201,7 @@
 
                 <div class="form-group">
                     <label for="model">Model *</label>
-                    <input type="text" id="model" name="model" th:field="*{model}" required>
+                    <input type="text" id="model" name="model" th:field="*{model}">
                     <div class="error-message"
                          th:if="${#fields.hasErrors('model')}"
                          th:errors="*{model}">
@@ -212,7 +212,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="year">Year *</label>
-                    <input type="number" id="year" name="year" th:field="*{year}" min="1900" max="2100" required>
+                    <input type="number" id="year" name="year" th:field="*{year}">
                     <div class="error-message"
                          th:if="${#fields.hasErrors('year')}"
                          th:errors="*{year}">
@@ -221,7 +221,7 @@
 
                 <div class="form-group">
                     <label for="mileage">Mileage (miles) *</label>
-                    <input type="number" id="mileage" name="mileage" th:field="*{mileage}" min="0" required>
+                    <input type="number" id="mileage" name="mileage" th:field="*{mileage}">
                     <div class="error-message"
                          th:if="${#fields.hasErrors('mileage')}"
                          th:errors="*{mileage}">
@@ -231,7 +231,7 @@
 
             <div class="form-group">
                 <label for="vin">VIN (Vehicle Identification Number) *</label>
-                <input type="text" id="vin" name="vin" th:field="*{vin}" placeholder="17-character VIN" required>
+                <input type="text" id="vin" name="vin" th:field="*{vin}" placeholder="17-character VIN">
                 <div class="error-message"
                      th:if="${#fields.hasErrors('vin')}"
                      th:errors="*{vin}">
@@ -243,7 +243,7 @@
                 <a href="/vehicles" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
-        <form th:unless="${isEdit}"
+        <form th:if="${!isEdit}"
               th:action="@{/vehicles/add}"
               method="post"
               th:object="${vehicle}">
@@ -251,7 +251,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="make">Make *</label>
-                    <input type="text" id="make" name="make" th:field="*{make}" required>
+                    <input type="text" id="make" name="make" th:field="*{make}">
                     <div class="error-message"
                          th:if="${#fields.hasErrors('make')}"
                          th:errors="*{make}">
@@ -260,7 +260,7 @@
 
                 <div class="form-group">
                     <label for="model">Model *</label>
-                    <input type="text" id="model" name="model" th:field="*{model}" required>
+                    <input type="text" id="model" name="model" th:field="*{model}">
                     <div class="error-message"
                          th:if="${#fields.hasErrors('model')}"
                          th:errors="*{model}">
@@ -271,7 +271,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="year">Year *</label>
-                    <input type="number" id="year" name="year" th:field="*{year}" min="1900" max="2100" required>
+                    <input type="number" id="year" name="year" th:field="*{year}">
                     <div class="error-message"
                          th:if="${#fields.hasErrors('year')}"
                          th:errors="*{year}">
@@ -280,7 +280,7 @@
 
                 <div class="form-group">
                     <label for="mileage">Mileage (miles) *</label>
-                    <input type="number" id="mileage" name="mileage" th:field="*{mileage}" min="0" required>
+                    <input type="number" id="mileage" name="mileage" th:field="*{mileage}">
                     <div class="error-message"
                          th:if="${#fields.hasErrors('mileage')}"
                          th:errors="*{mileage}">
@@ -290,7 +290,7 @@
 
             <div class="form-group">
                 <label for="vin">VIN (Vehicle Identification Number) *</label>
-                <input type="text" id="vin" name="vin" th:field="*{vin}" placeholder="17-character VIN" required>
+                <input type="text" id="vin" name="vin" th:field="*{vin}" placeholder="17-character VIN">
                 <div class="error-message"
                      th:if="${#fields.hasErrors('vin')}"
                      th:errors="*{vin}">

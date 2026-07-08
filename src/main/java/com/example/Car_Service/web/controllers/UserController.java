@@ -1,9 +1,9 @@
-package com.example.Car_Service.web;
+package com.example.Car_Service.web.controllers;
 
 import com.example.Car_Service.user.model.User;
 import com.example.Car_Service.user.service.UserService;
-import com.example.Car_Service.web.dtos.ChangePasswordRequest;
-import com.example.Car_Service.web.dtos.ChangeProfileRequest;
+import com.example.Car_Service.web.dtos.ChangePassword;
+import com.example.Car_Service.web.dtos.ChangeProfile;
 import com.example.Car_Service.web.dtos.LoginRequest;
 import com.example.Car_Service.web.dtos.UserRegistration;
 import jakarta.servlet.http.HttpSession;
@@ -73,11 +73,12 @@ public class UserController {
     public ModelAndView getProfile(HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("profile");
+        modelAndView.addObject("activeTab", "profile");
         Object userId = session.getAttribute("userId");
         User user = userService.getById((UUID) userId);
         modelAndView.addObject("user", user);
-        modelAndView.addObject("changePassword", new ChangePasswordRequest());
-        modelAndView.addObject("changeProfile", new ChangeProfileRequest());
+        modelAndView.addObject("changePassword", new ChangePassword());
+        modelAndView.addObject("changeProfile", new ChangeProfile());
         return modelAndView;
     }
 

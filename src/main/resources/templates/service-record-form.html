@@ -167,6 +167,11 @@
         .btn-secondary:hover {
             background: #d5dbdb;
         }
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 5px;
+        }
 
     </style>
 </head>
@@ -198,24 +203,32 @@
 
             <div class="form-group">
                 <label for="vehicle">Vehicle *</label>
-                <select id="vehicle" th:field="*{vehicleId}" required>
+                <select id="vehicle" th:field="*{vehicleId}">
                     <option value="">-- Select Vehicle --</option>
                     <option th:each="vehicle : ${vehicles}"
                             th:value="${vehicle.id}"
                             th:text="|${vehicle.year} ${vehicle.make} ${vehicle.model}|"></option>
                 </select>
+                <div class="error-message"
+                     th:if="${#fields.hasErrors('vehicleId')}"
+                     th:errors="*{vehicleId}">
+                </div>
             </div>
 
             <div class="form-row">
+                <div class="form-group">
+                    <label for="serviceType">Service Type *</label>
+                    <input type="text" id="serviceType" th:field="*{serviceType}">
+                    <div class="error-message"
+                         th:if="${#fields.hasErrors('serviceType')}"
+                         th:errors="*{serviceType}">
+                    </div>
+                </div>
                 <div class="form-group">
                     <label for="serviceDate">Service Date</label>
                     <input type="date" id="serviceDate" th:field="*{date}">
                 </div>
 
-                <div class="form-group">
-                    <label for="serviceType">Service Type *</label>
-                    <input type="text" id="serviceType" th:field="*{serviceType}" required>
-                </div>
             </div>
 
             <div class="form-group">
@@ -226,12 +239,20 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="cost">Cost *</label>
-                    <input type="number" id="cost" th:field="*{cost}" min="0" step="0.01" required>
+                    <input type="number" id="cost" th:field="*{cost}">
+                    <div class="error-message"
+                         th:if="${#fields.hasErrors('cost')}"
+                         th:errors="*{cost}">
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="mileageAtService">Mileage at Service *</label>
-                    <input type="number" id="mileageAtService" th:field="*{mileageAtService}" min="0" required>
+                    <input type="number" id="mileageAtService" th:field="*{mileageAtService}">
+                    <div class="error-message"
+                         th:if="${#fields.hasErrors('mileageAtService')}"
+                         th:errors="*{mileageAtService}">
+                    </div>
                 </div>
             </div>
 
@@ -268,7 +289,11 @@
 
                 <div class="form-group">
                     <label for="serviceType">Service Type *</label>
-                    <input type="text" id="serviceType" th:field="*{serviceType}" required>
+                    <input type="text" id="serviceType" th:field="*{serviceType}">
+                <div class="error-message"
+                     th:if="${#fields.hasErrors('serviceType')}"
+                     th:errors="*{serviceType}">
+                </div>
                 </div>
             </div>
 
@@ -280,12 +305,20 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="cost">Cost *</label>
-                    <input type="number" id="cost" th:field="*{cost}" min="0" step="0.01" required>
+                    <input type="number" id="cost" th:field="*{cost}">
+                <div class="error-message"
+                     th:if="${#fields.hasErrors('cost')}"
+                     th:errors="*{cost}">
+                </div>
                 </div>
 
                 <div class="form-group">
                     <label for="mileageAtService">Mileage at Service *</label>
-                    <input type="number" id="mileageAtService" th:field="*{mileageAtService}" min="0" required>
+                    <input type="number" id="mileageAtService" th:field="*{mileageAtService}">
+                    <div class="error-message"
+                         th:if="${#fields.hasErrors('mileageAtService')}"
+                         th:errors="*{mileageAtService}">
+                    </div>
                 </div>
             </div>
 

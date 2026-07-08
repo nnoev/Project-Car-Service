@@ -1,10 +1,9 @@
-package com.example.Car_Service.web;
+package com.example.Car_Service.web.controllers;
 
 import com.example.Car_Service.user.model.User;
-import com.example.Car_Service.user.property.UserProperties;
 import com.example.Car_Service.user.service.UserService;
-import com.example.Car_Service.web.dtos.ChangePasswordRequest;
-import com.example.Car_Service.web.dtos.ChangeProfileRequest;
+import com.example.Car_Service.web.dtos.ChangePassword;
+import com.example.Car_Service.web.dtos.ChangeProfile;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,39 +30,51 @@ public class ProfileController {
     }
 
     @PostMapping("/profile/change-password")
-    public ModelAndView changePassword(@Valid ChangePasswordRequest changePasswordRequest,
-                                       RedirectAttributes redirectAttributes,
+    public ModelAndView changePassword(@Valid ChangePassword changePassword,
                                        BindingResult bindingResult,
+                                       RedirectAttributes redirectAttributes,
                                        HttpSession session) {
         if (bindingResult.hasErrors()) {
-            return new ModelAndView("profile");
+            ModelAndView modelAndView = new ModelAndView("profile");
+            modelAndView.addObject("activeTab", "change-password");
+            modelAndView.addObject("changeProfile", new ChangeProfile());
+            User user = UserService.getById((UUID) session.getAttribute("userId"));
+            modelAndView.addObject("user", user);
+            modelAndView.addObject("changePassword", changePassword);
+            return modelAndView;
         }
         Object userId = session.getAttribute("userId");
         User user = UserService.getById((UUID) userId);
-        if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(changePassword.getCurrentPassword(), user.getPassword())) {
             return new ModelAndView("profile");
         }
-        if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
+        if (!changePassword.getNewPassword().equals(changePassword.getConfirmPassword())) {
             return new ModelAndView("profile");
         }
-        user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+        user.setPassword(passwordEncoder.encode(changePassword.getNewPassword()));
         UserService.save(user);
         redirectAttributes.addFlashAttribute("message", "Password changed successfully");
         return new ModelAndView("redirect:/profile");
     }
 @PostMapping("/profile/edit")
-    public ModelAndView changeProfile(@Valid ChangeProfileRequest changeProfileRequest,
+    public ModelAndView changeProfile(@Valid ChangeProfile changeProfile,
                                       BindingResult bindingResult,
                                       RedirectAttributes redirectAttributes,
                                       HttpSession session) {
         if (bindingResult.hasErrors()) {
-            return new ModelAndView("profile");
+            ModelAndView modelAndView = new ModelAndView("profile");
+            modelAndView.addObject("activeTab", "edit-profile");
+            modelAndView.addObject("changeProfile", changeProfile);
+            User user = UserService.getById((UUID) session.getAttribute("userId"));
+            modelAndView.addObject("user", user);
+            modelAndView.addObject("changePassword", new ChangePassword());
+            return modelAndView;
         }
         Object userId = session.getAttribute("userId");
         User user = UserService.getById((UUID) userId);
-        user.setFirstName(changeProfileRequest.getFirstName());
-        user.setLastName(changeProfileRequest.getLastName());
-        user.setEmail(changeProfileRequest.getEmail());
+        user.setFirstName(changeProfile.getFirstName());
+        user.setLastName(changeProfile.getLastName());
+        user.setEmail(changeProfile.getEmail());
         UserService.save(user);
         redirectAttributes.addFlashAttribute("message", "Profile updated successfully");
         return new ModelAndView("redirect:/profile");

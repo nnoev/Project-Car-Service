@@ -1,6 +1,7 @@
 package com.example.Car_Service.web.dtos;
 
 import com.example.Car_Service.vehicle.model.Vehicle;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -13,17 +14,15 @@ public class ServiceReminderDto {
 
     private UUID serviceId;
 
-    @NotNull
-    private Vehicle vehicle;
+    @NotNull(message = "Vehicle is required")
+    private UUID vehicleId;
 
-    @NotNull
+    @NotBlank(message = "Title is required")
     private String title;
 
     private LocalDate dueDate;
 
     private Integer dueMileage;
-
-    private boolean completed = false;
 
 
 }
