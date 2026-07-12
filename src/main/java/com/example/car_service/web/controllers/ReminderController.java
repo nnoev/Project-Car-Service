@@ -1,6 +1,6 @@
 package com.example.car_service.web.controllers;
 
-import com.example.car_service.exeptions.UnauthorizedActionException;
+import com.example.car_service.exceptions.UnauthorizedActionException;
 import com.example.car_service.service_reminder.model.ServiceReminder;
 import com.example.car_service.service_reminder.service.ServiceReminderService;
 import com.example.car_service.user.model.User;

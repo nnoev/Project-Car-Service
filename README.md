@@ -1,87 +1,135 @@
-Car Service Management System
+# 🚗 Car Service Management System
 
-A Spring MVC web application that allows users to manage their vehicles, service records, and maintenance reminders. The system provides full CRUD operations for multiple domain entities and offers a clean, intuitive UI built with Thymeleaf.
+A full-stack Spring Boot web application for managing vehicles, service history, and maintenance reminders.
 
-Technologies Used
+The application allows registered users to manage multiple vehicles, keep track of performed services, and schedule future maintenance through an intuitive web interface built with Thymeleaf.
 
-Java 17
+---
 
-Spring Boot / Spring MVC
+## Features
 
-Spring Data JPA & Hibernate
+- User registration and login
+- Secure authentication with Spring Security
+- Vehicle management
+    - Add vehicle
+    - Edit vehicle
+    - Delete vehicle
+    - View vehicle information
+- Service record management
+    - Add service records
+    - Update service history
+    - Delete records
+- Maintenance reminders
+- User profile page
+- Session-based authentication
+- Responsive user interface using HTML and CSS
 
-Thymeleaf
+---
 
-MySQL
+## Technologies
 
-Maven
+### Backend
 
-HTML / CSS
+- Java 17
+- Spring Boot 3
+- Spring MVC
+- Spring Security
+- Spring Data JPA
+- Hibernate
 
-How to Run
+### Frontend
 
-Clone the repository
+- Thymeleaf
+- HTML5
+- CSS3
 
-Configure database credentials in application.properties
+### Database
 
-Run the application
+- MySQL
 
-Open http://localhost:8080 in your browser
+### Build Tool
 
-Main Domain Entities
+- Maven
 
-Vehicle
+---
 
-ServiceRecord
+## Project Structure
 
-Reminder
+```
+src
+├── controller
+├── service
+├── repository
+├── model
+├── security
+├── config
+├── templates
+└── static
+```
 
-Valid Domain Functionalities
+---
 
-1. Create Vehicle
+## Getting Started
 
-Trigger: Add Vehicle form
+### Prerequisites
 
-Endpoint: POST /vehicles/add
+- Java 17+
+- Maven
+- MySQL
 
-CRUD: Create
+### Installation
 
-Result: Vehicle appears in list
+1. Clone the repository
 
-2. Edit Vehicle
+```bash
+git clone https://github.com/yourusername/Car-Service.git
+```
 
-Trigger: Edit Vehicle form
+2. Navigate to the project
 
-Endpoint: POST /vehicles/edit/{id}
+```bash
+cd Car-Service
+```
 
-CRUD: Update
+3. Configure your database credentials in
 
-Result: Updated vehicle displayed
+```
+src/main/resources/application.properties
+```
 
-3. Delete Vehicle
+Example:
 
-Trigger: Delete button
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/car_service
+spring.datasource.username=root
+spring.datasource.password=your_password
+```
 
-Endpoint: POST /vehicles/delete/{id}
+4. Run the application
 
-CRUD: Delete
+```bash
+mvn spring-boot:run
+```
 
-Result: Flash message + removed from list
+or run the main application class directly from your IDE.
 
-4. Create Service Record
+---
 
-Trigger: Add Service Record form
+## Future Improvements
 
-Endpoint: POST /service-records/add
+- Email reminders
+- File upload for invoices
+- Vehicle images
+- REST API
+- Docker support
+- Unit and integration tests
+- Pagination and search
+- Role-based authorization (Admin/User)
 
-CRUD: Create
+---
 
-Result: Record appears in list
+## Author
 
-Database Diagram
+**Nikolay Noev**
 
-User (1) → Vehicle (∞) Vehicle (1) → ServiceRecord (∞) Vehicle (1) → Reminder (∞)
-
-User Roles
-
-USER – full access to personal vehicles, service records, and reminders
+GitHub: https://github.com/nnoev

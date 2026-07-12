@@ -1,7 +1,7 @@
 package com.example.car_service.service_record.service;
 
-import com.example.car_service.exeptions.LimitException;
-import com.example.car_service.exeptions.NoSuchElementException;
+import com.example.car_service.exceptions.LimitException;
+import com.example.car_service.exceptions.NoSuchElementException;
 import com.example.car_service.service_record.model.ServiceRecord;
 import com.example.car_service.service_record.repo.ServiceRecordRepository;
 import com.example.car_service.user.model.User;

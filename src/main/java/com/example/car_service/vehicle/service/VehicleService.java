@@ -1,8 +1,8 @@
 package com.example.car_service.vehicle.service;
 
-import com.example.car_service.exeptions.DuplicateException;
-import com.example.car_service.exeptions.LimitException;
-import com.example.car_service.exeptions.NoSuchElementException;
+import com.example.car_service.exceptions.DuplicateException;
+import com.example.car_service.exceptions.LimitException;
+import com.example.car_service.exceptions.NoSuchElementException;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.model.UserRole;
 import com.example.car_service.vehicle.model.Vehicle;
