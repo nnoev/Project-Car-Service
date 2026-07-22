@@ -1,14 +1,14 @@
 package com.example.car_service.web.controllers;
 
+import com.example.car_service.security.UserData;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.UUID;
 
 @Controller
 public class IndexController {
@@ -28,14 +28,11 @@ public class IndexController {
     }
 
     @GetMapping("/dashboard")
-    public ModelAndView getDashboard(HttpSession session) {
+    public ModelAndView getDashboard(@AuthenticationPrincipal UserData principal) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("dashboard");
-        UUID userId = (UUID) session.getAttribute("userId");
-        User user = userService.getById(userId);
-        if (user != null) {
-            modelAndView.addObject("user", user);
-        }
+        User user = userService.getById(principal.getId());
+        modelAndView.addObject("user", user);
         return modelAndView;
     }
 

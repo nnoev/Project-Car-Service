@@ -1,14 +1,15 @@
 package com.example.car_service.web.controllers;
 
 import com.example.car_service.exceptions.UnauthorizedActionException;
+import com.example.car_service.security.UserData;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.service.UserService;
 import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.vehicle.service.VehicleService;
 import com.example.car_service.web.dtos.VehicleAddRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,38 +38,32 @@ public class VehicleController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("vehicle-form");
         modelAndView.addObject("vehicle", new VehicleAddRequest());
-        modelAndView.addObject("isEdit",false);
+        modelAndView.addObject("isEdit", false);
         return modelAndView;
     }
 
     @PostMapping("/vehicles/add")
-    public ModelAndView addVehicle(@Valid @ModelAttribute("vehicle") VehicleAddRequest vehicleAddRequest, BindingResult bindingResult, HttpSession session, RedirectAttributes redirectAttributes) {
+    public ModelAndView addVehicle(@Valid @ModelAttribute("vehicle") VehicleAddRequest vehicleAddRequest, BindingResult bindingResult, @AuthenticationPrincipal UserData principal, RedirectAttributes redirectAttributes) {
+        User user = userService.getById(principal.getId());
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("vehicle-form");
             modelAndView.addObject("vehicle", vehicleAddRequest);
             modelAndView.addObject("isEdit", false);
-
-            User user = userService.getById((UUID) session.getAttribute("userId"));
             modelAndView.addObject("vehicles", user.getVehicles());
-
             return modelAndView;
         }
-        UUID userId = (UUID) session.getAttribute("userId");
-        User user = userService.getById(userId);
         vehicleService.addVehicle(vehicleAddRequest, user);
         redirectAttributes.addFlashAttribute("message", "Vehicle added successfully");
         return new ModelAndView("redirect:/vehicles");
     }
-    @PostMapping("/vehicles/delete/{id}")
-    public ModelAndView deleteVehicle(@PathVariable UUID id, HttpSession session, RedirectAttributes redirectAttributes) {
 
-        UUID userId = (UUID) session.getAttribute("userId");
-        User user = userService.getById(userId);
+    @PostMapping("/vehicles/delete/{id}")
+    public ModelAndView deleteVehicle(@PathVariable UUID id, @AuthenticationPrincipal UserData principal, RedirectAttributes redirectAttributes) {
+        User user = userService.getById(principal.getId());
         Vehicle vehicle = vehicleService.getById(id);
         boolean ownsVehicle = user.getVehicles()
                 .stream()
                 .anyMatch(v -> v.equals(vehicle));
-
         if (!ownsVehicle) {
             throw new UnauthorizedActionException("No permission");
         }
@@ -76,6 +71,7 @@ public class VehicleController {
         redirectAttributes.addFlashAttribute("message", "Vehicle deleted successfully");
         return new ModelAndView("redirect:/vehicles");
     }
+
     @GetMapping("/vehicles/edit/{id}")
     public ModelAndView editVehicle(@PathVariable UUID id) {
         ModelAndView modelAndView = new ModelAndView();
@@ -89,24 +85,21 @@ public class VehicleController {
         vehicleAddRequest.setVin(vehicle.getVin());
         vehicleAddRequest.setId(vehicle.getId());
         modelAndView.addObject("vehicle", vehicleAddRequest);
-        modelAndView.addObject("isEdit",true);
+        modelAndView.addObject("isEdit", true);
         return modelAndView;
     }
+
     @PostMapping("/vehicles/edit/{id}")
-    public ModelAndView editVehicle(@Valid @ModelAttribute("vehicle")VehicleAddRequest vehicleAddRequest, BindingResult bindingResult,@PathVariable UUID id,HttpSession session, RedirectAttributes redirectAttributes) {
-        if(bindingResult.hasErrors()){
+    public ModelAndView editVehicle(@Valid @ModelAttribute("vehicle") VehicleAddRequest vehicleAddRequest, BindingResult bindingResult, @PathVariable UUID id, @AuthenticationPrincipal UserData principal, RedirectAttributes redirectAttributes) {
+        User user = userService.getById(principal.getId());
+        if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("vehicle-form");
             modelAndView.addObject("vehicle", vehicleAddRequest);
             modelAndView.addObject("isEdit", true);
-
-            User user = userService.getById((UUID) session.getAttribute("userId"));
             modelAndView.addObject("vehicles", user.getVehicles());
-
             return modelAndView;
         }
-        UUID userId = (UUID) session.getAttribute("userId");
-        User user = userService.getById(userId);
-        if(user.getVehicles().stream().noneMatch(v->v.getId().equals(id))){
+        if (user.getVehicles().stream().noneMatch(v -> v.getId().equals(id))) {
             throw new UnauthorizedActionException("No permission");
         }
         Vehicle vehicle = vehicleService.getById(id);
@@ -119,6 +112,5 @@ public class VehicleController {
         redirectAttributes.addFlashAttribute("message", "Vehicle updated successfully");
         return new ModelAndView("redirect:/vehicles");
     }
-
 
 }

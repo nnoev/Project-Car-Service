@@ -162,7 +162,7 @@
                 <th>Username</th>
                 <th>Email</th>
                 <th>Role</th>
-                <th>Enabled</th>
+                <th>Active</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -173,7 +173,7 @@
                 <td th:text="${u.username}"></td>
                 <td th:text="${u.email}"></td>
                 <td th:text="${u.role}"></td>
-                <td th:text="${u.enabled ? 'Yes' : 'No'}"></td>
+                <td th:text="${u.active ? 'Yes' : 'No'}"></td>
 
                 <td>
                     <form th:action="@{/admin/users/delete/{id}(id=${u.id})}" method="post" style="display:inline;">

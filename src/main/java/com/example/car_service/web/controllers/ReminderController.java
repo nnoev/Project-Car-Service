@@ -1,6 +1,7 @@
 package com.example.car_service.web.controllers;
 
 import com.example.car_service.exceptions.UnauthorizedActionException;
+import com.example.car_service.security.UserData;
 import com.example.car_service.service_reminder.model.ServiceReminder;
 import com.example.car_service.service_reminder.service.ServiceReminderService;
 import com.example.car_service.user.model.User;
@@ -8,9 +9,9 @@ import com.example.car_service.user.service.UserService;
 import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.vehicle.service.VehicleService;
 import com.example.car_service.web.dtos.ServiceReminderDto;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -36,11 +37,11 @@ public class ReminderController {
     }
 
     @GetMapping("/reminders/add")
-    public ModelAndView addReminder(HttpSession session) {
+    public ModelAndView addReminder(@AuthenticationPrincipal UserData principal) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("reminder-form");
         modelAndView.addObject("reminder", new ServiceReminderDto());
-        User user = userService.getUserBySession(session);
+        User user = userService.getById(principal.getId());
         modelAndView.addObject("vehicles", user.getVehicles());
         return modelAndView;
     }
@@ -49,14 +50,14 @@ public class ReminderController {
     public ModelAndView addReminder(@Valid @ModelAttribute("reminder") ServiceReminderDto reminderDto,
                                     BindingResult bindingResult,
                                     RedirectAttributes redirectAttributes,
-                                    HttpSession session) {
+                                    @AuthenticationPrincipal UserData principal) {
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("reminder-form");
             modelAndView.addObject("vehicles",
-                    userService.getUserBySession(session).getVehicles());
+                    userService.getById(principal.getId()).getVehicles());
             return modelAndView;
         }
-        User user = userService.getUserBySession(session);
+        User user = userService.getById(principal.getId());
         Vehicle vehicle = vehicleService.getById(reminderDto.getVehicleId());
         serviceReminderService.addReminder(reminderDto,vehicle,user);
         redirectAttributes.addFlashAttribute("message", "Reminder added successfully");
@@ -64,9 +65,9 @@ public class ReminderController {
     }
 
     @PostMapping("/reminders/delete/{id}")
-    public ModelAndView deleteReminder(@PathVariable UUID id, RedirectAttributes redirectAttributes, HttpSession session) {
+    public ModelAndView deleteReminder(@PathVariable UUID id, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserData principal) {
         ServiceReminder serviceReminder = serviceReminderService.getById(id);
-        User user = userService.getUserBySession(session);
+        User user = userService.getById(principal.getId());
         Vehicle vehicle = serviceReminder.getVehicle();
         if(!vehicle.getOwner().equals(user)){
             throw new UnauthorizedActionException("No permission");
@@ -79,8 +80,13 @@ public class ReminderController {
     @PostMapping("/reminders/toggle/{id}")
     public String toggleReminder(@PathVariable UUID id,
                                  @RequestParam boolean completed,
-                                 RedirectAttributes redirectAttributes) {
+                                 RedirectAttributes redirectAttributes,
+                                 @AuthenticationPrincipal UserData principal) {
         ServiceReminder reminder = serviceReminderService.getById(id);
+        User user = userService.getById(principal.getId());
+        if(!reminder.getVehicle().getOwner().equals(user)){
+            throw new UnauthorizedActionException("No permission");
+        }
         reminder.setCompleted(completed);
         serviceReminderService.save(reminder);
         redirectAttributes.addFlashAttribute("message", "Reminder updated");

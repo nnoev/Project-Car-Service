@@ -1,52 +1,40 @@
 package com.example.car_service.user.service;
 
 import com.example.car_service.exceptions.DuplicateException;
-import com.example.car_service.exceptions.LimitException;
 import com.example.car_service.exceptions.NoSuchElementException;
-import com.example.car_service.exceptions.UnauthorizedActionException;
+import com.example.car_service.security.UserData;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.model.UserClass;
 import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.repo.UserRepository;
-import com.example.car_service.web.dtos.LoginRequest;
 import com.example.car_service.web.dtos.UserRegistration;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    public User login(LoginRequest loginRequest) {
-        Optional<User> optionalUser = userRepository.findByUsername(loginRequest.getUsername());
-        if (optionalUser.isEmpty()) {
-            throw new NoSuchElementException("Username does not exist");
-        }
-        if (!passwordEncoder.matches(loginRequest.getPassword(), optionalUser.get().getPassword())) {
-            throw new UnauthorizedActionException("Password is incorrect");
-        }
-        if (!optionalUser.get().isActive()) {
-            throw new LimitException("Account is not active");
-        }
-        return optionalUser.get();
     }
 
     @Transactional
@@ -74,20 +62,39 @@ public class UserService {
     }
 
     public User getByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(()->new NoSuchElementException("Username does not exist"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("Username does not exist"));
 
     }
 
     public User getById(UUID id) {
-     return    userRepository.findById(id).orElseThrow(()->new NoSuchElementException("User does not exist"));
+        return userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User does not exist"));
     }
 
     public void save(User user) {
         userRepository.save(user);
     }
 
-    public User getUserBySession(HttpSession session) {
-        return userRepository.findById((UUID) session.getAttribute("userId")).orElseThrow(()->new NoSuchElementException("User does not exist"));
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteUser(User user) {
+        userRepository.delete(user);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public void changeRole(UUID id, UserRole role) {
+        User user = getById(id);
+        user.setRole(role);
+        userRepository.save(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("User does not exist"));
+        return new UserData(user.getId(), user.getUsername(), user.getPassword(), user.getRole(), user.isActive());
     }
 
 }

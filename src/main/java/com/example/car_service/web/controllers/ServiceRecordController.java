@@ -1,6 +1,7 @@
 package com.example.car_service.web.controllers;
 
 import com.example.car_service.exceptions.UnauthorizedActionException;
+import com.example.car_service.security.UserData;
 import com.example.car_service.service_record.model.ServiceRecord;
 import com.example.car_service.service_record.service.ServiceRecordService;
 import com.example.car_service.user.model.User;
@@ -8,9 +9,9 @@ import com.example.car_service.user.service.UserService;
 import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.vehicle.service.VehicleService;
 import com.example.car_service.web.dtos.ServiceRecordDto;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,45 +27,40 @@ import java.util.UUID;
 public class ServiceRecordController {
 
     private final UserService userService;
-
     private final ServiceRecordService serviceRecordService;
-
     private final VehicleService vehicleService;
 
     @Autowired
-    public ServiceRecordController(UserService userService, ServiceRecordService serviceRecordService, VehicleService vehicleService) {
+    public ServiceRecordController(UserService userService,
+                                   ServiceRecordService serviceRecordService,
+                                   VehicleService vehicleService) {
         this.userService = userService;
         this.serviceRecordService = serviceRecordService;
         this.vehicleService = vehicleService;
     }
 
     @GetMapping("/service-records/add")
-    public ModelAndView addServiceRecord(HttpSession session) {
+    public ModelAndView addServiceRecord(@AuthenticationPrincipal UserData principal) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("service-record-form");
         modelAndView.addObject("serviceRecord", new ServiceRecordDto());
-        User user = userService.getUserBySession(session);
+        User user = userService.getById(principal.getId());
         modelAndView.addObject("vehicles", user.getVehicles());
         modelAndView.addObject("isEdit", false);
         return modelAndView;
     }
 
     @PostMapping("/service-records/add")
-    public ModelAndView addServiceRecord(@Valid @ModelAttribute("serviceRecord") ServiceRecordDto serviceRecordDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session) {
+    public ModelAndView addServiceRecord(@Valid @ModelAttribute("serviceRecord") ServiceRecordDto serviceRecordDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserData principal) {
+        User user = userService.getById(principal.getId());
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("service-record-form");
-
             modelAndView.addObject("isEdit", false);
             modelAndView.addObject("serviceRecord", serviceRecordDto);
-
-
-            User user = userService.getUserBySession(session);
             modelAndView.addObject("vehicles", user.getVehicles());
-
             return modelAndView;
         }
         Vehicle vehicle = vehicleService.getById(serviceRecordDto.getVehicleId());
-        User user = userService.getUserBySession(session);
         serviceRecordService.addService(serviceRecordDto, vehicle, user);
         redirectAttributes.addFlashAttribute("message", "Service record added successfully");
         return new ModelAndView("redirect:/service-records");
@@ -90,22 +86,18 @@ public class ServiceRecordController {
     }
 
     @PostMapping("/service-records/edit/{id}")
-    public ModelAndView editServiceRecord(@PathVariable UUID id, @Valid @ModelAttribute("serviceRecord")ServiceRecordDto serviceRecordDto, BindingResult bindingResult,HttpSession session, RedirectAttributes redirectAttributes) {
+    public ModelAndView editServiceRecord(@PathVariable UUID id, @Valid @ModelAttribute("serviceRecord") ServiceRecordDto serviceRecordDto, BindingResult bindingResult, @AuthenticationPrincipal UserData principal, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("service-record-form");
-
             modelAndView.addObject("serviceRecord", serviceRecordDto);
             modelAndView.addObject("isEdit", true);
-
-
             Vehicle vehicle = vehicleService.getById(serviceRecordDto.getVehicleId());
             modelAndView.addObject("vehicle", vehicle);
-
             return modelAndView;
         }
-        User user = userService.getUserBySession(session);
+        User user = userService.getById(principal.getId());
         Vehicle vehicle = vehicleService.getById(serviceRecordDto.getVehicleId());
-        if(!vehicle.getOwner().equals(user)){
+        if (!vehicle.getOwner().equals(user)) {
             throw new UnauthorizedActionException("No permission");
         }
         ServiceRecord serviceRecord = serviceRecordService.getById(id);
@@ -120,11 +112,11 @@ public class ServiceRecordController {
     }
 
     @PostMapping("/service-records/delete/{id}")
-    public ModelAndView deleteServiceRecord(@PathVariable UUID id, RedirectAttributes redirectAttributes, HttpSession session) {
+    public ModelAndView deleteServiceRecord(@PathVariable UUID id, RedirectAttributes redirectAttributes,@AuthenticationPrincipal UserData principal) {
         ServiceRecord serviceRecord = serviceRecordService.getById(id);
         Vehicle vehicle = serviceRecord.getVehicle();
-        User user = userService.getUserBySession(session);
-        if(!vehicle.getOwner().equals(user)){
+        User user = userService.getById(principal.getId());
+        if (!vehicle.getOwner().equals(user)) {
             throw new UnauthorizedActionException("No permission");
         }
         serviceRecordService.deleteServiceRecord(serviceRecord);
