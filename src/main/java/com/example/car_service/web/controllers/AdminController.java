@@ -1,7 +1,10 @@
 package com.example.car_service.web.controllers;
 
+import com.example.car_service.service_record.service.ServiceRecordService;
+import com.example.car_service.service_reminder.service.ServiceReminderService;
 import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.service.UserService;
+import com.example.car_service.vehicle.service.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,22 @@ import java.util.UUID;
 public class AdminController {
 
     private final UserService userService;
+    private final VehicleService vehicleService;
+    private final ServiceRecordService serviceRecordService;
+    private final ServiceReminderService serviceReminderService;
+
+    @GetMapping("")
+    public ModelAndView getAdminPage() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("admin/admin-index");
+        modelAndView.addObject("users", userService.getAllUsers().size());
+        modelAndView.addObject("vehicles",vehicleService.getAllVehicles().size());
+        modelAndView.addObject("records",serviceRecordService.getAllRecords().size());
+        modelAndView.addObject("reminders",serviceReminderService.getAllReminders().size());
+
+        return modelAndView;
+    }
+
 
     @GetMapping("/users")
     public ModelAndView getUsers() {

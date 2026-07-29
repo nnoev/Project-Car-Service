@@ -1,7 +1,7 @@
 package com.example.car_service.service_record.service;
 
 import com.example.car_service.exceptions.LimitException;
-import com.example.car_service.exceptions.NoSuchElementException;
+import com.example.car_service.exceptions.NothingFoundException;
 import com.example.car_service.service_record.model.ServiceRecord;
 import com.example.car_service.service_record.repo.ServiceRecordRepository;
 import com.example.car_service.user.model.User;
@@ -9,8 +9,10 @@ import com.example.car_service.user.model.UserRole;
 import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.web.dtos.ServiceRecordDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -40,7 +42,7 @@ public class ServiceRecordService {
     }
 
     public ServiceRecord getById(UUID id) {
-        return serviceRecordRepository.findById(id).orElseThrow(()->new NoSuchElementException("Service Record does not exist"));
+        return serviceRecordRepository.findById(id).orElseThrow(()->new NothingFoundException("Service Record does not exist"));
     }
 
     public void save(ServiceRecord serviceRecord) {
@@ -49,6 +51,11 @@ public class ServiceRecordService {
 
     public void deleteServiceRecord(ServiceRecord serviceRecord) {
         serviceRecordRepository.delete(serviceRecord);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<ServiceRecord> getAllRecords() {
+        return serviceRecordRepository.findAll();
     }
 
 }

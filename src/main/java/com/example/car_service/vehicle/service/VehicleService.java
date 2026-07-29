@@ -2,15 +2,17 @@ package com.example.car_service.vehicle.service;
 
 import com.example.car_service.exceptions.DuplicateException;
 import com.example.car_service.exceptions.LimitException;
-import com.example.car_service.exceptions.NoSuchElementException;
+import com.example.car_service.exceptions.NothingFoundException;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.model.UserRole;
 import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.vehicle.repo.VehicleRepository;
 import com.example.car_service.web.dtos.VehicleAddRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -46,11 +48,15 @@ public class VehicleService {
     }
 
     public Vehicle getById(UUID id) {
-        return vehicleRepository.findById(id).orElseThrow(()->new NoSuchElementException("Vehicle does not exist"));
+        return vehicleRepository.findById(id).orElseThrow(()->new NothingFoundException("Vehicle does not exist"));
     }
 
     public void save(Vehicle vehicle) {
         vehicleRepository.save(vehicle);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Vehicle> getAllVehicles() {
+       return vehicleRepository.findAll();
+    }
 }

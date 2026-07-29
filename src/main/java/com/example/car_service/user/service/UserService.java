@@ -1,14 +1,13 @@
 package com.example.car_service.user.service;
 
 import com.example.car_service.exceptions.DuplicateException;
-import com.example.car_service.exceptions.NoSuchElementException;
+import com.example.car_service.exceptions.NothingFoundException;
 import com.example.car_service.security.UserData;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.model.UserClass;
 import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.repo.UserRepository;
 import com.example.car_service.web.dtos.UserRegistration;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +61,12 @@ public class UserService implements UserDetailsService {
     }
 
     public User getByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("Username does not exist"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new NothingFoundException("Username does not exist"));
 
     }
 
     public User getById(UUID id) {
-        return userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User does not exist"));
+        return userRepository.findById(id).orElseThrow(() -> new NothingFoundException("User does not exist"));
     }
 
     public void save(User user) {
@@ -93,7 +92,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("User does not exist"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NothingFoundException("User does not exist"));
         return new UserData(user.getId(), user.getUsername(), user.getPassword(), user.getRole(), user.isActive());
     }
 

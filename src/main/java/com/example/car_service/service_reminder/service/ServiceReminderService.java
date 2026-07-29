@@ -1,7 +1,7 @@
 package com.example.car_service.service_reminder.service;
 
 import com.example.car_service.exceptions.LimitException;
-import com.example.car_service.exceptions.NoSuchElementException;
+import com.example.car_service.exceptions.NothingFoundException;
 import com.example.car_service.service_reminder.model.ServiceReminder;
 import com.example.car_service.service_reminder.repo.ServiceReminderRepository;
 import com.example.car_service.user.model.User;
@@ -9,7 +9,9 @@ import com.example.car_service.user.model.UserRole;
 import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.web.dtos.ServiceReminderDto;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.List;
 import java.util.UUID;
 
 @org.springframework.stereotype.Service
@@ -25,7 +27,7 @@ public class ServiceReminderService {
     }
 
     public ServiceReminder getById(UUID id) {
-        return serviceReminderRepository.findById(id).orElseThrow(()->new NoSuchElementException("Reminder does not exist"));
+        return serviceReminderRepository.findById(id).orElseThrow(()->new NothingFoundException("Reminder does not exist"));
     }
 
     public void deleteServiceReminder(ServiceReminder serviceReminder) {
@@ -45,6 +47,10 @@ public class ServiceReminderService {
                 .completed(false)
                 .build();
         serviceReminderRepository.save(serviceReminder);
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<ServiceReminder> getAllReminders() {
+        return serviceReminderRepository.findAll();
     }
 
 }
