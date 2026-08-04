@@ -1,37 +1,34 @@
-package com.example.car_service.service_record.model;
+package com.example.car_service_microservice.service_record.model;
 
-import com.example.car_service.user.model.User;
-import com.example.car_service.vehicle.model.Vehicle;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Entity(name = "service_records")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "service_records")
-@Builder
+@Data
 public class ServiceRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id")
-    private Vehicle vehicle;
+    @Column(nullable = false)
+    private UUID vehicleId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(nullable = false)
+    private UUID userId;
 
     @Column
-    private LocalDate date;
+    private LocalDate serviceDate;
 
     @Column(nullable = false)
     private String serviceType;

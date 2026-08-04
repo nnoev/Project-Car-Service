@@ -216,6 +216,7 @@
                 overflow-x: auto;
             }
         }
+
         .alert.success {
             background: #d4edda;
             color: #155724;
@@ -249,7 +250,7 @@
         <span th:text="${message}"></span>
     </div>
 
-    <div class="table-container" th:if="${!user.getServiceRecords().isEmpty()}">
+    <div class="table-container" th:if="${!records.isEmpty()}">
         <table>
             <thead>
             <tr>
@@ -263,22 +264,35 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="record : ${user.getServiceRecords()}">
+            <tr th:each="record : ${records}"
+                th:with="vehicle=${vehiclesById.get(record.vehicleId)}">
                 <td>
+    <span class="record-vehicle"
+          th:if="${vehicle != null}"
+          th:text="${vehicle.year}
+                   + ' '
+                   + ${vehicle.make}
+                   + ' '
+                   + ${vehicle.model}">
+    </span>
+
                     <span class="record-vehicle"
-                          th:text="${record.vehicle.year} + ' ' + ${record.vehicle.make} + ' ' + ${record.vehicle.model}"></span>
+                          th:if="${vehicle == null}">
+        Vehicle unavailable
+    </span>
                 </td>
                 <td>
-                    <span class="record-type" th:text="${record.serviceType}"></span>
+                    <span class="record-type" th:text="${record.getServiceType()}"></span>
                 </td>
                 <td>
-                    <span class="record-date" th:text="${#temporals.format(record.date, 'MMM dd, yyyy')}"></span>
+                    <span class="record-date"
+                          th:text="${#temporals.format(record.getServiceDate(), 'MMM dd, yyyy')}"></span>
                 </td>
-                <td th:text="${record.mileageAtService} + ' kilometers'"></td>
+                <td th:text="${record.getMileageAtService()} + ' kilometers'"></td>
                 <td>
-                    <span class="record-cost" th:text="'€' + ${#numbers.formatDecimal(record.cost, 1, 2)}"></span>
+                    <span class="record-cost" th:text="'€' + ${#numbers.formatDecimal(record.getCost(), 1, 2)}"></span>
                 </td>
-                <td th:text="${record.description}"></td>
+                <td th:text="${record.getDescription()}"></td>
                 <td>
                     <div class="record-actions">
                         <a th:href="@{/service-records/edit/{id}(id=${record.id})}" class="btn btn-sm btn-info">Edit</a>
@@ -287,7 +301,8 @@
                                     class="btn btn-sm btn-danger"
                                     onclick="return confirm('Are you sure you want to delete this reminder?')">
                                 Delete
-                            </button>                        </form>
+                            </button>
+                        </form>
                     </div>
                 </td>
             </tr>
@@ -295,7 +310,7 @@
         </table>
     </div>
 
-    <div class="empty-state" th:if="${user.getServiceRecords().isEmpty()}">
+    <div class="empty-state" th:if="${records.isEmpty()}">
         <div class="empty-state-icon">🔧</div>
         <h2>No service records yet</h2>
         <p>Track your vehicle maintenance by adding your first service record</p>

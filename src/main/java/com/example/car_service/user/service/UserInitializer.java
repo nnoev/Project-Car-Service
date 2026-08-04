@@ -45,8 +45,8 @@ public class UserInitializer implements ApplicationRunner {
                     password(userProperties.getDefaultUser().getPassword()).
                     firstName(userProperties.getDefaultUser().getFirstName()).
                     lastName(userProperties.getDefaultUser().getLastName()).
-                    email(userProperties.getDefaultUser().getEmail()).
-                    build();
+                    email(userProperties.getDefaultUser().getEmail())
+                    .build();
             userService.registerUser(userRegistration);
         }
         createGuestUser();

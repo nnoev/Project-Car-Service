@@ -1,10 +1,13 @@
 package com.example.car_service.web.controllers;
 
+import com.example.car_service.client.ServiceRecordClient;
+import com.example.car_service.client.dto.ServiceRecordRequest;
+import com.example.car_service.client.dto.ServiceRecordResponse;
+import com.example.car_service.exceptions.LimitException;
 import com.example.car_service.exceptions.UnauthorizedActionException;
 import com.example.car_service.security.UserData;
-import com.example.car_service.service_record.model.ServiceRecord;
-import com.example.car_service.service_record.service.ServiceRecordService;
 import com.example.car_service.user.model.User;
+import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.service.UserService;
 import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.vehicle.service.VehicleService;
@@ -15,28 +18,28 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
 public class ServiceRecordController {
 
     private final UserService userService;
-    private final ServiceRecordService serviceRecordService;
+
     private final VehicleService vehicleService;
 
+    private final ServiceRecordClient serviceRecordClient;
+
     @Autowired
-    public ServiceRecordController(UserService userService,
-                                   ServiceRecordService serviceRecordService,
-                                   VehicleService vehicleService) {
+    public ServiceRecordController(UserService userService, VehicleService vehicleService, ServiceRecordClient serviceRecordClient) {
         this.userService = userService;
-        this.serviceRecordService = serviceRecordService;
         this.vehicleService = vehicleService;
+        this.serviceRecordClient = serviceRecordClient;
     }
 
     @GetMapping("/service-records/add")
@@ -51,7 +54,7 @@ public class ServiceRecordController {
     }
 
     @PostMapping("/service-records/add")
-    public ModelAndView addServiceRecord(@Valid @ModelAttribute("serviceRecord") ServiceRecordDto serviceRecordDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserData principal) {
+    public ModelAndView addServiceRecord(@Valid ServiceRecordDto serviceRecordDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserData principal) {
         User user = userService.getById(principal.getId());
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("service-record-form");
@@ -61,32 +64,49 @@ public class ServiceRecordController {
             return modelAndView;
         }
         Vehicle vehicle = vehicleService.getById(serviceRecordDto.getVehicleId());
-        serviceRecordService.addService(serviceRecordDto, vehicle, user);
+        if (!vehicle.getOwner().equals(user)) {
+            throw new UnauthorizedActionException("No permission");
+        }
+        checkGuestServiceRecordLimit(user);
+        ServiceRecordRequest request = ServiceRecordRequest.builder()
+                .vehicleId(vehicle.getId())
+                .serviceType(serviceRecordDto.getServiceType())
+                .userId(user.getId())
+                .serviceDate(serviceRecordDto.getDate())
+                .description(serviceRecordDto.getDescription())
+                .cost(serviceRecordDto.getCost())
+                .mileageAtService(serviceRecordDto.getMileageAtService())
+                .build();
+        serviceRecordClient.create(request);
         redirectAttributes.addFlashAttribute("message", "Service record added successfully");
         return new ModelAndView("redirect:/service-records");
     }
 
     @GetMapping("/service-records/edit/{id}")
-    public ModelAndView editServiceRecord(@PathVariable UUID id) {
+    public ModelAndView editServiceRecord(@PathVariable UUID id, @AuthenticationPrincipal UserData principal) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("service-record-form");
-        ServiceRecord serviceRecord = serviceRecordService.getById(id);
+        ServiceRecordResponse response = serviceRecordClient.getById(id, principal.getId());
+        Vehicle vehicle = vehicleService.getById(response.getVehicleId());
+        if (!vehicle.getOwner().getId().equals(principal.getId())) {
+            throw new UnauthorizedActionException("No permission");
+        }
         ServiceRecordDto serviceRecordDto = new ServiceRecordDto();
-        serviceRecordDto.setId(serviceRecord.getId());
-        serviceRecordDto.setVehicleId(serviceRecord.getVehicle().getId());
-        serviceRecordDto.setServiceType(serviceRecord.getServiceType());
-        serviceRecordDto.setDate(serviceRecord.getDate());
-        serviceRecordDto.setDescription(serviceRecord.getDescription());
-        serviceRecordDto.setCost(serviceRecord.getCost());
-        serviceRecordDto.setMileageAtService(serviceRecord.getMileageAtService());
+        serviceRecordDto.setId(response.getId());
+        serviceRecordDto.setServiceType(response.getServiceType());
+        serviceRecordDto.setDate(response.getServiceDate());
+        serviceRecordDto.setDescription(response.getDescription());
+        serviceRecordDto.setCost(response.getCost());
+        serviceRecordDto.setMileageAtService(response.getMileageAtService());
+        serviceRecordDto.setVehicleId(response.getVehicleId());
         modelAndView.addObject("serviceRecord", serviceRecordDto);
-        modelAndView.addObject("vehicle", serviceRecord.getVehicle());
+        modelAndView.addObject("vehicle", vehicle);
         modelAndView.addObject("isEdit", true);
         return modelAndView;
     }
 
     @PostMapping("/service-records/edit/{id}")
-    public ModelAndView editServiceRecord(@PathVariable UUID id, @Valid @ModelAttribute("serviceRecord") ServiceRecordDto serviceRecordDto, BindingResult bindingResult, @AuthenticationPrincipal UserData principal, RedirectAttributes redirectAttributes) {
+    public ModelAndView editServiceRecord(@PathVariable UUID id, @Valid ServiceRecordDto serviceRecordDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserData principal) {
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("service-record-form");
             modelAndView.addObject("serviceRecord", serviceRecordDto);
@@ -100,28 +120,41 @@ public class ServiceRecordController {
         if (!vehicle.getOwner().equals(user)) {
             throw new UnauthorizedActionException("No permission");
         }
-        ServiceRecord serviceRecord = serviceRecordService.getById(id);
-        serviceRecord.setServiceType(serviceRecordDto.getServiceType());
-        serviceRecord.setDate(serviceRecordDto.getDate());
-        serviceRecord.setDescription(serviceRecordDto.getDescription());
-        serviceRecord.setCost(serviceRecordDto.getCost());
-        serviceRecord.setMileageAtService(serviceRecordDto.getMileageAtService());
-        serviceRecordService.save(serviceRecord);
+        ServiceRecordRequest request = ServiceRecordRequest.builder()
+                .serviceType(serviceRecordDto.getServiceType())
+                .serviceDate(serviceRecordDto.getDate())
+                .description(serviceRecordDto.getDescription())
+                .cost(serviceRecordDto.getCost())
+                .mileageAtService(serviceRecordDto.getMileageAtService())
+                .build();
+        serviceRecordClient.update(id, user.getId(), request);
         redirectAttributes.addFlashAttribute("message", "Service Record updated successfully");
         return new ModelAndView("redirect:/service-records");
     }
 
     @PostMapping("/service-records/delete/{id}")
-    public ModelAndView deleteServiceRecord(@PathVariable UUID id, RedirectAttributes redirectAttributes,@AuthenticationPrincipal UserData principal) {
-        ServiceRecord serviceRecord = serviceRecordService.getById(id);
-        Vehicle vehicle = serviceRecord.getVehicle();
+    public ModelAndView deleteServiceRecord(@PathVariable UUID id, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserData principal) {
         User user = userService.getById(principal.getId());
+        Vehicle vehicle = vehicleService.getById(serviceRecordClient.getById(id,principal.getId()).getVehicleId());
         if (!vehicle.getOwner().equals(user)) {
             throw new UnauthorizedActionException("No permission");
         }
-        serviceRecordService.deleteServiceRecord(serviceRecord);
+        serviceRecordClient.delete(id,user.getId());
         redirectAttributes.addFlashAttribute("message", "Service Record deleted successfully");
         return new ModelAndView("redirect:/service-records");
+    }
+
+    private void checkGuestServiceRecordLimit(User user) {
+        if (user.getRole() != UserRole.GUEST) {
+            return;
+        }
+        List<ServiceRecordResponse> records =
+                serviceRecordClient.getAllByUserId(user.getId());
+        if (records.size() >= 2) {
+            throw new LimitException(
+                    "Guest has reached the maximum number of service records"
+            );
+        }
     }
 
 }

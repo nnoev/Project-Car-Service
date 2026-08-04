@@ -1,6 +1,5 @@
 package com.example.car_service.vehicle.model;
 
-import com.example.car_service.service_record.model.ServiceRecord;
 import com.example.car_service.service_reminder.model.ServiceReminder;
 import com.example.car_service.user.model.User;
 import jakarta.persistence.*;
@@ -44,10 +43,6 @@ public class Vehicle {
 
     @Builder.Default
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
-    private List<ServiceRecord> serviceRecords = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "vehicle" , cascade = CascadeType.ALL)
     private List<ServiceReminder> serviceReminders = new ArrayList<>();
 
 }

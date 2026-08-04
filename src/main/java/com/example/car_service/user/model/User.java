@@ -1,6 +1,5 @@
 package com.example.car_service.user.model;
 
-import com.example.car_service.service_record.model.ServiceRecord;
 import com.example.car_service.service_reminder.model.ServiceReminder;
 import com.example.car_service.vehicle.model.Vehicle;
 import jakarta.persistence.*;
@@ -60,16 +59,6 @@ public class User {
 
     @Builder.Default
     @OneToMany(mappedBy = "user")
-    private List<ServiceRecord> serviceRecords = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "user")
     private List<ServiceReminder> serviceReminders = new ArrayList<>();
-
-    public BigDecimal getTotalCost() {
-        return serviceRecords.stream()
-                .map(ServiceRecord::getCost)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
 
 }

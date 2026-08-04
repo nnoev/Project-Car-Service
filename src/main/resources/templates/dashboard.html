@@ -269,7 +269,7 @@
             <div class="card">
                 <div class="card-icon">🔧</div>
                 <div class="card-title">Service Records</div>
-                <div class="card-value" th:text="${user.getServiceRecords().size()}">0</div>
+                <div class="card-value" th:text="${serviceRecords}">0</div>
                 <div class="card-description">Total maintenance records</div>
             </div>
         </a>
@@ -284,7 +284,7 @@
         <div class="card">
             <div class="card-icon">💰</div>
             <div class="card-title">Total Spent</div>
-            <div class="card-value" th:text="${user.getTotalCost()}">$0</div>
+            <div class="card-value" th:text="${totalCost}">$0</div>
             <div class="card-description">On maintenance</div>
         </div>
     </div>
