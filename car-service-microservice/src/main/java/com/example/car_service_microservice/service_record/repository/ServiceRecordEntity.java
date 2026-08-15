@@ -1,4 +1,4 @@
-package com.example.car_service_microservice.service_record.model;
+package com.example.car_service_microservice.service_record.repository;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ServiceRecord {
+public class ServiceRecordEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

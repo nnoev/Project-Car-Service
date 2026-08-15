@@ -12,14 +12,15 @@ import java.util.UUID;
 @FeignClient(name = "service-record", url = "http://localhost:8081/api/v1/service-records")
 public interface ServiceRecordClient {
 
+    @GetMapping("/users/{userId}")
+    List<ServiceRecordResponse> getAllByUserId(@PathVariable UUID userId);
+
     @PostMapping
     ServiceRecordResponse create(@RequestBody ServiceRecordRequest request);
 
     @GetMapping("/{recordId}")
     ServiceRecordResponse getById(@PathVariable UUID recordId, @RequestParam UUID userId);
 
-    @GetMapping("/users/{userId}")
-    List<ServiceRecordResponse> getAllByUserId(@PathVariable UUID userId);
 
     @PutMapping("{recordId}")
     ServiceRecordResponse update(@PathVariable UUID recordId, @RequestParam UUID userId, @RequestBody ServiceRecordRequest request);

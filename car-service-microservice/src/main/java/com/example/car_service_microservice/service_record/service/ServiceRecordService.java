@@ -4,13 +4,12 @@ import com.example.car_service_microservice.service_record.dto.ServiceRecordRequ
 import com.example.car_service_microservice.service_record.dto.ServiceRecordResponse;
 import com.example.car_service_microservice.service_record.dto.UpdateServiceRecordRequest;
 import com.example.car_service_microservice.service_record.exceptions.ServiceRecordNotFoundException;
-import com.example.car_service_microservice.service_record.model.ServiceRecord;
+import com.example.car_service_microservice.service_record.repository.ServiceRecordEntity;
 import com.example.car_service_microservice.service_record.repository.ServiceRecordRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,9 +23,8 @@ public class ServiceRecordService {
         this.serviceRecordRepository = serviceRecordRepository;
     }
 
-    @Transactional
     public ServiceRecordResponse create(ServiceRecordRequest request) {
-        ServiceRecord serviceRecord = ServiceRecord.builder()
+        ServiceRecordEntity record = ServiceRecordEntity.builder()
                 .vehicleId(request.getVehicleId())
                 .userId(request.getUserId())
                 .serviceDate(request.getServiceDate())
@@ -35,76 +33,64 @@ public class ServiceRecordService {
                 .cost(request.getCost())
                 .mileageAtService(request.getMileageAtService())
                 .build();
-        serviceRecordRepository.save(serviceRecord);
-        return mapToResponse(serviceRecord);
+        ServiceRecordEntity savedRecord = serviceRecordRepository.save(record);
+        return mapToResponse(savedRecord);
     }
 
     public ServiceRecordResponse getById(UUID recordId, UUID userId) {
-        ServiceRecord serviceRecord = serviceRecordRepository
-                .findByIdAndUserId(recordId, userId)
+        ServiceRecordEntity serviceRecordEntity = serviceRecordRepository.findByIdAndUserId(recordId,userId)
                 .orElseThrow(
                         () -> new ServiceRecordNotFoundException("Service Record not found")
                 );
-        return mapToResponse(serviceRecord);
+        return mapToResponse(serviceRecordEntity);
     }
 
-    private ServiceRecordResponse mapToResponse(ServiceRecord serviceRecord) {
+    private ServiceRecordResponse mapToResponse(ServiceRecordEntity serviceRecordEntity) {
         return ServiceRecordResponse.builder()
-                .id(serviceRecord.getId())
-                .userId(serviceRecord.getUserId())
-                .vehicleId(serviceRecord.getVehicleId())
-                .serviceDate(serviceRecord.getServiceDate())
-                .serviceType(serviceRecord.getServiceType())
-                .description(serviceRecord.getDescription())
-                .cost(serviceRecord.getCost())
-                .mileageAtService(serviceRecord.getMileageAtService()).build();
+                .id(serviceRecordEntity.getId())
+                .userId(serviceRecordEntity.getUserId())
+                .vehicleId(serviceRecordEntity.getVehicleId())
+                .serviceDate(serviceRecordEntity.getServiceDate())
+                .serviceType(serviceRecordEntity.getServiceType())
+                .description(serviceRecordEntity.getDescription())
+                .cost(serviceRecordEntity.getCost())
+                .mileageAtService(serviceRecordEntity.getMileageAtService()).build();
     }
 
     public List<ServiceRecordResponse> getAllByUserId(UUID userId) {
         return serviceRecordRepository
                 .findAllByUserId(userId)
                 .stream()
-                .map(serviceRecord -> ServiceRecordResponse.builder()
-                        .id(serviceRecord.getId())
-                        .userId(serviceRecord.getUserId())
-                        .vehicleId(serviceRecord.getVehicleId())
-                        .serviceDate(serviceRecord.getServiceDate())
-                        .serviceType(serviceRecord.getServiceType())
-                        .description(serviceRecord.getDescription())
-                        .cost(serviceRecord.getCost())
-                        .mileageAtService(
-                                serviceRecord.getMileageAtService()
-                        )
-                        .build())
+                .map(this::mapToResponse)
                 .toList();
     }
-
     @Transactional
     public ServiceRecordResponse update(UUID recordId, UUID userId, UpdateServiceRecordRequest request) {
-        ServiceRecord serviceRecord = serviceRecordRepository.findByIdAndUserId(recordId, userId).orElseThrow(() -> new ServiceRecordNotFoundException("Service Record not found"));
-        serviceRecord.setServiceDate(request.getServiceDate());
-        serviceRecord.setServiceType(request.getServiceType());
-        serviceRecord.setDescription(request.getDescription());
-        serviceRecord.setCost(request.getCost());
-        serviceRecord.setMileageAtService(request.getMileageAtService());
-        serviceRecordRepository.save(serviceRecord);
-        return mapToResponse(serviceRecord);
+        ServiceRecordEntity serviceRecordEntity = serviceRecordRepository.findByIdAndUserId(recordId, userId).orElseThrow(() -> new ServiceRecordNotFoundException("Service Record not found"));
+        serviceRecordEntity.setServiceDate(request.getServiceDate());
+        serviceRecordEntity.setServiceType(request.getServiceType());
+        serviceRecordEntity.setDescription(request.getDescription());
+        serviceRecordEntity.setCost(request.getCost());
+        serviceRecordEntity.setMileageAtService(request.getMileageAtService());
+        serviceRecordRepository.save(serviceRecordEntity);
+        return mapToResponse(serviceRecordEntity);
     }
 
     public ServiceRecordResponse delete(UUID recordId, UUID userId) {
-        ServiceRecord serviceRecord = serviceRecordRepository.findByIdAndUserId(recordId, userId).orElseThrow(() -> new ServiceRecordNotFoundException("Service Record not found"));
-        serviceRecordRepository.delete(serviceRecord);
-        return mapToResponse(serviceRecord);
+        ServiceRecordEntity serviceRecordEntity = serviceRecordRepository.findByIdAndUserId(recordId, userId).orElseThrow(() -> new ServiceRecordNotFoundException("Service Record not found"));
+        serviceRecordRepository.delete(serviceRecordEntity);
+        return mapToResponse(serviceRecordEntity);
     }
-
-    public Integer getCount() {
-        List<ServiceRecord> all = serviceRecordRepository.findAll();
-        return all.size();
-    }
-
-    public BigDecimal totalCost() {
-        List<ServiceRecord> all = serviceRecordRepository.findAll();
-        return all.stream().map(ServiceRecord::getCost).reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
+//
+//    public Integer getCount() {
+//        List<ServiceRecordEntity> all = recordRepositoryAdapter.findAll();
+//        return all.size();
+//    }
+//
+//    public BigDecimal totalCost() {
+//        List<ServiceRecordEntity> all = recordRepositoryAdapter.findAll();
+//        return all.stream().map(ServiceRecordEntity::getCost).reduce(BigDecimal.ZERO, BigDecimal::add);
+//    }
 
 }
+
