@@ -22,7 +22,7 @@ public interface ServiceRecordClient {
     ServiceRecordResponse getById(@PathVariable UUID recordId, @RequestParam UUID userId);
 
 
-    @PutMapping("{recordId}")
+    @PutMapping("/{recordId}")
     ServiceRecordResponse update(@PathVariable UUID recordId, @RequestParam UUID userId, @RequestBody ServiceRecordRequest request);
 
     @DeleteMapping("/{id}")

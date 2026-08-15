@@ -73,10 +73,14 @@ public class VehicleController {
     }
 
     @GetMapping("/vehicles/edit/{id}")
-    public ModelAndView editVehicle(@PathVariable UUID id) {
+    public ModelAndView editVehicle(@PathVariable UUID id, @AuthenticationPrincipal UserData principal) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("vehicle-form");
         Vehicle vehicle = vehicleService.getById(id);
+        User user = userService.getById(principal.getId());
+        if (!user.getVehicles().contains(vehicle)) {
+            throw new UnauthorizedActionException("No permission");
+        }
         VehicleAddRequest vehicleAddRequest = new VehicleAddRequest();
         vehicleAddRequest.setModel(vehicle.getModel());
         vehicleAddRequest.setMake(vehicle.getMake());
