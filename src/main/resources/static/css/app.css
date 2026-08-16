@@ -6368,7 +6368,7 @@ html {
     border-color: rgba(78, 234, 255, .42);
 }
 
-.page-vehicles .alert {
+.alert {
     margin-bottom: 22px;
     padding: 14px 17px;
     display: flex;
@@ -6381,7 +6381,7 @@ html {
     font-size: .84rem;
 }
 
-.page-vehicles .alert::before {
+.alert::before {
     content: "✓";
     width: 23px;
     height: 23px;

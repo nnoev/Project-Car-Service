@@ -17,6 +17,9 @@
         <div class="nav-links">
             <a th:href="@{/admin}" href="/admin">Overview</a>
             <a class="active" th:href="@{/admin/users}" href="/admin/users">Users</a>
+            <a th:href="@{/admin/vehicles}" href="/admin/vehicles">Vehicles</a>
+            <a th:href="@{/admin/services}" href="/admin/services">Services</a>
+            <a th:href="@{/admin/reminders}" href="/admin/reminders">Reminders</a>
             <a class="return-link" th:href="@{/dashboard}" href="/dashboard">Main app</a>
             <form class="logout-form" th:action="@{/logout}" method="post"><button type="submit" class="btn-logout">Logout</button></form>
         </div>
@@ -32,7 +35,9 @@
         </div>
         <div class="user-count"><strong th:text="${users.size()}">0</strong> accounts</div>
     </header>
-
+    <div class="alert" th:if="${message}">
+        <span th:text="${message}">Operation completed successfully.</span>
+    </div>
     <section class="table-card" aria-label="Registered users">
         <table th:if="${!users.isEmpty()}">
             <thead>

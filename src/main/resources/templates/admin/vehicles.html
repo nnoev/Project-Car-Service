@@ -1,16 +1,70 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Car Service | Admin Vehicles</title>
-<link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+    <meta charset="UTF-8">
+    <meta content="width=device-width,initial-scale=1.0" name="viewport">
+    <title>Car Service | Admin Vehicles</title>
+    <link href="/css/app.css" rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body class="page-admin-vehicles">
-<nav><div class="nav wrap"><a class="brand" th:href="@{/admin}" href="/admin"><span class="mark">CS</span><span>Admin Control</span><span class="tag">ADMIN</span></a><div class="links"><a th:href="@{/admin}" href="/admin">Overview</a><a th:href="@{/admin/users}" href="/admin/users">Users</a><a class="active" th:href="@{/admin/vehicles}" href="/admin/vehicles">Vehicles</a><a th:href="@{/admin/services}" href="/admin/services">Services</a><a th:href="@{/admin/reminders}" href="/admin/reminders">Reminders</a><a class="return" th:href="@{/dashboard}" href="/dashboard">Main app</a><form th:action="@{/logout}" method="post"><button class="logout" type="submit">Logout</button></form></div></div></nav>
+<nav>
+    <div class="nav wrap"><a class="brand" href="/admin" th:href="@{/admin}"><span class="mark">CS</span><span>Admin Control</span><span
+            class="tag">ADMIN</span></a>
+        <div class="links"><a href="/admin" th:href="@{/admin}">Overview</a><a href="/admin/users"
+                                                                               th:href="@{/admin/users}">Users</a><a
+                class="active" href="/admin/vehicles" th:href="@{/admin/vehicles}">Vehicles</a><a
+                href="/admin/services" th:href="@{/admin/services}">Services</a><a href="/admin/reminders"
+                                                                                   th:href="@{/admin/reminders}">Reminders</a><a
+                class="return" href="/dashboard" th:href="@{/dashboard}">Main app</a>
+            <form method="post" th:action="@{/logout}">
+                <button class="logout" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
 <main class="wrap">
-<header class="head"><div><p class="eyebrow">Domain registry / fleet oversight</p><h1>All <span>vehicles.</span></h1><p class="copy">Review every vehicle registered across user garages.</p></div><div class="count"><strong th:text="${vehicles.size()}">0</strong> VEHICLES</div></header>
-<section class="table"><table th:if="${!vehicles.isEmpty()}"><thead><tr><th>Identifier</th><th>Owner</th><th>Vehicle</th><th>Year</th><th>VIN</th><th>Mileage</th><th>Action</th></tr></thead><tbody>
-<tr th:each="vehicleItem : ${vehicles}"><td><span class="id" th:title="${vehicleItem.id}" th:text="${vehicleItem.id}">UUID</span></td><td><span class="owner" th:text="${vehicleItem.owner.username}">owner</span></td><td><span class="vehicle" th:text="${vehicleItem.make + ' ' + vehicleItem.model}">Vehicle</span></td><td th:text="${vehicleItem.year}">2026</td><td><span class="id" th:title="${vehicleItem.vin}" th:text="${vehicleItem.vin}">VIN</span></td><td><span class="mileage" th:text="${vehicleItem.mileage + ' km'}">0 km</span></td><td><form th:action="@{/admin/vehicles/{id}/delete(id=${vehicleItem.id})}" method="post"><button class="delete" type="submit" onclick="return confirm('Delete this vehicle and its related data?')">Delete</button></form></td></tr>
-</tbody></table><div class="empty" th:if="${vehicles.isEmpty()}">No vehicles were found.</div></section>
+    <header class="head">
+        <div><p class="eyebrow">Domain registry / fleet oversight</p>
+            <h1>All <span>vehicles.</span></h1>
+            <p class="copy">Review every vehicle registered across user garages.</p></div>
+        <div class="count"><strong th:text="${vehicles.size()}">0</strong> VEHICLES</div>
+    </header>
+    <div class="alert" th:if="${message}">
+        <span th:text="${message}">Operation completed successfully.</span>
+    </div>
+    <section class="table">
+        <table th:if="${!vehicles.isEmpty()}">
+            <thead>
+            <tr>
+                <th>Identifier</th>
+                <th>Owner</th>
+                <th>Vehicle</th>
+                <th>Year</th>
+                <th>VIN</th>
+                <th>Mileage</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="vehicleItem : ${vehicles}">
+                <td><span class="id" th:text="${vehicleItem.id}" th:title="${vehicleItem.id}">UUID</span></td>
+                <td><span class="owner" th:text="${vehicleItem.owner.username}">owner</span></td>
+                <td><span class="vehicle" th:text="${vehicleItem.make + ' ' + vehicleItem.model}">Vehicle</span></td>
+                <td th:text="${vehicleItem.year}">2026</td>
+                <td><span class="id" th:text="${vehicleItem.vin}" th:title="${vehicleItem.vin}">VIN</span></td>
+                <td><span class="mileage" th:text="${vehicleItem.mileage + ' km'}">0 km</span></td>
+                <td>
+                    <form method="post" th:action="@{/admin/vehicles/{id}/delete(id=${vehicleItem.id})}">
+                        <button class="delete" onclick="return confirm('Delete this vehicle and its related data?')"
+                                type="submit">Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="empty" th:if="${vehicles.isEmpty()}">No vehicles were found.</div>
+    </section>
 </main>
-</body></html>
+</body>
+</html>

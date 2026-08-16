@@ -53,5 +53,9 @@ public class ServiceReminderService {
     public List<ServiceReminder> getAllReminders() {
         return serviceReminderRepository.findAll();
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteReminder(ServiceReminder serviceReminder) {
+        serviceReminderRepository.delete(serviceReminder);
+    }
 
 }

@@ -1,12 +1,76 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Car Service | Admin Reminders</title>
-<link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css"></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Car Service | Admin Reminders</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
 <body class="page-admin-reminders">
-<nav><div class="nav wrap"><a class="brand" th:href="@{/admin}" href="/admin"><span class="mark">CS</span><span>Admin Control</span><span class="tag">ADMIN</span></a><div class="links"><a th:href="@{/admin}" href="/admin">Overview</a><a th:href="@{/admin/users}" href="/admin/users">Users</a><a th:href="@{/admin/vehicles}" href="/admin/vehicles">Vehicles</a><a th:href="@{/admin/services}" href="/admin/services">Services</a><a class="active" th:href="@{/admin/reminders}" href="/admin/reminders">Reminders</a><a class="return" th:href="@{/dashboard}" href="/dashboard">Main app</a><form th:action="@{/logout}" method="post"><button class="logout" type="submit">Logout</button></form></div></div></nav>
-<main class="wrap"><header class="head"><div><p class="eyebrow">Maintenance registry / global queue</p><h1>All <span>reminders.</span></h1><p class="copy">Review maintenance tasks created across all user accounts.</p></div><div class="count"><strong th:text="${reminders.size()}">0</strong> REMINDERS</div></header>
-<section class="table"><table th:if="${!reminders.isEmpty()}"><thead><tr><th>Identifier</th><th>Owner</th><th>Vehicle</th><th>Title</th><th>Due date</th><th>Due mileage</th><th>Status</th><th>Action</th></tr></thead><tbody>
-<tr th:each="reminderItem : ${reminders}"><td><span class="id" th:title="${reminderItem.id}" th:text="${reminderItem.id}">UUID</span></td><td><span class="owner" th:text="${reminderItem.user.username}">owner</span></td><td th:text="${reminderItem.vehicle.make + ' ' + reminderItem.vehicle.model}">Vehicle</td><td><span class="title" th:text="${reminderItem.title}">Reminder</span></td><td th:text="${reminderItem.dueDate != null ? #temporals.format(reminderItem.dueDate,'dd MMM yyyy') : '—'}">Date</td><td th:text="${reminderItem.dueMileage != null ? reminderItem.dueMileage + ' km' : '—'}">Mileage</td><td><span class="status" th:classappend="${reminderItem.completed} ? ' done' : ''" th:text="${reminderItem.completed ? 'COMPLETED' : 'PENDING'}">PENDING</span></td><td><form th:action="@{/admin/reminders/{id}/delete(id=${reminderItem.id})}" method="post"><button class="delete" type="submit" onclick="return confirm('Delete this reminder?')">Delete</button></form></td></tr>
-</tbody></table><div class="empty" th:if="${reminders.isEmpty()}">No reminders were found.</div></section></main>
-</body></html>
+<nav>
+    <div class="nav wrap"><a class="brand" th:href="@{/admin}" href="/admin"><span class="mark">CS</span><span>Admin Control</span><span
+            class="tag">ADMIN</span></a>
+        <div class="links"><a th:href="@{/admin}" href="/admin">Overview</a><a th:href="@{/admin/users}"
+                                                                               href="/admin/users">Users</a><a
+                th:href="@{/admin/vehicles}" href="/admin/vehicles">Vehicles</a><a th:href="@{/admin/services}"
+                                                                                   href="/admin/services">Services</a><a
+                class="active" th:href="@{/admin/reminders}" href="/admin/reminders">Reminders</a><a class="return"
+                                                                                                     th:href="@{/dashboard}"
+                                                                                                     href="/dashboard">Main
+            app</a>
+            <form th:action="@{/logout}" method="post">
+                <button class="logout" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<main class="wrap">
+    <header class="head">
+        <div><p class="eyebrow">Maintenance registry / global queue</p>
+            <h1>All <span>reminders.</span></h1>
+            <p class="copy">Review maintenance tasks created across all user accounts.</p></div>
+        <div class="count"><strong th:text="${reminders.size()}">0</strong> REMINDERS</div>
+    </header>
+    <div class="alert" th:if="${message}">
+        <span th:text="${message}">Operation completed successfully.</span>
+    </div>
+    <section class="table">
+        <table th:if="${!reminders.isEmpty()}">
+            <thead>
+            <tr>
+                <th>Identifier</th>
+                <th>Owner</th>
+                <th>Vehicle</th>
+                <th>Title</th>
+                <th>Due date</th>
+                <th>Due mileage</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="reminderItem : ${reminders}">
+                <td><span class="id" th:title="${reminderItem.id}" th:text="${reminderItem.id}">UUID</span></td>
+                <td><span class="owner" th:text="${reminderItem.user.username}">owner</span></td>
+                <td th:text="${reminderItem.vehicle.make + ' ' + reminderItem.vehicle.model}">Vehicle</td>
+                <td><span class="title" th:text="${reminderItem.title}">Reminder</span></td>
+                <td th:text="${reminderItem.dueDate != null ? #temporals.format(reminderItem.dueDate,'dd MMM yyyy') : '—'}">
+                    Date
+                </td>
+                <td th:text="${reminderItem.dueMileage != null ? reminderItem.dueMileage + ' km' : '—'}">Mileage</td>
+                <td><span class="status" th:classappend="${reminderItem.completed} ? ' done' : ''"
+                          th:text="${reminderItem.completed ? 'COMPLETED' : 'PENDING'}">PENDING</span></td>
+                <td>
+                    <form th:action="@{/admin/reminders/{id}/delete(id=${reminderItem.id})}" method="post">
+                        <button class="delete" type="submit" onclick="return confirm('Delete this reminder?')">Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="empty" th:if="${reminders.isEmpty()}">No reminders were found.</div>
+    </section>
+</main>
+</body>
+</html>

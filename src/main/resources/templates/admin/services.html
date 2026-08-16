@@ -31,6 +31,9 @@
             <p class="copy">Monitor maintenance entries returned by the service-record microservice.</p></div>
         <div class="count"><strong th:text="${services.size()}">0</strong> RECORDS</div>
     </header>
+    <div class="alert" th:if="${message}">
+        <span th:text="${message}">Operation completed successfully.</span>
+    </div>
     <section class="table">
         <table th:if="${!services.isEmpty()}">
             <thead>
@@ -60,6 +63,7 @@
                 <td><span class="cost" th:text="${'€' + #numbers.formatDecimal(serviceItem.cost,1,2)}">€0.00</span></td>
                 <td>
                     <form th:action="@{/admin/services/{id}/delete(id=${serviceItem.id})}" method="post">
+                        <input type="hidden" name="userId" th:value="${serviceItem.userId}">
                         <button class="delete" type="submit" onclick="return confirm('Delete this service record?')">
                             Delete
                         </button>

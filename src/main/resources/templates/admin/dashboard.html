@@ -17,6 +17,9 @@
         <div class="nav-links">
             <a class="active" th:href="@{/admin}" href="/admin">Overview</a>
             <a th:href="@{/admin/users}" href="/admin/users">Users</a>
+            <a th:href="@{/admin/vehicles}" href="/admin/vehicles">Vehicles</a>
+            <a th:href="@{/admin/services}" href="/admin/services">Services</a>
+            <a th:href="@{/admin/reminders}" href="/admin/reminders">Reminders</a>
             <a class="return-link" th:href="@{/dashboard}" href="/dashboard">Main app</a>
             <form class="logout-form" th:action="@{/logout}" method="post"><button type="submit" class="btn-logout">Logout</button></form>
         </div>
@@ -35,6 +38,7 @@
             <p>Live totals aggregated from the main application and service-record microservice.</p>
         </aside>
     </header>
+
 
     <section class="grid" aria-label="System totals">
         <a class="card-link" th:href="@{/admin/users}" href="/admin/users">

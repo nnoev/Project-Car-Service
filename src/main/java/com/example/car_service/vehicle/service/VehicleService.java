@@ -62,6 +62,11 @@ public class VehicleService {
        return vehicleRepository.findAll();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteVehicleAdmin(Vehicle vehicle) {
+        vehicleRepository.delete(vehicle);
+    }
+
 
     public void checkOwnership(Vehicle vehicle, User user) {
         if (!vehicle.getOwner().getId().equals(user.getId())) {

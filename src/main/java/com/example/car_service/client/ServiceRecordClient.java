@@ -21,7 +21,6 @@ public interface ServiceRecordClient {
     @GetMapping("/{recordId}")
     ServiceRecordResponse getById(@PathVariable UUID recordId, @RequestParam UUID userId);
 
-
     @PutMapping("/{recordId}")
     ServiceRecordResponse update(@PathVariable UUID recordId, @RequestParam UUID userId, @RequestBody ServiceRecordRequest request);
 
@@ -33,5 +32,11 @@ public interface ServiceRecordClient {
 
     @GetMapping("/total-cost")
     BigDecimal totalCost();
+
+    @GetMapping("/")
+    List<ServiceRecordResponse> getAll();
+
+    @DeleteMapping("/{recordId}")
+    ServiceRecordResponse deleteByIdAndUserId(@PathVariable UUID recordId, @RequestParam UUID userId);
 
 }

@@ -25,7 +25,7 @@ public class UserInitializer implements ApplicationRunner {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserInitializer(UserService userService, UserProperties userProperties, GuestProperties guestProperties, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserInitializer( UserProperties userProperties, GuestProperties guestProperties, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userProperties = userProperties;
         this.guestProperties = guestProperties;
         this.userRepository = userRepository;

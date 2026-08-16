@@ -21,6 +21,12 @@ public class ServiceRecordRestController {
 
     private final ServiceRecordService serviceRecordService;
 
+    @GetMapping("/")
+    public ResponseEntity<List<ServiceRecordResponse>> getAll() {
+        List<ServiceRecordResponse> response = serviceRecordService.getAll();
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{recordId}")
     public ResponseEntity<ServiceRecordResponse> getById(@PathVariable UUID recordId, @RequestParam UUID userId) {
         ServiceRecordResponse response = serviceRecordService.getById(recordId, userId);
@@ -63,5 +69,4 @@ public class ServiceRecordRestController {
         BigDecimal totalCost = serviceRecordService.totalCost();
         return ResponseEntity.ok(totalCost);
     }
-
 }

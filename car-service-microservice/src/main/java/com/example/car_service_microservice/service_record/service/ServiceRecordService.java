@@ -101,5 +101,9 @@ public class ServiceRecordService {
         return totalCost;
     }
 
+    public List<ServiceRecordResponse> getAll() {
+        return serviceRecordRepository.findAll().stream().map(this::mapToResponse).toList();
+    }
+
 }
 
