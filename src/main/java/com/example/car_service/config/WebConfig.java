@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationSuccessHandler authenticationSuccessHandler) throws Exception {
         httpSecurity.authorizeHttpRequests(matcher -> matcher
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/", "/register","/login","/guest-login","/error").permitAll()
+                        .requestMatchers("/", "/register","/login","/error").permitAll()
                         .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
                         .anyRequest().authenticated()

@@ -99,6 +99,7 @@ public class VehicleController {
             return modelAndView;
         }
         vehicleService.checkOwnership(vehicle,user);
+        vehicleService.checkForDuplication(vehicleAddRequest.getVin());
         vehicle.setModel(vehicleAddRequest.getModel());
         vehicle.setMake(vehicleAddRequest.getMake());
         vehicle.setYear(vehicleAddRequest.getYear());

@@ -23,7 +23,7 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> globalControllerAdvice(Exception e) {
         ErrorResponse response = new ErrorResponse(e.getMessage(), LocalDateTime.now());
-        log.error("Exception : {}", e.getMessage());
+        log.error("Exception : {}",e.getMessage());
         return ResponseEntity.badRequest().body(response);
     }
 

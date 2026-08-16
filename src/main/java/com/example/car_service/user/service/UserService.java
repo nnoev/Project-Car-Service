@@ -2,6 +2,7 @@ package com.example.car_service.user.service;
 
 import com.example.car_service.exceptions.DuplicateException;
 import com.example.car_service.exceptions.NothingFoundException;
+import com.example.car_service.exceptions.UnauthorizedActionException;
 import com.example.car_service.security.UserData;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.model.UserClass;
@@ -9,6 +10,8 @@ import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.repo.UserRepository;
 import com.example.car_service.web.dtos.UserRegistration;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -73,7 +76,7 @@ public class UserService implements UserDetailsService {
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(User user) {
         userRepository.delete(user);
-        log.info("User {} deleted successfully", user.getUsername());
+        log.info("User {} deleted successfully by administrator", user.getUsername());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -84,15 +87,34 @@ public class UserService implements UserDetailsService {
     @PreAuthorize("hasRole('ADMIN')")
     public void changeRole(UUID id, UserRole role) {
         User user = getById(id);
+        if (user.getRole() == UserRole.ADMIN) {
+            log.warn("Unauthorized action: User {} cannot be changed to {}", user.getUsername(), role);
+            throw new UnauthorizedActionException("You cannot change an administrator role");
+        }
         user.setRole(role);
         userRepository.save(user);
-        log.info("User {} role changed to {}", user.getUsername(), role);
+        log.info("User {} role changed to {} by administrator", user.getUsername(), role);
+    }
+    public User getDeletableUser(UUID id) {
+        User user = getById(id);
+        if (user.getRole() == UserRole.ADMIN) {
+            log.warn("Unauthorized action: User {} cannot be deleted", user.getUsername());
+            throw new UnauthorizedActionException("You cannot delete an administrator");
+        }
+        return user;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NothingFoundException("User does not exist"));
         return new UserData(user.getId(), user.getUsername(), user.getPassword(), user.getRole(), user.isActive());
+    }
+
+    public void checkForEmail(String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            log.warn("Registration failed: Email {} already exists", email);
+            throw new DuplicateException("Email already exists");
+        }
     }
 
 }

@@ -37,7 +37,7 @@ public class ServiceRecordService {
                 .mileageAtService(request.getMileageAtService())
                 .build();
         ServiceRecordEntity savedRecord = serviceRecordRepository.save(record);
-        log.info("Service Record {} created for vehicle {} with owner {}", savedRecord, savedRecord.getVehicleId(), savedRecord.getUserId());
+        log.info("Service Record {} created for vehicle {} with owner {}", savedRecord.getId(), savedRecord.getVehicleId(), savedRecord.getUserId());
         return mapToResponse(savedRecord);
     }
 
@@ -78,14 +78,14 @@ public class ServiceRecordService {
         serviceRecordEntity.setCost(request.getCost());
         serviceRecordEntity.setMileageAtService(request.getMileageAtService());
         serviceRecordRepository.save(serviceRecordEntity);
-        log.info("Service Record {} updated for vehicle {} with owner {}", serviceRecordEntity, serviceRecordEntity.getVehicleId(), serviceRecordEntity.getUserId());
+        log.info("Service Record {} updated for vehicle {} with owner {}", serviceRecordEntity.getId(), serviceRecordEntity.getVehicleId(), serviceRecordEntity.getUserId());
         return mapToResponse(serviceRecordEntity);
     }
 
     public ServiceRecordResponse delete(UUID recordId, UUID userId) {
         ServiceRecordEntity serviceRecordEntity = serviceRecordRepository.findByIdAndUserId(recordId, userId).orElseThrow(() -> new ServiceRecordNotFoundException("Service Record not found"));
         serviceRecordRepository.delete(serviceRecordEntity);
-        log.info("Service Record {} deleted for vehicle {} with owner {}", serviceRecordEntity, serviceRecordEntity.getVehicleId(), serviceRecordEntity.getUserId());
+        log.info("Service Record {} deleted for vehicle {} with owner {}", serviceRecordEntity.getId(), serviceRecordEntity.getVehicleId(), serviceRecordEntity.getUserId());
         return mapToResponse(serviceRecordEntity);
     }
 

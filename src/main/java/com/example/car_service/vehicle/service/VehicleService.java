@@ -1,14 +1,18 @@
 package com.example.car_service.vehicle.service;
 
+import com.example.car_service.client.ServiceRecordClient;
 import com.example.car_service.exceptions.DuplicateException;
 import com.example.car_service.exceptions.LimitException;
 import com.example.car_service.exceptions.NothingFoundException;
 import com.example.car_service.exceptions.UnauthorizedActionException;
+import com.example.car_service.service_reminder.service.ServiceReminderService;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.model.UserRole;
 import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.vehicle.repo.VehicleRepository;
 import com.example.car_service.web.dtos.VehicleAddRequest;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,9 +28,15 @@ public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
 
+    private final ServiceReminderService serviceReminderService;
+
+    private final ServiceRecordClient serviceRecordClient;
+
     @Autowired
-    public VehicleService(VehicleRepository vehicleRepository) {
+    public VehicleService(VehicleRepository vehicleRepository, ServiceReminderService serviceReminderService, ServiceRecordClient serviceRecordClient) {
         this.vehicleRepository = vehicleRepository;
+        this.serviceReminderService = serviceReminderService;
+        this.serviceRecordClient = serviceRecordClient;
     }
 
     public void addVehicle(VehicleAddRequest vehicleAddRequest, User user) {
@@ -52,6 +62,8 @@ public class VehicleService {
     }
 
     public void deleteVehicle(Vehicle vehicle) {
+        serviceReminderService.deleteAllByVehicleId(vehicle.getId());
+        serviceRecordClient.deleteAllByVehicleId(vehicle.getId());
         vehicleRepository.delete(vehicle);
         log.info("Vehicle {} deleted successfully", vehicle.getVin());
     }
@@ -88,6 +100,13 @@ public class VehicleService {
             log.warn("Unauthorized action: User {} does not own vehicle {}", user.getUsername(), vehicle.getVin());
             throw new UnauthorizedActionException("You do not have permission to manage this vehicle");
         }
+    }
+
+    public void checkForDuplication(String vin) {
+       if (vehicleRepository.findByVin(vin).isPresent()) {
+           log.warn("Registration failed: Vehicle {} already exists", vin);
+           throw new DuplicateException("Vehicle already exists");
+       }
     }
 
 }

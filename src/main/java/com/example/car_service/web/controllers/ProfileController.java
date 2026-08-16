@@ -47,7 +47,7 @@ public class ProfileController {
         User user = userService.getById(principal.getId());
         modelAndView.addObject("user", user);
         modelAndView.addObject("changePassword", new ChangePassword());
-        modelAndView.addObject("changeProfile", new ChangeProfile()); // REQUIRED
+        modelAndView.addObject("changeProfile", new ChangeProfile());
         modelAndView.addObject("activeTab", "change-password");
         return modelAndView;
     }
@@ -127,6 +127,7 @@ public class ProfileController {
         User user = userService.getById(principal.getId());
         user.setFirstName(changeProfile.getFirstName());
         user.setLastName(changeProfile.getLastName());
+        userService.checkForEmail(changeProfile.getEmail());
         user.setEmail(changeProfile.getEmail());
         userService.save(user);
         redirectAttributes.addFlashAttribute("message", "Profile updated successfully");

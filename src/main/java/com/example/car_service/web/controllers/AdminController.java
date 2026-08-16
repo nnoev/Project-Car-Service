@@ -64,7 +64,7 @@ public class AdminController {
     public String deleteUser(
             @PathVariable UUID id, RedirectAttributes redirectAttributes
     ) {
-        User user = userService.getById(id);
+        User user = userService.getDeletableUser(id);
         serviceReminderService.deleteAllByUserId(id);
         serviceRecordClient.deleteAllByUserId(id);
         vehicleService.deleteAllByUserId(id);
