@@ -5,8 +5,10 @@ import com.example.car_service.service_reminder.service.ServiceReminderService;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.service.UserService;
+import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.vehicle.service.VehicleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.UUID;
-
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin")
@@ -54,6 +56,7 @@ public class AdminController {
     ) {
         userService.changeRole(id, role);
         redirectAttributes.addFlashAttribute("message", "Role changed successfully");
+        log.info("Role changed for user {} by administrator", id);
         return "redirect:/admin/users";
     }
 
@@ -67,6 +70,7 @@ public class AdminController {
         vehicleService.deleteAllByUserId(id);
         userService.deleteUser(user);
         redirectAttributes.addFlashAttribute("message", "User deleted successfully");
+        log.info("User {} deleted by administrator", id);
         return "redirect:/admin/users";
     }
 
@@ -83,10 +87,12 @@ public class AdminController {
 
     @PostMapping("/vehicles/{id}/delete")
     public ModelAndView deleteVehicle(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
-        serviceReminderService.deleteAllByVehicleId(vehicleService.getById(id).getOwner().getId());
-        serviceRecordClient.deleteAllByVehicleId(vehicleService.getById(id).getId());
-        vehicleService.deleteVehicleAdmin(vehicleService.getById(id));
+        Vehicle vehicle = vehicleService.getById(id);
+        serviceReminderService.deleteAllByVehicleId(vehicle.getId());
+        serviceRecordClient.deleteAllByVehicleId(vehicle.getId());
+        vehicleService.deleteVehicleAdmin(vehicle);
         redirectAttributes.addFlashAttribute("message", "Vehicle deleted successfully");
+        log.info("Vehicle {} including related service records and service reminders deleted by administrator", id);
         return new ModelAndView("redirect:/admin/vehicles");
     }
 
@@ -102,6 +108,7 @@ public class AdminController {
     public ModelAndView deleteReminder(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
         serviceReminderService.deleteReminder(serviceReminderService.getById(id));
         redirectAttributes.addFlashAttribute("message", "Service Reminder deleted successfully");
+        log.info("Service Reminder {} deleted by administrator", id);
         return new ModelAndView("redirect:/admin/reminders");
     }
 
@@ -119,6 +126,7 @@ public class AdminController {
     public ModelAndView deleteRecord(@PathVariable UUID id, @RequestParam UUID userId, RedirectAttributes redirectAttributes) {
         serviceRecordClient.delete(id, userId);
         redirectAttributes.addFlashAttribute("message", "Service Record deleted successfully");
+        log.info("Service Record {} deleted by administrator", id);
         return new ModelAndView("redirect:/admin/services");
     }
 }

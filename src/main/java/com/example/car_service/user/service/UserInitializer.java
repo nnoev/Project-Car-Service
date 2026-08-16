@@ -4,6 +4,7 @@ import com.example.car_service.user.model.User;
 import com.example.car_service.user.property.GuestProperties;
 import com.example.car_service.user.property.UserProperties;
 import com.example.car_service.user.repo.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class UserInitializer implements ApplicationRunner {
 
@@ -25,7 +27,7 @@ public class UserInitializer implements ApplicationRunner {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserInitializer( UserProperties userProperties, GuestProperties guestProperties, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserInitializer(UserProperties userProperties, GuestProperties guestProperties, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userProperties = userProperties;
         this.guestProperties = guestProperties;
         this.userRepository = userRepository;
@@ -55,6 +57,7 @@ public class UserInitializer implements ApplicationRunner {
                     .active(guestProperties.isActive())
                     .build();
             userRepository.save(guest);
+            log.info("Default guest user created successfully");
         }
     }
 
@@ -72,6 +75,8 @@ public class UserInitializer implements ApplicationRunner {
                     .active(userProperties.isActive())
                     .build();
             userRepository.save(admin);
+            log.info("Default admin user created successfully");
         }
     }
+
 }

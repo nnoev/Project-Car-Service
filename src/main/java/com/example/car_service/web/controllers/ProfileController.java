@@ -6,6 +6,7 @@ import com.example.car_service.user.service.UserService;
 import com.example.car_service.web.dtos.ChangePassword;
 import com.example.car_service.web.dtos.ChangeProfile;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+@Slf4j
 @Controller
 public class ProfileController {
 
@@ -73,6 +74,7 @@ public class ProfileController {
             modelAndView.addObject("changeProfile", new ChangeProfile());
             modelAndView.addObject("user", user);
             modelAndView.addObject("passwordError", "Current password is incorrect");
+            log.error("Password change rejected: current password is incorrect for user {}", user.getUsername());
             return modelAndView;
         }
         if (!changePassword.getNewPassword().equals(changePassword.getConfirmPassword())) {
@@ -82,10 +84,12 @@ public class ProfileController {
             modelAndView.addObject("changeProfile", new ChangeProfile());
             modelAndView.addObject("user", user);
             modelAndView.addObject("passwordError", "Passwords do not match");
+            log.error("Password change rejected: passwords do not match for user {}", user.getUsername());
             return modelAndView;
         }
         user.setPassword(passwordEncoder.encode(changePassword.getNewPassword()));
         userService.save(user);
+        log.info("Password changed for user {}", user.getUsername());
         redirectAttributes.addFlashAttribute("message", "Password changed successfully");
         return new ModelAndView("redirect:/profile");
     }
@@ -102,6 +106,7 @@ public class ProfileController {
         modelAndView.addObject("changeProfile", changeProfile);
         modelAndView.addObject("changePassword", new ChangePassword());
         modelAndView.addObject("activeTab", "edit-profile");
+        log.info("User {} is updated successfully", user.getUsername());
         return modelAndView;
     }
 

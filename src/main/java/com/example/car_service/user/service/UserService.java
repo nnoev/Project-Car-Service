@@ -40,10 +40,12 @@ public class UserService implements UserDetailsService {
     public void registerUser(UserRegistration userRegistration) {
         Optional<User> optionalUser = userRepository.findByUsername(userRegistration.getUsername());
         if (optionalUser.isPresent()) {
+            log.warn("Registration failed: Username {} already exists", userRegistration.getUsername());
             throw new DuplicateException("Username already exists");
         }
         optionalUser = userRepository.findByEmail(userRegistration.getEmail());
         if (optionalUser.isPresent()) {
+            log.warn("Registration failed: Email {} already exists", userRegistration.getEmail());
             throw new DuplicateException("Email already exists");
         }
         User user = User.builder()
@@ -57,12 +59,7 @@ public class UserService implements UserDetailsService {
                 .classType(UserClass.NEW)
                 .active(true).build();
         userRepository.save(user);
-        log.info("User [%s] registered successfully".formatted(userRegistration.getUsername()));
-    }
-
-    public User getByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new NothingFoundException("Username does not exist"));
-
+        log.info("User {} registered successfully",userRegistration.getUsername());
     }
 
     public User getById(UUID id) {
@@ -76,6 +73,7 @@ public class UserService implements UserDetailsService {
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(User user) {
         userRepository.delete(user);
+        log.info("User {} deleted successfully", user.getUsername());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -88,6 +86,7 @@ public class UserService implements UserDetailsService {
         User user = getById(id);
         user.setRole(role);
         userRepository.save(user);
+        log.info("User {} role changed to {}", user.getUsername(), role);
     }
 
     @Override

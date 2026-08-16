@@ -8,8 +8,8 @@ import java.util.UUID;
 
 @Repository
 public interface ServiceReminderRepository extends JpaRepository<ServiceReminder, UUID> {
-    Integer deleteAllByUserId(UUID userId);
+    void deleteAllByUserId(UUID userId);
 
-    Integer deleteAllByVehicleId(UUID vehicleId);
+    void deleteAllByVehicleId(UUID vehicleId);
 
 }

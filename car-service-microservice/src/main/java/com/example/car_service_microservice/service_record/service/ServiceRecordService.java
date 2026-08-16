@@ -7,6 +7,7 @@ import com.example.car_service_microservice.service_record.exceptions.ServiceRec
 import com.example.car_service_microservice.service_record.repository.ServiceRecordEntity;
 import com.example.car_service_microservice.service_record.repository.ServiceRecordRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class ServiceRecordService {
 
@@ -35,6 +37,7 @@ public class ServiceRecordService {
                 .mileageAtService(request.getMileageAtService())
                 .build();
         ServiceRecordEntity savedRecord = serviceRecordRepository.save(record);
+        log.info("Service Record {} created for vehicle {} with owner {}", savedRecord, savedRecord.getVehicleId(), savedRecord.getUserId());
         return mapToResponse(savedRecord);
     }
 
@@ -75,12 +78,14 @@ public class ServiceRecordService {
         serviceRecordEntity.setCost(request.getCost());
         serviceRecordEntity.setMileageAtService(request.getMileageAtService());
         serviceRecordRepository.save(serviceRecordEntity);
+        log.info("Service Record {} updated for vehicle {} with owner {}", serviceRecordEntity, serviceRecordEntity.getVehicleId(), serviceRecordEntity.getUserId());
         return mapToResponse(serviceRecordEntity);
     }
 
     public ServiceRecordResponse delete(UUID recordId, UUID userId) {
         ServiceRecordEntity serviceRecordEntity = serviceRecordRepository.findByIdAndUserId(recordId, userId).orElseThrow(() -> new ServiceRecordNotFoundException("Service Record not found"));
         serviceRecordRepository.delete(serviceRecordEntity);
+        log.info("Service Record {} deleted for vehicle {} with owner {}", serviceRecordEntity, serviceRecordEntity.getVehicleId(), serviceRecordEntity.getUserId());
         return mapToResponse(serviceRecordEntity);
     }
 
@@ -104,12 +109,16 @@ public class ServiceRecordService {
     public List<ServiceRecordResponse> getAll() {
         return serviceRecordRepository.findAll().stream().map(this::mapToResponse).toList();
     }
+
     @Transactional
     public Integer deleteAllByUserId(UUID userId) {
+        log.info("Deleting all service records for user {} by administrator", userId);
         return serviceRecordRepository.deleteAllByUserId(userId);
     }
+
     @Transactional
     public Integer deleteAllByVehicleId(UUID vehicleId) {
+        log.info("Deleting all service records for vehicle {} by administrator", vehicleId);
         return serviceRecordRepository.deleteAllByVehicleId(vehicleId);
     }
 
