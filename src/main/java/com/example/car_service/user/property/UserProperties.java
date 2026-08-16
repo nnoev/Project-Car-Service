@@ -1,29 +1,27 @@
 package com.example.car_service.user.property;
 
+import com.example.car_service.user.model.UserRole;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "user")
+@ConfigurationProperties(prefix = "user.default-user")
 public class UserProperties {
 
-    private DefaultUser defaultUser;
+    private String username;
 
-    @Data
-    public static class DefaultUser {
+    private String password;
 
-        private String username;
+    private String firstName;
 
-        private String password;
+    private String lastName;
 
-        private String firstName;
+    private String email;
 
-        private String lastName;
+    private UserRole role;
 
-        private String email;
-
-    }
+    private boolean active;
 
 }

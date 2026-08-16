@@ -5,9 +5,11 @@ import com.example.car_service.client.dto.ServiceRecordResponse;
 import com.example.car_service.security.UserData;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,13 +47,6 @@ public class IndexController {
         modelAndView.addObject("serviceRecords", serviceRecords.size());
         modelAndView.addObject("totalCost", totalCost);
         return modelAndView;
-    }
-
-    @GetMapping("/guest-login")
-    public ModelAndView guestLogin(HttpSession session) {
-        User guest = userService.getByUsername("guest");
-        session.setAttribute("userId", guest.getId());
-        return new ModelAndView("redirect:/dashboard");
     }
 
 }

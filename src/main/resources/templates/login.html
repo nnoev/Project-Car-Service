@@ -16,7 +16,8 @@
         <section class="intro">
             <p class="eyebrow">Your digital garage / secure access</p>
             <h1>Drive smarter.<br><span>Maintain better.</span></h1>
-            <p class="intro-copy">Keep every vehicle, service record, and maintenance reminder organized in one intelligent workspace.</p>
+            <p class="intro-copy">Keep every vehicle, service record, and maintenance reminder organized in one
+                intelligent workspace.</p>
             <div class="telemetry" aria-label="Platform benefits">
                 <div class="metric"><small>Access</small><strong>SECURE</strong></div>
                 <div class="metric"><small>Records</small><strong>CONNECTED</strong></div>
@@ -24,16 +25,36 @@
             </div>
         </section>
         <section class="form-panel">
-            <div class="form-heading"><p>Driver authentication</p><h2>Welcome back</h2><span>Enter your credentials to access your garage.</span></div>
+            <div class="form-heading"><p>Driver authentication</p>
+                <h2>Welcome back</h2><span>Enter your credentials to access your garage.</span></div>
             <form th:action="@{/login}" method="post" th:object="${loginRequest}">
                 <p class="error-message" th:if="${error != null}" th:text="${error}">Invalid username or password.</p>
-                <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username is invalid.</div>
-                <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password is invalid.</div>
-                <div class="form-group"><label for="username">Username</label><input type="text" id="username" autocomplete="username" placeholder="Enter your username" required th:field="*{username}"></div>
-                <div class="form-group"><label for="password">Password</label><input type="password" id="password" autocomplete="current-password" placeholder="Enter your password" required th:field="*{password}"></div>
+                <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username is
+                    invalid.
+                </div>
+                <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password is
+                    invalid.
+                </div>
+                <div class="form-group"><label for="username">Username</label><input type="text" id="username"
+                                                                                     autocomplete="username"
+                                                                                     placeholder="Enter your username"
+                                                                                     th:field="*{username}"></div>
+                <div class="form-group"><label for="password">Password</label><input type="password" id="password"
+                                                                                     autocomplete="current-password"
+                                                                                     placeholder="Enter your password"
+                                                                                     th:field="*{password}"></div>
                 <button type="submit" class="btn-login">Enter garage</button>
-                <div class="register-link">New to Car Service? <a th:href="@{/register}" href="/register">Create an account</a></div>
             </form>
+            <form th:action="@{/login}" method="post" class="guest-login-form">
+                <input type="hidden" name="username" value="guest">
+                <input type="hidden" name="password" value="guest123">
+
+                <button type="submit" class="btn-guest">
+                    Continue as guest
+                </button>
+            </form>
+            <div class="register-link">New to Car Service? <a th:href="@{/register}" href="/register">Create an
+                account</a></div>
         </section>
     </main>
     <footer class="footer"><span>Vehicle care, precisely managed</span><span>Car Service Platform</span></footer>

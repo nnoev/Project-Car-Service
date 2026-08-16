@@ -4,7 +4,6 @@ import com.example.car_service.user.model.User;
 import com.example.car_service.user.property.GuestProperties;
 import com.example.car_service.user.property.UserProperties;
 import com.example.car_service.user.repo.UserRepository;
-import com.example.car_service.web.dtos.UserRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -17,8 +16,6 @@ import java.util.Optional;
 @Component
 public class UserInitializer implements ApplicationRunner {
 
-    private final UserService userService;
-
     private final UserProperties userProperties;
 
     private final GuestProperties guestProperties;
@@ -29,7 +26,6 @@ public class UserInitializer implements ApplicationRunner {
 
     @Autowired
     public UserInitializer(UserService userService, UserProperties userProperties, GuestProperties guestProperties, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
         this.userProperties = userProperties;
         this.guestProperties = guestProperties;
         this.userRepository = userRepository;
@@ -38,17 +34,7 @@ public class UserInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        Optional<User> optionalUser = userRepository.findByUsername(userProperties.getDefaultUser().getUsername());
-        if (optionalUser.isEmpty()) {
-            UserRegistration userRegistration = UserRegistration.builder().
-                    username(userProperties.getDefaultUser().getUsername()).
-                    password(userProperties.getDefaultUser().getPassword()).
-                    firstName(userProperties.getDefaultUser().getFirstName()).
-                    lastName(userProperties.getDefaultUser().getLastName()).
-                    email(userProperties.getDefaultUser().getEmail())
-                    .build();
-            userService.registerUser(userRegistration);
-        }
+        createAdmin();
         createGuestUser();
     }
 
@@ -72,4 +58,20 @@ public class UserInitializer implements ApplicationRunner {
         }
     }
 
+    private void createAdmin() {
+        Optional<User> optionalUser = userRepository.findByUsername(userProperties.getUsername());
+        if (optionalUser.isEmpty()) {
+            User admin = User.builder()
+                    .username(userProperties.getUsername())
+                    .password(passwordEncoder.encode(userProperties.getPassword()))
+                    .firstName(userProperties.getFirstName())
+                    .lastName(userProperties.getLastName())
+                    .email(userProperties.getEmail())
+                    .role(userProperties.getRole())
+                    .createdAt(LocalDate.now())
+                    .active(userProperties.isActive())
+                    .build();
+            userRepository.save(admin);
+        }
+    }
 }

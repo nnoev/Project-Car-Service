@@ -36,7 +36,7 @@ public class ServiceReminderService {
     }
 
     public void addReminder(@Valid ServiceReminderDto reminderDto, Vehicle vehicle, User user) {
-        if(user.getRole() == UserRole.GUEST && vehicle.getServiceReminders().size() >= 3 ){
+        if(user.getRole() == UserRole.GUEST || vehicle.getServiceReminders().size() >= 3 ){
             throw new LimitException("Vehicle has reached maximum number of service reminders");
         }
         ServiceReminder serviceReminder = ServiceReminder.builder()

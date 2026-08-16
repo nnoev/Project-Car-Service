@@ -1,6 +1,9 @@
 package com.example.car_service.web.controllers;
 
 import com.example.car_service.exceptions.DuplicateException;
+import com.example.car_service.exceptions.LimitException;
+import com.example.car_service.exceptions.NothingFoundException;
+import com.example.car_service.exceptions.UnauthorizedActionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +20,36 @@ public class GlobalControllerAdvice {
         modelAndView.addObject("message", e.getMessage());
         modelAndView.addObject("status", HttpStatus.CONFLICT.value());
         modelAndView.addObject("title", HttpStatus.CONFLICT.getReasonPhrase());
+        return modelAndView;
+    }
+
+    @ExceptionHandler(LimitException.class)
+    public ModelAndView handleException(LimitException e) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("error");
+        modelAndView.addObject("message", e.getMessage());
+        modelAndView.addObject("status", HttpStatus.INSUFFICIENT_STORAGE.value());
+        modelAndView.addObject("title", HttpStatus.INSUFFICIENT_STORAGE.getReasonPhrase());
+        return modelAndView;
+    }
+
+    @ExceptionHandler(UnauthorizedActionException.class)
+    public ModelAndView handleException(UnauthorizedActionException e) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("error");
+        modelAndView.addObject("message", e.getMessage());
+        modelAndView.addObject("status", HttpStatus.UNAUTHORIZED.value());
+        modelAndView.addObject("title", HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        return modelAndView;
+    }
+
+    @ExceptionHandler(NothingFoundException.class)
+    public ModelAndView handleException(NothingFoundException e) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("error");
+        modelAndView.addObject("message", e.getMessage());
+        modelAndView.addObject("status", HttpStatus.NOT_FOUND.value());
+        modelAndView.addObject("title", HttpStatus.NOT_FOUND.getReasonPhrase());
         return modelAndView;
     }
 
