@@ -8,10 +8,11 @@ import java.util.UUID;
 
 public interface ServiceRecordRepository extends JpaRepository<ServiceRecordEntity, UUID> {
 
-
     List<ServiceRecordEntity> findAllByUserId(UUID userId);
-
 
     Optional<ServiceRecordEntity> findByIdAndUserId(UUID recordId, UUID userId);
 
+    Integer deleteAllByUserId(UUID userId);
+
+    Integer deleteAllByVehicleId(UUID vehicleId);
 }

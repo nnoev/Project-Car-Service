@@ -12,4 +12,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
 
     Optional<Vehicle> findByVin(String vin);
 
+    Integer deleteAllByOwnerId(UUID userId);
+
 }

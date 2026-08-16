@@ -104,6 +104,14 @@ public class ServiceRecordService {
     public List<ServiceRecordResponse> getAll() {
         return serviceRecordRepository.findAll().stream().map(this::mapToResponse).toList();
     }
+    @Transactional
+    public Integer deleteAllByUserId(UUID userId) {
+        return serviceRecordRepository.deleteAllByUserId(userId);
+    }
+    @Transactional
+    public Integer deleteAllByVehicleId(UUID vehicleId) {
+        return serviceRecordRepository.deleteAllByVehicleId(vehicleId);
+    }
 
 }
 

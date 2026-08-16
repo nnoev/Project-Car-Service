@@ -69,4 +69,14 @@ public class ServiceRecordRestController {
         BigDecimal totalCost = serviceRecordService.totalCost();
         return ResponseEntity.ok(totalCost);
     }
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Integer> deleteAllByUserId(@PathVariable UUID userId) {
+        Integer count = serviceRecordService.deleteAllByUserId(userId);
+        return ResponseEntity.ok(count);
+    }
+    @DeleteMapping("/vehicles/{vehicleId}")
+    public ResponseEntity<Integer> deleteAllByVehicleId(@PathVariable UUID vehicleId) {
+        Integer count = serviceRecordService.deleteAllByVehicleId(vehicleId);
+        return ResponseEntity.ok(count);
+    }
 }

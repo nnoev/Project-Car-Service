@@ -67,6 +67,10 @@ public class VehicleService {
         vehicleRepository.delete(vehicle);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    public Integer deleteAllByUserId(UUID userId) {
+        return vehicleRepository.deleteAllByOwnerId(userId);
+    }
 
     public void checkOwnership(Vehicle vehicle, User user) {
         if (!vehicle.getOwner().getId().equals(user.getId())) {

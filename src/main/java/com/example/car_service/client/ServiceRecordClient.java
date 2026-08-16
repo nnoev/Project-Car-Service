@@ -36,7 +36,9 @@ public interface ServiceRecordClient {
     @GetMapping("/")
     List<ServiceRecordResponse> getAll();
 
-    @DeleteMapping("/{recordId}")
-    ServiceRecordResponse deleteByIdAndUserId(@PathVariable UUID recordId, @RequestParam UUID userId);
+    @DeleteMapping("/users/{userId}")
+    Integer deleteAllByUserId(@PathVariable UUID userId);
 
+    @DeleteMapping("/vehicles/{vehicleId}")
+    Integer deleteAllByVehicleId(@PathVariable UUID vehicleId);
 }

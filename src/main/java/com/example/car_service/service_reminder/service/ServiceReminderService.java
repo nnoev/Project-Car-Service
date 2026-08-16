@@ -58,4 +58,8 @@ public class ServiceReminderService {
         serviceReminderRepository.delete(serviceReminder);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    public Integer deleteAllByUserId(UUID userId) {
+        return serviceReminderRepository.deleteAllByUserId(userId);
+    }
 }

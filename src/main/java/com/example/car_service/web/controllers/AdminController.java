@@ -60,6 +60,9 @@ public class AdminController {
     public String deleteUser(
             @PathVariable UUID id, RedirectAttributes redirectAttributes
     ) {
+        serviceReminderService.deleteAllByUserId(userService.getById(id).getId());
+        serviceRecordClient.deleteAllByUserId(userService.getById(id).getId());
+        vehicleService.deleteAllByUserId(userService.getById(id).getId());
         userService.deleteUser(
                 userService.getById(id)
         );
@@ -81,6 +84,8 @@ public class AdminController {
     @PostMapping("/vehicles/{id}/delete")
     public ModelAndView deleteVehicle(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
         vehicleService.deleteVehicleAdmin(vehicleService.getById(id));
+        serviceReminderService.deleteAllByUserId(vehicleService.getById(id).getOwner().getId());
+        serviceRecordClient.deleteAllByVehicleId(vehicleService.getById(id).getId());
         redirectAttributes.addFlashAttribute("message", "Vehicle deleted successfully");
         return new ModelAndView("redirect:/admin/vehicles");
     }
@@ -104,16 +109,15 @@ public class AdminController {
     @GetMapping("/services")
     public ModelAndView getRecords() {
         ModelAndView modelAndView = new ModelAndView();
-        serviceRecordClient.getAll();
         modelAndView.setViewName("admin/services");
         modelAndView.addObject("services", serviceRecordClient.getAll());
         return modelAndView;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("services/{id}/delete")
+    @PostMapping("/services/{id}/delete")
     public ModelAndView deleteRecord(@PathVariable UUID id, @RequestParam UUID userId, RedirectAttributes redirectAttributes) {
-        serviceRecordClient.deleteByIdAndUserId(id, userId);
+        serviceRecordClient.delete(id, userId);
         redirectAttributes.addFlashAttribute("message", "Service Record deleted successfully");
         return new ModelAndView("redirect:/admin/services");
     }
