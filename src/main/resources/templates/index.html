@@ -1,394 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Service - Vehicle Maintenance Management</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        header {
-            background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #666;
-            margin-left: 30px;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: #667eea;
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .btn-login {
-            color: #667eea;
-            border: 2px solid #667eea;
-            background: transparent;
-        }
-
-        .btn-login:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-register {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 100px 20px;
-            text-align: center;
-            min-height: 500px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        .hero p {
-            font-size: 20px;
-            margin-bottom: 30px;
-            opacity: 0.95;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-lg {
-            padding: 15px 40px;
-            font-size: 16px;
-        }
-
-        .btn-primary {
-            background: white;
-            color: #667eea;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-secondary {
-            border: 2px solid white;
-            color: white;
-            background: transparent;
-        }
-
-        .btn-secondary:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        .features {
-            padding: 80px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .features h2 {
-            text-align: center;
-            font-size: 36px;
-            margin-bottom: 50px;
-            color: #333;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-
-        .feature-card {
-            text-align: center;
-            padding: 30px;
-        }
-
-        .feature-icon {
-            font-size: 50px;
-            margin-bottom: 20px;
-        }
-
-        .feature-card h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .feature-card p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.8;
-        }
-
-        .how-it-works {
-            background: #f5f7fa;
-            padding: 80px 20px;
-        }
-
-        .how-it-works h2 {
-            text-align: center;
-            font-size: 36px;
-            margin-bottom: 50px;
-            color: #333;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .steps {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-        }
-
-        .step {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .step-number {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin: 0 auto 20px;
-        }
-
-        .step h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .step p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .cta {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-        }
-
-        .cta h2 {
-            font-size: 36px;
-            margin-bottom: 20px;
-        }
-
-        .cta p {
-            font-size: 18px;
-            margin-bottom: 30px;
-        }
-
-        footer {
-            background: #333;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 14px;
-        }
-
-        footer a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 36px;
-            }
-
-            .hero p {
-                font-size: 16px;
-            }
-
-            header {
-                flex-wrap: wrap;
-            }
-
-            nav {
-                display: none;
-            }
-        }
-    </style>
+    <title>Car Service | Your Digital Garage</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
 </head>
-<body>
+<body class="page-index">
 <header>
-    <div class="logo">🚗 Car Service</div>
-    <nav>
-        <a href="#features">Features</a>
-        <a href="#how-it-works">How It Works</a>
-    </nav>
-    <div class="auth-buttons">
-        <a href="/login" class="btn btn-login">Login</a>
-        <a href="/register" class="btn btn-register">Sign Up</a>
+    <div class="navbar wrap">
+        <a class="brand" th:href="@{/}" href="/">
+            <span class="brand-mark">CS</span>
+            <span>Car Service</span>
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+            <a href="#features">Features</a>
+            <a href="#workflow">How it works</a>
+        </nav>
+        <div class="auth">
+            <a class="button" th:href="@{/login}" href="/login">Sign in</a>
+            <a class="button primary" th:href="@{/register}" href="/register">Get started</a>
+        </div>
     </div>
 </header>
 
-<section class="hero">
-    <h1>🚗 Car Service Management</h1>
-    <p>Keep track of your vehicle maintenance with ease</p>
-    <div class="hero-buttons">
-        <a href="/register" class="btn btn-primary btn-lg">Get Started</a>
-        <a href="/login" class="btn btn-secondary btn-lg">Sign In</a>
-    </div>
-</section>
-
-<section id="features" class="features">
-    <h2>Key Features</h2>
-    <div class="features-grid">
-        <div class="feature-card">
-            <div class="feature-icon">🚗</div>
-            <h3>Multiple Vehicles</h3>
-            <p>Manage multiple vehicles from a single dashboard. Track all your cars, trucks, and more.</p>
+<main>
+    <section class="hero wrap">
+        <div>
+            <p class="eyebrow">Your digital garage / always ready</p>
+            <h1>Know your car.<br><span>Own the road.</span></h1>
+            <p class="hero-copy">One intelligent workspace for vehicles, maintenance history, service expenses, and reminders—built to keep every journey under control.</p>
+            <div class="hero-actions">
+                <a class="button primary" th:href="@{/register}" href="/register">Build your garage</a>
+                <a class="button" th:href="@{/login}" href="/login">Open dashboard</a>
+            </div>
         </div>
 
-        <div class="feature-card">
-            <div class="feature-icon">🔧</div>
-            <h3>Service Records</h3>
-            <p>Keep detailed records of all maintenance and repairs. Never forget when you last serviced your vehicle.</p>
+        <div class="vehicle-visual" aria-label="Digital vehicle diagnostic">
+            <div class="scanner">
+                <div class="scanner-head"><span>Vehicle link active</span><span>CS.OS 2.0</span></div>
+                <svg class="car" viewBox="0 0 620 245" role="img" aria-label="Futuristic vehicle">
+                    <defs>
+                        <linearGradient id="paint" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#9b7cff"/>
+                            <stop offset=".55" stop-color="#5440ad"/>
+                            <stop offset="1" stop-color="#17152b"/>
+                        </linearGradient>
+                        <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
+                            <stop stop-color="#111828"/>
+                            <stop offset="1" stop-color="#3aa9bd"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M65 159 94 112l88-13 74-54h159l85 59 58 18 24 42-20 18H84Z" fill="url(#paint)" stroke="#baaaff" stroke-width="2"/>
+                    <path d="m211 100 62-43h130l63 45Z" fill="url(#glass)" stroke="#4eeaff" stroke-opacity=".7"/>
+                    <path d="M273 57 256 101M403 57l20 45" stroke="#bdb4ef" stroke-opacity=".45"/>
+                    <path d="M73 159h52m357 0h90M157 119l-70 13m411-12 55 15" fill="none" stroke="#75efff" stroke-width="5"/>
+                    <circle cx="168" cy="176" r="43" fill="#08090f" stroke="#24283a" stroke-width="9"/>
+                    <circle cx="168" cy="176" r="18" fill="none" stroke="#8d6cff" stroke-width="5"/>
+                    <circle cx="476" cy="176" r="43" fill="#08090f" stroke="#24283a" stroke-width="9"/>
+                    <circle cx="476" cy="176" r="18" fill="none" stroke="#8d6cff" stroke-width="5"/>
+                    <path d="M34 213h552" stroke="#4eeaff" stroke-opacity=".28" stroke-width="2"/>
+                </svg>
+                <div class="telemetry">
+                    <div class="metric"><small>Garage</small><strong>CONNECTED</strong></div>
+                    <div class="metric"><small>History</small><strong>TRACKED</strong></div>
+                    <div class="metric"><small>Reminders</small><strong>ARMED</strong></div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="feature-card">
-            <div class="feature-icon">⏰</div>
-            <h3>Smart Reminders</h3>
-            <p>Get reminders for upcoming maintenance based on date or mileage. Stay on top of your vehicle care.</p>
+    <section id="features" class="content wrap">
+        <div class="section-heading">
+            <p>Everything connected</p>
+            <h2>Complete control over your vehicle care.</h2>
+            <span>Keep essential information organized and accessible without paper notes, forgotten dates, or scattered service records.</span>
         </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">💰</div>
-            <h3>Cost Tracking</h3>
-            <p>Track maintenance expenses and see how much you've spent on each vehicle.</p>
+        <div class="features-grid">
+            <article class="feature-card" data-number="01"><div class="feature-icon">VHC</div><h3>Vehicle garage</h3><p>Add and manage your vehicles with ownership, mileage, VIN, make, and model details.</p></article>
+            <article class="feature-card" data-number="02"><div class="feature-icon">SRV</div><h3>Service records</h3><p>Store maintenance dates, service types, mileage, costs, and repair descriptions.</p></article>
+            <article class="feature-card" data-number="03"><div class="feature-icon">RMD</div><h3>Smart reminders</h3><p>Create, complete, and manage reminders so important maintenance is never overlooked.</p></article>
+            <article class="feature-card" data-number="04"><div class="feature-icon">CST</div><h3>Cost visibility</h3><p>Keep service expenses attached to the correct vehicle and maintenance event.</p></article>
+            <article class="feature-card" data-number="05"><div class="feature-icon">PRF</div><h3>Personal profile</h3><p>Manage your account information and keep access to your digital garage secure.</p></article>
+            <article class="feature-card" data-number="06"><div class="feature-icon">SEC</div><h3>Protected ownership</h3><p>Authenticated access and ownership checks keep each driver’s vehicle data private.</p></article>
         </div>
+    </section>
 
-        <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Analytics</h3>
-            <p>View detailed analytics about your maintenance history and spending patterns.</p>
+    <section id="workflow" class="workflow">
+        <div class="content wrap">
+            <div class="section-heading">
+                <p>Simple workflow</p>
+                <h2>From registration to road-ready.</h2>
+            </div>
+            <div class="steps">
+                <article class="step-card"><div class="step-number">STEP / 01</div><h3>Create an account</h3><p>Set up your secure driver profile or explore the application as a guest.</p></article>
+                <article class="step-card"><div class="step-number">STEP / 02</div><h3>Add your vehicle</h3><p>Enter its identification details and current mileage.</p></article>
+                <article class="step-card"><div class="step-number">STEP / 03</div><h3>Record maintenance</h3><p>Connect every service event with its vehicle, cost, and mileage.</p></article>
+                <article class="step-card"><div class="step-number">STEP / 04</div><h3>Plan what comes next</h3><p>Add reminders and keep future maintenance visible.</p></article>
+            </div>
         </div>
+    </section>
 
-        <div class="feature-card">
-            <div class="feature-icon">🔒</div>
-            <h3>Secure & Private</h3>
-            <p>Your data is secure and private. Only you can access your vehicle information.</p>
+    <section class="cta wrap">
+        <div>
+            <h2>Your next service should never be a surprise.</h2>
+            <p>Create your account and start building a complete vehicle history.</p>
         </div>
-    </div>
-</section>
-
-<section id="how-it-works" class="how-it-works">
-    <h2>How It Works</h2>
-    <div class="steps">
-        <div class="step">
-            <div class="step-number">1</div>
-            <h3>Create Account</h3>
-            <p>Sign up with your email and create a secure account</p>
-        </div>
-
-        <div class="step">
-            <div class="step-number">2</div>
-            <h3>Add Vehicles</h3>
-            <p>Add your vehicles with basic information like make, model, and VIN</p>
-        </div>
-
-        <div class="step">
-            <div class="step-number">3</div>
-            <h3>Log Services</h3>
-            <p>Record maintenance and repairs with dates, costs, and details</p>
-        </div>
-
-        <div class="step">
-            <div class="step-number">4</div>
-            <h3>Set Reminders</h3>
-            <p>Create reminders for upcoming maintenance based on time or mileage</p>
-        </div>
-    </div>
-</section>
-
-<section class="cta">
-    <h2>Ready to Manage Your Vehicles?</h2>
-    <p>Start tracking your vehicle maintenance today</p>
-    <a href="/register" class="btn btn-primary btn-lg" style="color: #667eea;">Sign Up Now</a>
-</section>
+        <a class="button primary" th:href="@{/register}" href="/register">Start now</a>
+    </section>
+</main>
 
 <footer>
-    <p>&copy; 2024 Car Service Management System. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    <div class="footer-inner wrap">
+        <span>© 2026 Car Service</span>
+        <span>Vehicle care, precisely managed</span>
+    </div>
 </footer>
 </body>
 </html>

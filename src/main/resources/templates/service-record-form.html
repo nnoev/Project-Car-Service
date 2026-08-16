@@ -1,339 +1,98 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${isEdit} ? 'Edit Service Record' : 'Add Service Record'"></title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-        }
-
-        .navbar {
-            background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .navbar-logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #666;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #667eea;
-        }
-
-        .btn-logout {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .form-container {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-title {
-            font-size: 24px;
-            margin-bottom: 25px;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .form-row .form-group {
-            margin-bottom: 0;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        input[type="date"]:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #ecf0f1;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #d5dbdb;
-        }
-        .error-message {
-            color: #e74c3c;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-    </style>
+    <title th:text="${(isEdit ? 'Edit Service Record' : 'Add Service Record') + ' | Car Service'}">Service Record | Car Service</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
 </head>
-<body>
+<body class="page-service-record-form">
 <nav class="navbar">
-    <div class="navbar-logo">🚗 Car Service</div>
-    <div class="nav-links">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/vehicles">Vehicles</a>
-        <a href="/service-records">Service Records</a>
-        <a href="/reminders">Reminders</a>
-        <a href="/profile">Profile</a>
-        <form action="/logout" method="post" style="display: inline;">
-            <button type="submit" class="btn-logout">Logout</button>
-        </form>
+    <div class="navbar-inner wrap">
+        <a class="brand" th:href="@{/dashboard}" href="/dashboard"><span class="brand-mark">CS</span><span>Car Service</span></a>
+        <div class="nav-links">
+            <a class="admin-link" sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" href="/admin">Admin</a>
+            <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
+            <a th:href="@{/vehicles}" href="/vehicles">Vehicles</a>
+            <a class="active" th:href="@{/service-records}" href="/service-records">Services</a>
+            <a th:href="@{/reminders}" href="/reminders">Reminders</a>
+            <a th:href="@{/profile}" href="/profile">Profile</a>
+            <form class="logout-form" th:action="@{/logout}" method="post"><button type="submit" class="btn-logout">Logout</button></form>
+        </div>
     </div>
 </nav>
 
-<div class="container">
-    <div class="form-container">
-        <h1 class="form-title"
-            th:text="${isEdit ? 'Edit Service Record' : 'Add New Service Record'}">
-        </h1>
+<main class="wrap">
+    <section class="intro">
+        <p class="eyebrow" th:text="${isEdit ? 'Maintenance archive / update mode' : 'Maintenance archive / new entry'}">Maintenance archive</p>
+        <h1 th:if="${isEdit}">Refine the <span>record.</span></h1>
+        <h1 th:unless="${isEdit}">Log every <span>service.</span></h1>
+        <p class="intro-copy" th:text="${isEdit ? 'Correct or expand the details stored for this maintenance event.' : 'Build a reliable history with the service type, mileage, date, cost, and work performed.'}">Record the maintenance event.</p>
+        <div class="data-card">
+            <div class="data-mark">SRV</div>
+            <div><strong>Connected record</strong><p>Each entry is linked to one of your vehicles and stored by the dedicated service-record microservice.</p></div>
+        </div>
+    </section>
 
-        <form th:if="${!isEdit}"
-              th:action="@{'/service-records/add'}"
-              method="post"
-              th:object="${serviceRecord}">
+    <section class="form-panel">
+        <div class="form-heading">
+            <p th:text="${isEdit ? 'Edit maintenance data' : 'Create maintenance entry'}">Maintenance details</p>
+            <h2 th:text="${isEdit ? 'Edit service record' : 'Add service record'}">Add service record</h2>
+            <span>Required fields must be completed before the record can be saved.</span>
+        </div>
 
-            <div class="form-group">
-                <label for="vehicle">Vehicle *</label>
-                <select id="vehicle" th:field="*{vehicleId}">
-                    <option value="">-- Select Vehicle --</option>
-                    <option th:each="vehicle : ${vehicles}"
-                            th:value="${vehicle.id}"
-                            th:text="|${vehicle.year} ${vehicle.make} ${vehicle.model}|"></option>
+        <form th:action="${isEdit} ? @{/service-records/edit/{id}(id=${serviceRecord.id})} : @{/service-records/add}" method="post" th:object="${serviceRecord}">
+            <div class="form-group" th:if="${!isEdit}">
+                <label for="vehicleId">Vehicle</label>
+                <select id="vehicleId" required th:field="*{vehicleId}" th:classappend="${#fields.hasErrors('vehicleId')} ? 'field-error' : ''">
+                    <option value="">Select a vehicle</option>
+                    <option th:each="vehicleOption : ${vehicles}" th:value="${vehicleOption.id}" th:text="${vehicleOption.year + ' ' + vehicleOption.make + ' ' + vehicleOption.model}">Vehicle</option>
                 </select>
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('vehicleId')}"
-                     th:errors="*{vehicleId}">
-                </div>
+                <span class="error-message" th:if="${#fields.hasErrors('vehicleId')}" th:errors="*{vehicleId}">Vehicle is required.</span>
+            </div>
+
+            <div class="form-group" th:if="${isEdit}">
+                <label for="vehicleDisplay">Vehicle <span class="hint">locked for this record</span></label>
+                <input type="text" id="vehicleDisplay" th:value="${vehicle.year + ' ' + vehicle.make + ' ' + vehicle.model}" readonly>
+                <input type="hidden" th:field="*{vehicleId}">
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="serviceType">Service Type *</label>
-                    <input type="text" id="serviceType" th:field="*{serviceType}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('serviceType')}"
-                         th:errors="*{serviceType}">
-                    </div>
+                    <label for="serviceType">Service type</label>
+                    <input type="text" id="serviceType" placeholder="e.g. Oil and filter change" required th:field="*{serviceType}" th:classappend="${#fields.hasErrors('serviceType')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('serviceType')}" th:errors="*{serviceType}">Service type is required.</span>
                 </div>
                 <div class="form-group">
-                    <label for="serviceDate">Service Date</label>
+                    <label for="serviceDate">Service date <span class="hint">optional</span></label>
                     <input type="date" id="serviceDate" th:field="*{date}">
                 </div>
-
             </div>
 
             <div class="form-group">
-                <label for="description">Description</label>
-                <textarea id="description" th:field="*{description}"></textarea>
+                <label for="description">Work description <span class="hint">optional</span></label>
+                <textarea id="description" placeholder="Describe the maintenance or repairs performed" th:field="*{description}"></textarea>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="cost">Cost *</label>
-                    <input type="number" id="cost" th:field="*{cost}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('cost')}"
-                         th:errors="*{cost}">
-                    </div>
+                    <label for="cost">Cost</label>
+                    <input type="number" id="cost" min="0.01" step="0.01" placeholder="0.00" required th:field="*{cost}" th:classappend="${#fields.hasErrors('cost')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}">Cost must be positive.</span>
                 </div>
-
                 <div class="form-group">
-                    <label for="mileageAtService">Mileage at Service *</label>
-                    <input type="number" id="mileageAtService" th:field="*{mileageAtService}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('mileageAtService')}"
-                         th:errors="*{mileageAtService}">
-                    </div>
+                    <label for="mileageAtService">Mileage at service <span class="hint">kilometers</span></label>
+                    <input type="number" id="mileageAtService" min="1" placeholder="50000" required th:field="*{mileageAtService}" th:classappend="${#fields.hasErrors('mileageAtService')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('mileageAtService')}" th:errors="*{mileageAtService}">Mileage must be positive.</span>
                 </div>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary" th:text = "${isEdit ? 'Edit' : 'Add'} + ' Service Record'">Add Record</button>
-                <a href="/service-records" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="button primary" th:text="${isEdit ? 'Save record' : 'Create record'}">Create record</button>
+                <a th:href="@{/service-records}" href="/service-records" class="button">Cancel</a>
             </div>
         </form>
-        <form th:if="${isEdit}"
-              th:action="@{'/service-records/edit/' + ${serviceRecord.getId()}}"
-              method="post"
-              th:object="${serviceRecord}">
-
-            <div class="form-group">
-                <div>
-                    <label>Vehicle</label>
-
-                    <label>
-                        <input type="text"
-                               th:value="|${vehicle.year} ${vehicle.make} ${vehicle.model}|"
-                               readonly>
-                    </label>
-
-                    <input type="hidden"
-                           th:field="*{vehicleId}">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="serviceDate">Service Date</label>
-                    <input type="date" id="serviceDate" th:field="*{date}">
-                </div>
-
-                <div class="form-group">
-                    <label for="serviceType">Service Type *</label>
-                    <input type="text" id="serviceType" th:field="*{serviceType}">
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('serviceType')}"
-                     th:errors="*{serviceType}">
-                </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea id="description" th:field="*{description}"></textarea>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="cost">Cost *</label>
-                    <input type="number" id="cost" th:field="*{cost}">
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('cost')}"
-                     th:errors="*{cost}">
-                </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="mileageAtService">Mileage at Service *</label>
-                    <input type="number" id="mileageAtService" th:field="*{mileageAtService}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('mileageAtService')}"
-                         th:errors="*{mileageAtService}">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit"
-                        class="btn btn-primary"
-                        th:text="${isEdit} ? 'Edit Service Record' : 'Add Service Record'">
-                </button>
-
-                <a href="/service-records" class="btn btn-secondary">Cancel</a>
-            </div>
-
-        </form>
-
-    </div>
-</div>
+    </section>
+</main>
 </body>
 </html>

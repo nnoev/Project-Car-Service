@@ -1,243 +1,84 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${'Add Reminder - Car Service'}"></title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-        }
-
-        .navbar {
-            background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .navbar-logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #666;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #667eea;
-        }
-
-        .btn-logout {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .form-container {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-title {
-            font-size: 24px;
-            margin-bottom: 25px;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        input[type="date"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
-            cursor: pointer;
-        }
-
-        .checkbox-group label {
-            margin: 0;
-            cursor: pointer;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #ecf0f1;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #d5dbdb;
-        }
-
-        .help-text {
-            font-size: 12px;
-            color: #7f8c8d;
-            margin-top: 5px;
-        }
-        .error-message {
-            color: #e74c3c;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-    </style>
+    <title>Add Reminder | Car Service</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
 </head>
-<body>
+<body class="page-reminder-form">
 <nav class="navbar">
-    <div class="navbar-logo">🚗 Car Service</div>
-    <div class="nav-links">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/vehicles">Vehicles</a>
-        <a href="/service-records">Service Records</a>
-        <a href="/reminders">Reminders</a>
-        <a href="/profile">Profile</a>
-        <form action="/logout" method="post" style="display: inline;">
-            <button type="submit" class="btn-logout">Logout</button>
-        </form>
+    <div class="navbar-inner wrap">
+        <a class="brand" th:href="@{/dashboard}" href="/dashboard"><span class="brand-mark">CS</span><span>Car Service</span></a>
+        <div class="nav-links">
+            <a class="admin-link" sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" href="/admin">Admin</a>
+            <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
+            <a th:href="@{/vehicles}" href="/vehicles">Vehicles</a>
+            <a th:href="@{/service-records}" href="/service-records">Services</a>
+            <a class="active" th:href="@{/reminders}" href="/reminders">Reminders</a>
+            <a th:href="@{/profile}" href="/profile">Profile</a>
+            <form class="logout-form" th:action="@{/logout}" method="post"><button type="submit" class="btn-logout">Logout</button></form>
+        </div>
     </div>
 </nav>
 
-<div class="container">
-    <div class="form-container">
-        <h1 class="form-title">Add New Reminder</h1>
+<main class="wrap">
+    <section class="intro">
+        <p class="eyebrow">Maintenance queue / schedule task</p>
+        <h1>Plan the next <span>service.</span></h1>
+        <p class="intro-copy">Connect a task to your vehicle and define when it should appear on your maintenance radar.</p>
+        <div class="schedule-card">
+            <div class="schedule-mark">RMD</div>
+            <div><strong>Flexible target</strong><p>You can schedule by date, mileage, or both, depending on the maintenance requirement.</p></div>
+        </div>
+    </section>
 
-        <form th:action="${'/reminders/add'}"
-              method="post"
-              th:object="${reminder}">
+    <section class="form-panel">
+        <div class="form-heading">
+            <p>New maintenance task</p>
+            <h2>Add service reminder</h2>
+            <span>Select a vehicle and provide a clear title. Scheduling targets are optional.</span>
+        </div>
 
+        <div class="notice" th:if="${vehicles.isEmpty()}">
+            You need a vehicle before creating a reminder. <a th:href="@{/vehicles/add}" href="/vehicles/add">Add a vehicle first</a>.
+        </div>
+
+        <form th:action="@{/reminders/add}" method="post" th:object="${reminder}">
             <div class="form-group">
-                <label for="vehicle">Vehicle *</label>
-                <select id="vehicle" th:field="*{vehicleId}">
-                    <option value="">-- Select Vehicle --</option>
-                    <option th:each="vehicle : ${vehicles}"
-                            th:value="${vehicle.getId()}"
-                            th:text="|${vehicle.getYear()} ${vehicle.getMake()} ${vehicle.getModel()}|"></option>
+                <label for="vehicleId">Vehicle</label>
+                <select id="vehicleId" required th:field="*{vehicleId}" th:classappend="${#fields.hasErrors('vehicleId')} ? 'field-error' : ''">
+                    <option value="">Select a vehicle</option>
+                    <option th:each="vehicleOption : ${vehicles}" th:value="${vehicleOption.id}" th:text="${vehicleOption.year + ' ' + vehicleOption.make + ' ' + vehicleOption.model}">Vehicle</option>
                 </select>
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('vehicleId')}"
-                     th:errors="*{vehicleId}">
+                <span class="error-message" th:if="${#fields.hasErrors('vehicleId')}" th:errors="*{vehicleId}">Vehicle is required.</span>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Reminder title</label>
+                <input type="text" id="title" placeholder="e.g. Oil change or tire rotation" required th:field="*{title}" th:classappend="${#fields.hasErrors('title')} ? 'field-error' : ''">
+                <span class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title is required.</span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dueDate">Due date <span class="hint">optional</span></label>
+                    <input type="date" id="dueDate" th:field="*{dueDate}">
+                    <span class="help-text">The calendar target for this maintenance task.</span>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label for="title">Reminder Title *</label>
-                <input type="text" id="title" name="title" th:field="*{title}"
-                       placeholder="e.g., Oil Change Due, Tire Rotation">
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('title')}"
-                     th:errors="*{title}">
+                <div class="form-group">
+                    <label for="dueMileage">Due mileage <span class="hint">kilometers</span></label>
+                    <input type="number" id="dueMileage" min="1" placeholder="e.g. 80000" th:field="*{dueMileage}">
+                    <span class="help-text">The odometer target for this maintenance task.</span>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label for="dueDate">Due Date</label>
-                <input type="date" id="dueDate" name="dueDate" th:field="*{dueDate}">
-                <div class="help-text">Set when this service is due by date</div>
-            </div>
-
-            <div class="form-group">
-                <label for="dueMileage">Due Mileage</label>
-                <input type="number" id="dueMileage" name="dueMileage" th:field="*{dueMileage}" min="0">
-                <div class="help-text">Set when this service is due by mileage (in miles)</div>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Add Record</button>
-                <a href="/reminders" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="button primary" th:disabled="${vehicles.isEmpty()}">Create reminder</button>
+                <a th:href="@{/reminders}" href="/reminders" class="button">Cancel</a>
             </div>
         </form>
-    </div>
-</div>
+    </section>
+</main>
 </body>
 </html>

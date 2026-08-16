@@ -1,308 +1,85 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${isEdit ? 'Edit' : 'Add'} + ' Vehicle'"></title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-        }
-
-        .navbar {
-            background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .navbar-logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #666;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #667eea;
-        }
-
-        .btn-logout {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .form-container {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-title {
-            font-size: 24px;
-            margin-bottom: 25px;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .form-row .form-group {
-            margin-bottom: 0;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #ecf0f1;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #d5dbdb;
-        }
-
-        .error-message {
-            color: #e74c3c;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-    </style>
+    <title th:text="${(isEdit ? 'Edit Vehicle' : 'Add Vehicle') + ' | Car Service'}">Vehicle | Car Service</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
 </head>
-<body>
+<body class="page-vehicle-form">
 <nav class="navbar">
-    <div class="navbar-logo">🚗 Car Service</div>
-    <div class="nav-links">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/vehicles">Vehicles</a>
-        <a href="/service-records">Service Records</a>
-        <a href="/reminders">Reminders</a>
-        <a href="/profile">Profile</a>
-        <form action="/logout" method="post" style="display: inline;">
-            <button type="submit" class="btn-logout">Logout</button>
-        </form>
+    <div class="navbar-inner wrap">
+        <a class="brand" th:href="@{/dashboard}" href="/dashboard"><span class="brand-mark">CS</span><span>Car Service</span></a>
+        <div class="nav-links">
+            <a class="admin-link" sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" href="/admin">Admin</a>
+            <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
+            <a class="active" th:href="@{/vehicles}" href="/vehicles">Vehicles</a>
+            <a th:href="@{/service-records}" href="/service-records">Services</a>
+            <a th:href="@{/reminders}" href="/reminders">Reminders</a>
+            <a th:href="@{/profile}" href="/profile">Profile</a>
+            <form class="logout-form" th:action="@{/logout}" method="post"><button type="submit" class="btn-logout">Logout</button></form>
+        </div>
     </div>
 </nav>
 
-<div class="container">
-    <!--suppress Annotator -->
-    <div class="form-container">
-            <h1 class="form-title"
-                th:text="${isEdit ? 'Edit Vehilce' : 'Add New Vehicle'}">
-            </h1>
+<main class="wrap">
+    <section class="intro">
+        <p class="eyebrow" th:text="${isEdit ? 'Vehicle registry / update mode' : 'Vehicle registry / new connection'}">Vehicle registry</p>
+        <h1 th:if="${isEdit}">Update your <span>vehicle.</span></h1>
+        <h1 th:unless="${isEdit}">Connect a new <span>vehicle.</span></h1>
+        <p class="intro-copy" th:text="${isEdit ? 'Keep your vehicle identity and current mileage accurate.' : 'Add the vehicle details required to begin tracking its complete maintenance history.'}">Enter the vehicle details.</p>
+        <div class="identity-card">
+            <div class="identity-mark">VIN</div>
+            <div><strong>Vehicle identity</strong><p>The 17-character VIN uniquely identifies the vehicle and should be entered exactly as shown on its documents.</p></div>
+        </div>
+    </section>
 
+    <section class="form-panel">
+        <div class="form-heading">
+            <p th:text="${isEdit ? 'Edit configuration' : 'Garage enrollment'}">Vehicle details</p>
+            <h2 th:text="${isEdit ? 'Edit vehicle' : 'Add vehicle'}">Add vehicle</h2>
+            <span>Fields marked as required must be completed.</span>
+        </div>
 
-        <form th:if="${isEdit}"
-              th:action="@{/vehicles/edit/{id}(id=${vehicle.id})}"
-              method="post"
-              th:object="${vehicle}">
-
+        <form th:action="${isEdit} ? @{/vehicles/edit/{id}(id=${vehicle.id})} : @{/vehicles/add}" method="post" th:object="${vehicle}">
             <div class="form-row">
                 <div class="form-group">
-                    <label for="make">Make *</label>
-                    <input type="text" id="make" name="make" th:field="*{make}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('make')}"
-                         th:errors="*{make}">
-                    </div>
+                    <label for="make">Make</label>
+                    <input type="text" id="make" placeholder="e.g. Toyota" required th:field="*{make}" th:classappend="${#fields.hasErrors('make')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('make')}" th:errors="*{make}">Invalid make.</span>
                 </div>
-
                 <div class="form-group">
-                    <label for="model">Model *</label>
-                    <input type="text" id="model" name="model" th:field="*{model}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('model')}"
-                         th:errors="*{model}">
-                    </div>
+                    <label for="model">Model</label>
+                    <input type="text" id="model" placeholder="e.g. Corolla" required th:field="*{model}" th:classappend="${#fields.hasErrors('model')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('model')}" th:errors="*{model}">Invalid model.</span>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="year">Year *</label>
-                    <input type="number" id="year" name="year" th:field="*{year}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('year')}"
-                         th:errors="*{year}">
-                    </div>
+                    <label for="year">Production year <span class="hint">1900–2100</span></label>
+                    <input type="number" id="year" min="1900" max="2100" placeholder="2020" required th:field="*{year}" th:classappend="${#fields.hasErrors('year')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Invalid production year.</span>
                 </div>
-
                 <div class="form-group">
-                    <label for="mileage">Mileage (kilometers) *</label>
-                    <input type="number" id="mileage" name="mileage" th:field="*{mileage}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('mileage')}"
-                         th:errors="*{mileage}">
-                    </div>
+                    <label for="mileage">Mileage <span class="hint">kilometers</span></label>
+                    <input type="number" id="mileage" min="1" placeholder="50000" required th:field="*{mileage}" th:classappend="${#fields.hasErrors('mileage')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('mileage')}" th:errors="*{mileage}">Invalid mileage.</span>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="vin">VIN (Vehicle Identification Number) *</label>
-                <input type="text" id="vin" name="vin" th:field="*{vin}" placeholder="17-character VIN">
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('vin')}"
-                     th:errors="*{vin}">
-                </div>
+                <label for="vin">Vehicle identification number <span class="hint">17 characters</span></label>
+                <input type="text" id="vin" minlength="17" maxlength="17" autocomplete="off" placeholder="Enter the complete VIN" required th:field="*{vin}" th:classappend="${#fields.hasErrors('vin')} ? 'field-error' : ''">
+                <span class="error-message" th:if="${#fields.hasErrors('vin')}" th:errors="*{vin}">Invalid VIN.</span>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary" th:text="${isEdit? 'Edit':'Add'}">Add Vehicle</button>
-                <a href="/vehicles" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="button primary" th:text="${isEdit ? 'Save vehicle' : 'Add to garage'}">Add to garage</button>
+                <a th:href="@{/vehicles}" href="/vehicles" class="button">Cancel</a>
             </div>
         </form>
-        <form th:if="${!isEdit}"
-              th:action="@{/vehicles/add}"
-              method="post"
-              th:object="${vehicle}">
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="make">Make *</label>
-                    <input type="text" id="make" name="make" th:field="*{make}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('make')}"
-                         th:errors="*{make}">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="model">Model *</label>
-                    <input type="text" id="model" name="model" th:field="*{model}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('model')}"
-                         th:errors="*{model}">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="year">Year *</label>
-                    <input type="number" id="year" name="year" th:field="*{year}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('year')}"
-                         th:errors="*{year}">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="mileage">Mileage (miles) *</label>
-                    <input type="number" id="mileage" name="mileage" th:field="*{mileage}">
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('mileage')}"
-                         th:errors="*{mileage}">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="vin">VIN (Vehicle Identification Number) *</label>
-                <input type="text" id="vin" name="vin" th:field="*{vin}" placeholder="17-character VIN">
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('vin')}"
-                     th:errors="*{vin}">
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary" th:text="${isEdit? 'Edit':'Add'}">Add Vehicle</button>
-                <a href="/vehicles" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
-    </div>
-</div>
+    </section>
+</main>
 </body>
 </html>

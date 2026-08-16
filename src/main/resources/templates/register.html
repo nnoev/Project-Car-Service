@@ -3,205 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Service - Register</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .logo p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .form-row .form-group {
-            margin-bottom: 0;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-register {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .btn-register:hover {
-            transform: translateY(-2px);
-        }
-
-        .error-message {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #fadbd8;
-            border-radius: 5px;
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .login-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-
-        .btn-guest {
-            display: block;
-            width: 100%;
-            margin-top: 10px;
-            padding: 12px;
-            text-align: center;
-            text-decoration: none;
-            background: #ecf0f1;
-            color: #333;
-            border-radius: 5px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .btn-guest:hover {
-            background: #d5dbdb;
-        }
-    </style>
+    <title>Car Service | Create Account</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
 </head>
-<body>
-<div class="container">
-    <div class="logo">
-        <h1>🚗 Car Service</h1>
-        <p>Create Your Account</p>
-    </div>
+<body class="page-register">
+<div class="page-shell">
+    <header class="topbar">
+        <a class="brand" th:href="@{/}" href="/">
+            <span class="brand-mark">CS</span>
+            <span>Car Service</span>
+        </a>
+        <div class="step">Account initialization</div>
+    </header>
 
-    <form th:action="@{/register}" th:method="post" th:object="${userRegistration}">
-        <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Please submit valid
-            username and password
-        </div>
-        <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Please submit valid
-            username and password
-        </div>
+    <main>
+        <section class="intro">
+            <p class="eyebrow">Your digital garage / new driver</p>
+            <h1>Build your<br><span>service history.</span></h1>
+            <p class="intro-copy">Create your secure workspace and keep ownership, maintenance, expenses, and reminders under control.</p>
+            <div class="benefits">
+                <div class="benefit">Keep all vehicles and records connected</div>
+                <div class="benefit">Receive maintenance reminders on time</div>
+                <div class="benefit">Monitor service history and ownership safely</div>
+            </div>
+        </section>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label for="firstName">First Name</label>
-                <input type="text" id="firstName" name="firstName" required th:field="*{firstName}">
+        <section class="form-panel">
+            <div class="form-heading">
+                <p>Create driver profile</p>
+                <h2>Start your garage</h2>
+                <span>Complete the details below to create your account.</span>
             </div>
 
-            <div class="form-group">
-                <label for="lastName">Last Name</label>
-                <input type="text" id="lastName" name="lastName" required th:field="*{lastName}">
-            </div>
-        </div>
+            <form th:action="@{/register}" method="post" th:object="${userRegistration}">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First name</label>
+                        <input type="text" id="firstName" autocomplete="given-name" placeholder="First name" required
+                               th:field="*{firstName}" th:classappend="${#fields.hasErrors('firstName')} ? 'field-error' : ''">
+                        <span class="error-message" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Invalid first name.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last name</label>
+                        <input type="text" id="lastName" autocomplete="family-name" placeholder="Last name" required
+                               th:field="*{lastName}" th:classappend="${#fields.hasErrors('lastName')} ? 'field-error' : ''">
+                        <span class="error-message" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Invalid last name.</span>
+                    </div>
+                </div>
 
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required th:field="*{username}">
-        </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" autocomplete="username" placeholder="Choose a username" required
+                           th:field="*{username}" th:classappend="${#fields.hasErrors('username')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Invalid username.</span>
+                </div>
 
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required th:field="*{email}">
-        </div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" autocomplete="email" placeholder="name@example.com" required
+                           th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Invalid email address.</span>
+                </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required th:field="*{password}">
-        </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" autocomplete="new-password" placeholder="Create a secure password" required
+                           th:field="*{password}" th:classappend="${#fields.hasErrors('password')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Invalid password.</span>
+                </div>
 
-        <div class="form-actions">
-            <button type="submit" class="btn-register">Register</button>
+                <button type="submit" class="btn-register">Create account</button>
+                <a th:href="@{/guest-login}" href="/guest-login" class="btn-guest">Continue as guest</a>
 
-            <a th:href="@{/guest-login}" class="btn-guest">
-                Continue as Guest
-            </a>
-        </div>
+                <div class="login-link">Already registered? <a th:href="@{/login}" href="/login">Sign in</a></div>
+            </form>
+        </section>
+    </main>
 
-        <div class="login-link">
-            Already have an account? <a href="/login">Login here</a>
-        </div>
-    </form>
+    <footer class="footer">
+        <span>Vehicle care, precisely managed</span>
+        <span>Secure account creation</span>
+    </footer>
 </div>
 </body>
 </html>

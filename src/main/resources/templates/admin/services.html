@@ -1,101 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin – Service Records</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <style>
-        body { margin:0; font-family:'Segoe UI',sans-serif; background:#f5f7fa; color:#333; }
-
-        .navbar {
-            background:white; box-shadow:0 2px 5px rgba(0,0,0,0.1);
-            padding:0 20px; height:60px; display:flex; justify-content:space-between; align-items:center;
-            position:sticky; top:0; z-index:100;
-        }
-
-        .navbar-logo { font-size:22px; font-weight:bold; color:#667eea; }
-
-        .nav-links { display:flex; gap:25px; align-items:center; }
-        .nav-links a { text-decoration:none; color:#666; transition:0.3s; }
-        .nav-links a:hover { color:#667eea; }
-
-        .btn-logout { background:#e74c3c; color:white; padding:8px 16px; border:none; border-radius:5px; cursor:pointer; }
-
-        .container { max-width:1200px; margin:30px auto; padding:0 20px; }
-
-        .table-card {
-            background:white; padding:20px; border-radius:8px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        table { width:100%; border-collapse:collapse; }
-        th,td { padding:12px; border-bottom:1px solid #ddd; }
-        th { text-align:left; color:#667eea; }
-        tr:hover { background:#f0f2ff; }
-
-        .btn-danger {
-            background:#e74c3c; color:white; padding:6px 12px; border:none; border-radius:5px; cursor:pointer;
-        }
-    </style>
-</head>
-
-<body>
-
-<nav class="navbar">
-    <div class="navbar-logo">🚗 Admin Panel</div>
-
-    <div class="nav-links">
-        <a href="/admin">Dashboard</a>
-        <a href="/admin/users">Users</a>
-        <a href="/admin/vehicles">Vehicles</a>
-        <a href="/admin/services">Services</a>
-        <a href="/admin/reminders">Reminders</a>
-        <a href="/admin/logs">Logs</a>
-
-        <form action="/logout" method="post" style="display:inline;">
-            <button class="btn-logout">Logout</button>
-        </form>
-    </div>
-</nav>
-
-<div class="container">
-    <h1>All Service Records</h1>
-
-    <div class="table-card">
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Vehicle</th>
-                <th>User</th>
-                <th>Service Type</th>
-                <th>Date</th>
-                <th>Cost</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr th:each="s : ${services}">
-                <td th:text="${s.id}"></td>
-                <td th:text="${s.vehicle.make + ' ' + s.vehicle.model}"></td>
-                <td th:text="${s.vehicle.user.username}"></td>
-                <td th:text="${s.serviceType}"></td>
-                <td th:text="${s.date}"></td>
-                <td th:text="${s.cost}"></td>
-
-                <td>
-                    <form th:action="@{/admin/services/delete/{id}(id=${s.id})}" method="post">
-                        <button class="btn-danger">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-
-        </table>
-    </div>
-</div>
-
-</body>
-</html>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Car Service | Admin Services</title>
+<link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css"></head>
+<body class="page-admin-services">
+<nav><div class="nav wrap"><a class="brand" th:href="@{/admin}" href="/admin"><span class="mark">CS</span><span>Admin Control</span><span class="tag">ADMIN</span></a><div class="links"><a th:href="@{/admin}" href="/admin">Overview</a><a th:href="@{/admin/users}" href="/admin/users">Users</a><a th:href="@{/admin/vehicles}" href="/admin/vehicles">Vehicles</a><a class="active" th:href="@{/admin/services}" href="/admin/services">Services</a><a th:href="@{/admin/reminders}" href="/admin/reminders">Reminders</a><a class="return" th:href="@{/dashboard}" href="/dashboard">Main app</a><form th:action="@{/logout}" method="post"><button class="logout" type="submit">Logout</button></form></div></div></nav>
+<main class="wrap"><header class="head"><div><p class="eyebrow">Microservice registry / global history</p><h1>All service <span>records.</span></h1><p class="copy">Monitor maintenance entries returned by the service-record microservice.</p></div><div class="count"><strong th:text="${services.size()}">0</strong> RECORDS</div></header>
+<section class="table"><table th:if="${!services.isEmpty()}"><thead><tr><th>Identifier</th><th>User ID</th><th>Vehicle ID</th><th>Service type</th><th>Date</th><th>Mileage</th><th>Cost</th><th>Action</th></tr></thead><tbody>
+<tr th:each="serviceItem : ${services}"><td><span class="id" th:title="${serviceItem.id}" th:text="${serviceItem.id}">UUID</span></td><td><span class="id" th:title="${serviceItem.userId}" th:text="${serviceItem.userId}">User UUID</span></td><td><span class="id" th:title="${serviceItem.vehicleId}" th:text="${serviceItem.vehicleId}">Vehicle UUID</span></td><td><span class="type" th:text="${serviceItem.serviceType}">Service</span></td><td th:text="${serviceItem.serviceDate != null ? #temporals.format(serviceItem.serviceDate,'dd MMM yyyy') : '—'}">Date</td><td th:text="${serviceItem.mileageAtService + ' km'}">0 km</td><td><span class="cost" th:text="${'€' + #numbers.formatDecimal(serviceItem.cost,1,2)}">€0.00</span></td><td><form th:action="@{/admin/services/{id}/delete(id=${serviceItem.id})}" method="post"><button class="delete" type="submit" onclick="return confirm('Delete this service record?')">Delete</button></form></td></tr>
+</tbody></table><div class="empty" th:if="${services.isEmpty()}">No service records were found.</div></section></main>
+</body></html>

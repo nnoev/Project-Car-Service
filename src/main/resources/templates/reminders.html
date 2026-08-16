@@ -1,381 +1,99 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Reminders - Car Service</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-        }
-
-        .navbar {
-            background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .navbar-logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #666;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #667eea;
-        }
-
-        .btn-logout {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            color: #333;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .reminders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .reminder-card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid #667eea;
-            transition: all 0.3s;
-        }
-
-        .reminder-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-        }
-
-        .reminder-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .reminder-vehicle {
-            color: #667eea;
-            font-size: 13px;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .reminder-details {
-            margin-bottom: 15px;
-        }
-
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-
-        .detail-label {
-            color: #999;
-            font-weight: 600;
-        }
-
-        .detail-value {
-            color: #333;
-        }
-
-        .reminder-status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-completed {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .reminder-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .btn-sm {
-            padding: 8px 12px;
-            font-size: 12px;
-            text-align: center;
-        }
-
-        .btn-danger {
-            background: #e74c3c;
-            color: white;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-danger:hover {
-            background: #c0392b;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            background: white;
-            border-radius: 8px;
-        }
-
-        .empty-state-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h2 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            color: #999;
-            margin-bottom: 20px;
-        }
-
-        .alert.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-    </style>
+    <title>Car Service | Reminders</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
 </head>
-<body>
+<body class="page-reminders">
 <nav class="navbar">
-    <div class="navbar-logo">🚗 Car Service</div>
-    <div class="nav-links">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/vehicles">Vehicles</a>
-        <a href="/service-records">Service Records</a>
-        <a href="/reminders">Reminders</a>
-        <a href="/profile">Profile</a>
-        <form action="/logout" method="post" style="display: inline;">
-            <button type="submit" class="btn-logout">Logout</button>
-        </form>
+    <div class="navbar-inner wrap">
+        <a class="brand" th:href="@{/dashboard}" href="/dashboard"><span class="brand-mark">CS</span><span>Car Service</span></a>
+        <div class="nav-links">
+            <a class="admin-link" sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" href="/admin">Admin</a>
+            <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
+            <a th:href="@{/vehicles}" href="/vehicles">Vehicles</a>
+            <a th:href="@{/service-records}" href="/service-records">Services</a>
+            <a class="active" th:href="@{/reminders}" href="/reminders">Reminders</a>
+            <a th:href="@{/profile}" href="/profile">Profile</a>
+            <form class="logout-form" th:action="@{/logout}" method="post"><button type="submit" class="btn-logout">Logout</button></form>
+        </div>
     </div>
 </nav>
 
-<div class="container">
-    <div class="header">
-        <h1>Service Reminders</h1>
-        <a href="/reminders/add" class="btn btn-primary">+ Add Reminder</a>
-    </div>
-    <div class="alert success" th:if="${message}">
-        <strong>Success!</strong>
-        <span th:text="${message}"></span>
-    </div>
+<main class="wrap">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Maintenance queue / priority monitoring</p>
+            <h1>Service <span>reminders.</span></h1>
+            <p class="page-copy">Track due dates and mileage targets before maintenance becomes urgent.</p>
+        </div>
+        <a th:href="@{/reminders/add}" href="/reminders/add" class="button primary">+ Add reminder</a>
+    </header>
 
-    <div class="reminders-grid" th:if="${!user.getServiceReminders().isEmpty()}">
-        <div class="reminder-card"
-             th:each="reminder : ${user.getServiceReminders()}"
-             th:classappend="${reminder.completed ? 'completed' : ''}">
+    <div class="alert" th:if="${message}"><span th:text="${message}">Operation completed successfully.</span></div>
 
-            <h3 class="reminder-title" th:text="${reminder.title}">
-            </h3>
+    <section class="reminders-grid" th:if="${!user.serviceReminders.isEmpty()}" aria-label="Service reminders">
+        <article class="reminder-card" th:each="reminder : ${user.serviceReminders}" th:classappend="${reminder.completed ? 'completed' : ''}">
+            <div class="card-head">
+                <div>
+                    <p class="reminder-code">Maintenance task</p>
+                    <h2 class="reminder-title" th:text="${reminder.title}">Reminder title</h2>
+                </div>
+                <span class="reminder-status status-completed" th:if="${reminder.completed}">Completed</span>
+                <span class="reminder-status status-overdue" th:if="${!reminder.completed and reminder.dueDate != null and reminder.dueDate.isBefore(T(java.time.LocalDate).now())}">Overdue</span>
+                <span class="reminder-status status-today" th:if="${!reminder.completed and reminder.dueDate != null and reminder.dueDate.equals(T(java.time.LocalDate).now())}">Due today</span>
+                <span class="reminder-status status-pending" th:if="${!reminder.completed and (reminder.dueDate == null or reminder.dueDate.isAfter(T(java.time.LocalDate).now()))}">Pending</span>
+            </div>
 
-
-            <p class="reminder-vehicle">
-                🚗
-                <span th:text="|${reminder.vehicle.year} ${reminder.vehicle.make} ${reminder.vehicle.model}|"></span>
-            </p>
-
-
-            <!-- Status -->
-            <span class="reminder-status status-completed"
-                  th:if="${reminder.completed}">
-        Completed
-    </span>
-
-            <span class="reminder-status status-overdue"
-                  th:if="${!reminder.completed
-          and reminder.dueDate != null
-          and reminder.dueDate.isBefore(T(java.time.LocalDate).now())}">
-        Overdue
-    </span>
-
-            <span class="reminder-status status-today"
-                  th:if="${!reminder.completed
-          and reminder.dueDate != null
-          and reminder.dueDate.equals(T(java.time.LocalDate).now())}">
-        Due Today
-    </span>
-
-            <span class="reminder-status status-pending"
-                  th:if="${!reminder.completed
-          and (reminder.dueDate == null
-          or reminder.dueDate.isAfter(T(java.time.LocalDate).now()))}">
-        Pending
-    </span>
-
+            <div class="reminder-vehicle">
+                <span class="vehicle-mark">VHC</span>
+                <span th:text="${reminder.vehicle.year + ' ' + reminder.vehicle.make + ' ' + reminder.vehicle.model}">Vehicle</span>
+            </div>
 
             <div class="reminder-details">
-
-
-                <div class="detail-item"
-                     th:if="${reminder.dueDate}">
-
-            <span class="detail-label">
-                📅 Due Date:
-            </span>
-
-                    <span class="detail-value"
-                          th:text="${#temporals.format(reminder.dueDate, 'MMM dd, yyyy')}">
-            </span>
-
+                <div class="detail-item" th:if="${reminder.dueDate != null}">
+                    <span class="detail-label">Due date</span>
+                    <span class="detail-value" th:text="${#temporals.format(reminder.dueDate, 'dd MMM yyyy')}">Date</span>
                 </div>
-
-
-                <div class="detail-item"
-                     th:if="${reminder.dueMileage}">
-
-            <span class="detail-label">
-                🛣 Mileage:
-            </span>
-
-                    <span class="detail-value"
-                          th:text="${reminder.dueMileage + ' kilometers'}">
-            </span>
-
+                <div class="detail-item" th:if="${reminder.dueDate == null}">
+                    <span class="detail-label">Due date</span>
+                    <span class="detail-value">Not specified</span>
                 </div>
-
+                <div class="detail-item" th:if="${reminder.dueMileage != null}">
+                    <span class="detail-label">Due mileage</span>
+                    <span class="detail-value" th:text="${reminder.dueMileage + ' km'}">0 km</span>
+                </div>
+                <div class="detail-item" th:if="${reminder.dueMileage == null}">
+                    <span class="detail-label">Due mileage</span>
+                    <span class="detail-value">Not specified</span>
+                </div>
             </div>
-
 
             <div class="reminder-actions">
-
-
-                <form th:action="@{/reminders/toggle/{id}(id=${reminder.id})}"
-                      method="post"
-                      style="display:flex; align-items:center; gap:6px;">
-
-                    <input type="hidden"
-                           name="completed"
-                           th:value="${!reminder.completed}">
-
-                    <label>
-                        <input type="checkbox"
-                               th:checked="${reminder.completed}"
-                               onchange="this.form.submit()">
+                <form th:action="@{/reminders/toggle/{id}(id=${reminder.id})}" method="post">
+                    <input type="hidden" name="completed" th:value="${!reminder.completed}">
+                    <label class="toggle-control">
+                        <input type="checkbox" th:checked="${reminder.completed}" onchange="this.form.submit()">
+                        <span th:text="${reminder.completed ? 'Reopen' : 'Complete'}">Complete</span>
                     </label>
-
-                    <label style="font-size:13px; font-weight:600;">
-                        Completed
-                    </label>
-
                 </form>
-
-
-                <form th:action="@{/reminders/delete/{id}(id=${reminder.id})}"
-                      method="post">
-                    <button class="btn btn-sm btn-danger"
-                            onclick="return confirm('Delete this reminder?')">
-                        Delete
-                    </button>
-
-
+                <form th:action="@{/reminders/delete/{id}(id=${reminder.id})}" method="post">
+                    <button type="submit" class="btn-danger" onclick="return confirm('Are you sure you want to delete this reminder?')">Delete</button>
                 </form>
-
             </div>
+        </article>
+    </section>
 
-
+    <section class="empty-state" th:if="${user.serviceReminders.isEmpty()}">
+        <div class="empty-content">
+            <div class="empty-state-icon">RMD+</div>
+            <h2>No reminders configured</h2>
+            <p>Create your first maintenance reminder and keep future service work visible.</p>
+            <a th:href="@{/reminders/add}" href="/reminders/add" class="button primary">Add first reminder</a>
         </div>
-
-    </div>
-
-    <div class="empty-state" th:if="${user.getServiceReminders().isEmpty()}">
-        <div class="empty-state-icon">⏰</div>
-        <h2>No reminders set</h2>
-        <p>Create reminders to stay on top of your vehicle maintenance</p>
-        <a href="/reminders/add" class="btn btn-primary">Add Your First Reminder</a>
-    </div>
-</div>
+    </section>
+</main>
 </body>
 </html>

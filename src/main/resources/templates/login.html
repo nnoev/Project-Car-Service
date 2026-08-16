@@ -3,148 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Service - Login</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .logo p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-        }
-
-        .error-message {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #fadbd8;
-            border-radius: 5px;
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .register-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>Car Service | Login</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
 </head>
-<body>
-<div class="container">
-    <div class="logo">
-        <h1>🚗 Car Service</h1>
-        <p>Vehicle Maintenance Management System</p>
-    </div>
-
-    <form th:action="@{/login}" th:method="post" th:object="${loginRequest}">
-        <p class="error-message" th:if="${error != null}" th:text="${error}"></p>
-        <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username not found!</div>
-        <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password don`t match!</div>
-
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required th:field="*{username}">
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required th:field="*{password}">
-        </div>
-
-        <button type="submit" class="btn-login">Login</button>
-
-        <div class="register-link">
-            Don't have an account? <a href="/register">Register here</a>
-        </div>
-    </form>
+<body class="page-login">
+<div class="page-shell">
+    <header class="topbar">
+        <a class="brand" th:href="@{/}" href="/"><span class="brand-mark">CS</span><span>Car Service</span></a>
+        <div class="system-status">Systems online</div>
+    </header>
+    <main>
+        <section class="intro">
+            <p class="eyebrow">Your digital garage / secure access</p>
+            <h1>Drive smarter.<br><span>Maintain better.</span></h1>
+            <p class="intro-copy">Keep every vehicle, service record, and maintenance reminder organized in one intelligent workspace.</p>
+            <div class="telemetry" aria-label="Platform benefits">
+                <div class="metric"><small>Access</small><strong>SECURE</strong></div>
+                <div class="metric"><small>Records</small><strong>CONNECTED</strong></div>
+                <div class="metric"><small>Reminders</small><strong>READY</strong></div>
+            </div>
+        </section>
+        <section class="form-panel">
+            <div class="form-heading"><p>Driver authentication</p><h2>Welcome back</h2><span>Enter your credentials to access your garage.</span></div>
+            <form th:action="@{/login}" method="post" th:object="${loginRequest}">
+                <p class="error-message" th:if="${error != null}" th:text="${error}">Invalid username or password.</p>
+                <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username is invalid.</div>
+                <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password is invalid.</div>
+                <div class="form-group"><label for="username">Username</label><input type="text" id="username" autocomplete="username" placeholder="Enter your username" required th:field="*{username}"></div>
+                <div class="form-group"><label for="password">Password</label><input type="password" id="password" autocomplete="current-password" placeholder="Enter your password" required th:field="*{password}"></div>
+                <button type="submit" class="btn-login">Enter garage</button>
+                <div class="register-link">New to Car Service? <a th:href="@{/register}" href="/register">Create an account</a></div>
+            </form>
+        </section>
+    </main>
+    <footer class="footer"><span>Vehicle care, precisely managed</span><span>Car Service Platform</span></footer>
 </div>
 </body>
 </html>

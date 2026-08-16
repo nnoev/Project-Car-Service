@@ -1,540 +1,139 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - Car Service</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-        }
-
-        /* NAVBAR */
-
-        .navbar {
-            background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px;
-        }
-
-        .navbar-logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #666;
-            transition: 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #667eea;
-        }
-
-        .btn-logout {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-
-        /* CONTAINER */
-
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-
-        /* PROFILE HEADER */
-
-        .profile-header {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 48px;
-            font-weight: bold;
-        }
-
-        .profile-info h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .profile-meta {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .meta-item {
-            color: #666;
-        }
-
-
-        /* TABS */
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            border-bottom: 2px solid #ecf0f1;
-            margin-bottom: 20px;
-        }
-
-        .tab-button {
-            padding: 12px 20px;
-            color: #666;
-            text-decoration: none;
-            font-weight: 600;
-            border-bottom: 3px solid transparent;
-            transition: 0.3s;
-        }
-
-        .tab-button:hover {
-            color: #667eea;
-        }
-
-        .tab-button.active {
-            color: #667eea;
-            border-bottom: 3px solid #667eea;
-        }
-
-
-        /* TAB CONTENT */
-
-        .tab-content {
-            display: none;
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-
-        /* THIS IS THE IMPORTANT PART */
-
-        .tab-content.active {
-            display: block !important;
-        }
-
-
-        /* FORMS */
-
-        .form-title {
-            font-size: 20px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns:1fr 1fr;
-            gap: 15px;
-        }
-
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-
-        input[type=text],
-        input[type=email],
-        input[type=password] {
-
-            width: 100%;
-            padding: 12px;
-
-            border: 1px solid #ddd;
-            border-radius: 5px;
-
-            font-size: 14px;
-        }
-
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-
-        input:disabled {
-            background: #f5f5f5;
-        }
-
-
-        /* BUTTONS */
-
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-
-        .btn {
-            padding: 12px 24px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-
-        .btn-secondary {
-            background: #ecf0f1;
-            color: #333;
-        }
-
-
-        /* OVERVIEW CARDS */
-
-        .info-grid {
-            display: grid;
-            grid-template-columns:1fr 1fr;
-            gap: 20px;
-        }
-
-
-        .info-card {
-
-            background: #f9f9f9;
-
-            padding: 20px;
-
-            border-radius: 8px;
-
-            border-left: 4px solid #667eea;
-        }
-
-
-        .info-card h3 {
-
-            font-size: 12px;
-
-            color: #999;
-
-            text-transform: uppercase;
-
-            margin-bottom: 8px;
-
-        }
-
-
-        .info-card p {
-
-            font-size: 18px;
-
-            font-weight: 600;
-
-        }
-
-
-        /* ALERT */
-
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-
-        .alert.success {
-
-            background: #d4edda;
-
-            color: #155724;
-
-        }
-
-
-        /* ERRORS */
-
-        .error-message {
-
-            color: #e74c3c;
-
-            font-size: 13px;
-
-        }
-
-        .password-requirements {
-
-            background: #f0f7ff;
-
-            border-left: 4px solid #667eea;
-
-            padding: 15px;
-
-            margin-top: 10px;
-
-            font-size: 13px;
-
-        }
-    </style>
+    <title>Car Service | Profile</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
 </head>
-<body>
+<body class="page-profile">
 <nav class="navbar">
-    <div class="navbar-logo">🚗 Car Service</div>
-    <div class="nav-links">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/vehicles">Vehicles</a>
-        <a href="/service-records">Service Records</a>
-        <a href="/reminders">Reminders</a>
-        <a href="/profile">Profile</a>
-        <form action="/logout" method="post" style="display: inline;">
-            <button type="submit" class="btn-logout">Logout</button>
-        </form>
+    <div class="navbar-inner wrap">
+        <a class="brand" th:href="@{/dashboard}" href="/dashboard"><span class="brand-mark">CS</span><span>Car Service</span></a>
+        <div class="nav-links">
+            <a class="admin-link" sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" href="/admin">Admin</a>
+            <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
+            <a th:href="@{/vehicles}" href="/vehicles">Vehicles</a>
+            <a th:href="@{/service-records}" href="/service-records">Services</a>
+            <a th:href="@{/reminders}" href="/reminders">Reminders</a>
+            <a class="active" th:href="@{/profile}" href="/profile">Profile</a>
+            <form class="logout-form" th:action="@{/logout}" method="post"><button type="submit" class="btn-logout">Logout</button></form>
+        </div>
     </div>
 </nav>
 
-<div class="container">
-    <!-- Profile Header -->
-    <div class="profile-header">
-        <div class="profile-avatar" th:text="${user.getFirstName().charAt(0)}"></div>
+<main class="wrap">
+    <header class="page-title">
+        <p class="eyebrow">Driver identity / account control</p>
+        <h1>Your <span>profile.</span></h1>
+    </header>
+
+    <section class="profile-header">
+        <div class="profile-avatar" th:text="${user.firstName.substring(0, 1).toUpperCase()}">U</div>
         <div class="profile-info">
-            <h1 th:text="|${user.getFirstName()} ${user.getLastName()}|"></h1>
-            <div class="profile-meta">
-                <div class="meta-item">
-                    <strong>Role:</strong>
-                    <span th:text="${user.getRole()}"></span>
-                </div>
-                <div class="meta-item">
-                    <strong>Member Since:</strong>
-                    <span th:text="${user.getCreatedAt()}"></span>
-                </div>
-                <div class="meta-item" th:if="${user.getClassType()}">
-                    <strong>Class:</strong>
-                    <span th:text="${user.getClassType()}"></span>
-                </div>
+            <p class="profile-code">Authenticated driver</p>
+            <h2 th:text="${user.firstName + ' ' + user.lastName}">Driver Name</h2>
+            <div class="profile-contact">
+                <span th:text="${'@' + user.username}">@username</span>
+                <span th:text="${user.email}">email@example.com</span>
             </div>
-            <p th:text="|Username: ${user.getUsername()}|"></p>
-            <p th:text="|Email: ${user.getEmail()}|"></p>
         </div>
-    </div>
-
-    <!-- Tab Navigation -->
-    <div class="tabs">
-
-        <a class="tab-button"
-           th:classappend="${activeTab == 'overview'} ? ' active'"
-           th:href="@{/profile}">
-            Overview
-        </a>
-
-        <a class="tab-button"
-           th:classappend="${activeTab == 'edit-profile'} ? ' active'"
-           th:href="@{/profile/edit}">
-            Edit Profile
-        </a>
-
-        <a class="tab-button"
-           th:classappend="${activeTab == 'change-password'} ? ' active'"
-           th:href="@{/profile/change-password}">
-            Change Password
-        </a>
-
-    </div>
-
-    <!-- Overview Tab -->
-    <div id="overview" class="tab-content" th:classappend="${activeTab == 'overview' || activeTab == null} ? ' active'">
-        <h2 class="form-title">Profile Overview</h2>
-        <div class="alert success" th:if="${message}">
-            <strong>Success!</strong>
-            <span th:text="${message}"></span>
+        <div class="profile-badges">
+            <span class="badge" th:text="${user.role}">USER</span>
+            <span class="badge violet" th:text="${'Member since ' + #temporals.format(user.createdAt, 'MMM yyyy')}">Member since 2026</span>
+            <span class="badge violet" th:if="${user.classType != null}" th:text="${user.classType}">Class</span>
         </div>
+    </section>
+
+    <nav class="tabs" aria-label="Profile sections">
+        <a class="tab-button" th:classappend="${activeTab == 'overview'} ? ' active' : ''" th:href="@{/profile}" href="/profile">Overview</a>
+        <a class="tab-button" th:classappend="${activeTab == 'edit-profile'} ? ' active' : ''" th:href="@{/profile/edit}" href="/profile/edit">Edit profile</a>
+        <a class="tab-button" th:classappend="${activeTab == 'change-password'} ? ' active' : ''" th:href="@{/profile/change-password}" href="/profile/change-password">Security</a>
+    </nav>
+
+    <section id="overview" class="tab-content" th:classappend="${activeTab == 'overview' || activeTab == null} ? ' active' : ''">
+        <div class="content-heading">
+            <div><p>Identity overview</p><h2>Account information</h2></div>
+            <span>Profile data currently stored</span>
+        </div>
+        <div class="alert" th:if="${message}"><span th:text="${message}">Operation completed successfully.</span></div>
         <div class="info-grid">
-            <div class="info-card">
-                <h3>First Name</h3>
-                <p th:text="${user.getFirstName()}"></p>
-            </div>
-            <div class="info-card">
-                <h3>Last Name</h3>
-                <p th:text="${user.getLastName()}"></p>
-            </div>
-            <div class="info-card">
-                <h3>Username</h3>
-                <p th:text="${user.getUsername()}"></p>
-            </div>
-            <div class="info-card">
-                <h3>Email</h3>
-                <p th:text="${user.getEmail()}"></p>
-            </div>
-            <div class="info-card">
-                <h3>Role</h3>
-                <p th:text="${user.getRole()}"></p>
-            </div>
-            <div class="info-card" th:if="${user.getClassType()}">
-                <h3>Class Type</h3>
-                <p th:text="${user.getClassType()}"></p>
-            </div>
+            <article class="info-card"><h3>First name</h3><p th:text="${user.firstName}">First name</p></article>
+            <article class="info-card"><h3>Last name</h3><p th:text="${user.lastName}">Last name</p></article>
+            <article class="info-card"><h3>Username</h3><p th:text="${user.username}">Username</p></article>
+            <article class="info-card"><h3>Email address</h3><p th:text="${user.email}">Email</p></article>
+            <article class="info-card"><h3>Access role</h3><p th:text="${user.role}">Role</p></article>
+            <article class="info-card"><h3>Member since</h3><p th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}">Date</p></article>
+            <article class="info-card" th:if="${user.classType != null}"><h3>Account class</h3><p th:text="${user.classType}">Class</p></article>
         </div>
-    </div>
+    </section>
 
-    <!-- Edit Profile Tab -->
-    <div id="edit-profile" class="tab-content" th:classappend="${activeTab == 'edit-profile'} ? ' active'">
-        <h2 class="form-title">Edit Profile</h2>
+    <section id="edit-profile" class="tab-content" th:classappend="${activeTab == 'edit-profile'} ? ' active' : ''">
+        <div class="content-heading">
+            <div><p>Personal details</p><h2>Edit profile</h2></div>
+            <span>Username cannot be changed</span>
+        </div>
         <form th:action="@{/profile/edit}" method="post" th:object="${changeProfile}">
             <div class="form-row">
                 <div class="form-group">
-                    <label for="firstName">First Name *</label>
-                    <input type="text" id="firstName" th:field="*{firstName}">
-
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('firstName')}"
-                         th:errors="*{firstName}">
-                    </div>
+                    <label for="firstName">First name</label>
+                    <input type="text" id="firstName" autocomplete="given-name" required th:field="*{firstName}" th:classappend="${#fields.hasErrors('firstName')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Invalid first name.</span>
                 </div>
-
                 <div class="form-group">
-                    <label for="lastName">Last Name *</label>
-                    <input type="text" id="lastName" th:field="*{lastName}">
-
-                    <div class="error-message"
-                         th:if="${#fields.hasErrors('lastName')}"
-                         th:errors="*{lastName}">
-                    </div>
+                    <label for="lastName">Last name</label>
+                    <input type="text" id="lastName" autocomplete="family-name" required th:field="*{lastName}" th:classappend="${#fields.hasErrors('lastName')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Invalid last name.</span>
                 </div>
             </div>
-
             <div class="form-group">
-                <label for="username">Username *</label>
-                <input type="text"
-                       id="username"
-                       th:value="${user.username}"
-                       disabled
-                       class="read-only-field">
-
-                <small style="color: #999;">Username cannot be changed</small>
+                <label for="username">Username</label>
+                <input type="text" id="username" th:value="${user.username}" disabled>
+                <span class="help-text">Your permanent account identifier.</span>
             </div>
-
             <div class="form-group">
-                <label for="email">Email *</label>
-                <input type="email" id="email" th:field="*{email}">
-
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('email')}"
-                     th:errors="*{email}">
-                </div>
+                <label for="email">Email address</label>
+                <input type="email" id="email" autocomplete="email" required th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'field-error' : ''">
+                <span class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Invalid email address.</span>
             </div>
-
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <button type="button" class="btn btn-secondary" onclick="location.reload()">Cancel</button>
+                <button type="submit" class="button primary">Save changes</button>
+                <a th:href="@{/profile}" href="/profile" class="button">Cancel</a>
             </div>
         </form>
-    </div>
+    </section>
 
-    <!-- Change Password Tab -->
-    <div id="change-password" class="tab-content" th:classappend="${activeTab == 'change-password'} ? ' active'">
-        <h2 class="form-title">Change Password</h2>
+    <section id="change-password" class="tab-content" th:classappend="${activeTab == 'change-password'} ? ' active' : ''">
+        <div class="content-heading">
+            <div><p>Security credentials</p><h2>Change password</h2></div>
+            <span>Protect your account access</span>
+        </div>
+        <div class="alert error" th:if="${passwordError}"><span th:text="${passwordError}">Password operation failed.</span></div>
         <form th:action="@{/profile/change-password}" method="post" th:object="${changePassword}">
-
             <div class="form-group">
-                <label for="currentPassword">Current Password *</label>
-                <input type="password"
-                       id="currentPassword"
-                       th:field="*{currentPassword}">
-
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('currentPassword')}"
-                     th:errors="*{currentPassword}">
+                <label for="currentPassword">Current password</label>
+                <input type="password" id="currentPassword" autocomplete="current-password" required th:field="*{currentPassword}" th:classappend="${#fields.hasErrors('currentPassword')} ? 'field-error' : ''">
+                <span class="error-message" th:if="${#fields.hasErrors('currentPassword')}" th:errors="*{currentPassword}">Invalid current password.</span>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="newPassword">New password</label>
+                    <input type="password" id="newPassword" minlength="6" maxlength="20" autocomplete="new-password" required th:field="*{newPassword}" th:classappend="${#fields.hasErrors('newPassword')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}">Invalid new password.</span>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm password</label>
+                    <input type="password" id="confirmPassword" minlength="6" maxlength="20" autocomplete="new-password" required th:field="*{confirmPassword}" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'field-error' : ''">
+                    <span class="error-message" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Invalid confirmation.</span>
                 </div>
             </div>
-
-            <div class="form-group">
-                <label for="newPassword">New Password *</label>
-                <input type="password"
-                       id="newPassword"
-                       th:field="*{newPassword}">
-
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('newPassword')}"
-                     th:errors="*{newPassword}">
-                </div>
-
-                <div class="password-requirements">
-                    <strong>Password Requirements:</strong>
-                    <ul>
-                        <li>Min 6 Max 20 characters long</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="confirmPassword">Confirm New Password *</label>
-                <input type="password"
-                       id="confirmPassword"
-                       th:field="*{confirmPassword}">
-
-                <div class="error-message"
-                     th:if="${#fields.hasErrors('confirmPassword')}"
-                     th:errors="*{confirmPassword}">
-                </div>
-            </div>
-
+            <div class="password-requirements"><strong>Password requirement:</strong> use between 6 and 20 characters.</div>
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Change Password</button>
-                <a class="btn btn-secondary" th:href="@{/profile}">
-                    Cancel
-                </a>
+                <button type="submit" class="button primary">Update password</button>
+                <a th:href="@{/profile}" href="/profile" class="button">Cancel</a>
             </div>
-
         </form>
-    </div>
-</div>
+    </section>
+</main>
 </body>
 </html>

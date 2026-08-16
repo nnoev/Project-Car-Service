@@ -1,103 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin – Reminders</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <style>
-        body { margin:0; font-family:'Segoe UI',sans-serif; background:#f5f7fa; color:#333; }
-
-        .navbar {
-            background:white; box-shadow:0 2px 5px rgba(0,0,0,0.1);
-            padding:0 20px; height:60px; display:flex; justify-content:space-between; align-items:center;
-            position:sticky; top:0; z-index:100;
-        }
-
-        .navbar-logo { font-size:22px; font-weight:bold; color:#667eea; }
-
-        .nav-links { display:flex; gap:25px; align-items:center; }
-        .nav-links a { text-decoration:none; color:#666; transition:0.3s; }
-        .nav-links a:hover { color:#667eea; }
-
-        .btn-logout { background:#e74c3c; color:white; padding:8px 16px; border:none; border-radius:5px; cursor:pointer; }
-
-        .container { max-width:1200px; margin:30px auto; padding:0 20px; }
-
-        .table-card {
-            background:white; padding:20px; border-radius:8px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        table { width:100%; border-collapse:collapse; }
-        th,td { padding:12px; border-bottom:1px solid #ddd; }
-        th { text-align:left; color:#667eea; }
-        tr:hover { background:#f0f2ff; }
-
-        .btn-danger {
-            background:#e74c3c; color:white; padding:6px 12px; border:none; border-radius:5px; cursor:pointer;
-        }
-    </style>
-</head>
-
-<body>
-
-<nav class="navbar">
-    <div class="navbar-logo">🚗 Admin Panel</div>
-
-    <div class="nav-links">
-        <a href="/admin">Dashboard</a>
-        <a href="/admin/users">Users</a>
-        <a href="/admin/vehicles">Vehicles</a>
-        <a href="/admin/services">Services</a>
-        <a href="/admin/reminders">Reminders</a>
-        <a href="/admin/logs">Logs</a>
-
-        <form action="/logout" method="post" style="display:inline;">
-            <button class="btn-logout">Logout</button>
-        </form>
-    </div>
-</nav>
-
-<div class="container">
-    <h1>All Reminders</h1>
-
-    <div class="table-card">
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Vehicle</th>
-                <th>User</th>
-                <th>Title</th>
-                <th>Due Date</th>
-                <th>Due Mileage</th>
-                <th>Completed</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr th:each="r : ${reminders}">
-                <td th:text="${r.id}"></td>
-                <td th:text="${r.vehicle.make + ' ' + r.vehicle.model}"></td>
-                <td th:text="${r.vehicle.user.username}"></td>
-                <td th:text="${r.title}"></td>
-                <td th:text="${r.dueDate}"></td>
-                <td th:text="${r.dueMileage}"></td>
-                <td th:text="${r.completed ? 'Yes' : 'No'}"></td>
-
-                <td>
-                    <form th:action="@{/admin/reminders/delete/{id}(id=${r.id})}" method="post">
-                        <button class="btn-danger">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-
-        </table>
-    </div>
-</div>
-
-</body>
-</html>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Car Service | Admin Reminders</title>
+<link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css"></head>
+<body class="page-admin-reminders">
+<nav><div class="nav wrap"><a class="brand" th:href="@{/admin}" href="/admin"><span class="mark">CS</span><span>Admin Control</span><span class="tag">ADMIN</span></a><div class="links"><a th:href="@{/admin}" href="/admin">Overview</a><a th:href="@{/admin/users}" href="/admin/users">Users</a><a th:href="@{/admin/vehicles}" href="/admin/vehicles">Vehicles</a><a th:href="@{/admin/services}" href="/admin/services">Services</a><a class="active" th:href="@{/admin/reminders}" href="/admin/reminders">Reminders</a><a class="return" th:href="@{/dashboard}" href="/dashboard">Main app</a><form th:action="@{/logout}" method="post"><button class="logout" type="submit">Logout</button></form></div></div></nav>
+<main class="wrap"><header class="head"><div><p class="eyebrow">Maintenance registry / global queue</p><h1>All <span>reminders.</span></h1><p class="copy">Review maintenance tasks created across all user accounts.</p></div><div class="count"><strong th:text="${reminders.size()}">0</strong> REMINDERS</div></header>
+<section class="table"><table th:if="${!reminders.isEmpty()}"><thead><tr><th>Identifier</th><th>Owner</th><th>Vehicle</th><th>Title</th><th>Due date</th><th>Due mileage</th><th>Status</th><th>Action</th></tr></thead><tbody>
+<tr th:each="reminderItem : ${reminders}"><td><span class="id" th:title="${reminderItem.id}" th:text="${reminderItem.id}">UUID</span></td><td><span class="owner" th:text="${reminderItem.user.username}">owner</span></td><td th:text="${reminderItem.vehicle.make + ' ' + reminderItem.vehicle.model}">Vehicle</td><td><span class="title" th:text="${reminderItem.title}">Reminder</span></td><td th:text="${reminderItem.dueDate != null ? #temporals.format(reminderItem.dueDate,'dd MMM yyyy') : '—'}">Date</td><td th:text="${reminderItem.dueMileage != null ? reminderItem.dueMileage + ' km' : '—'}">Mileage</td><td><span class="status" th:classappend="${reminderItem.completed} ? ' done' : ''" th:text="${reminderItem.completed ? 'COMPLETED' : 'PENDING'}">PENDING</span></td><td><form th:action="@{/admin/reminders/{id}/delete(id=${reminderItem.id})}" method="post"><button class="delete" type="submit" onclick="return confirm('Delete this reminder?')">Delete</button></form></td></tr>
+</tbody></table><div class="empty" th:if="${reminders.isEmpty()}">No reminders were found.</div></section></main>
+</body></html>
