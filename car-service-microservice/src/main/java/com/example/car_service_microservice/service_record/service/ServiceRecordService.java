@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,7 +39,7 @@ public class ServiceRecordService {
     }
 
     public ServiceRecordResponse getById(UUID recordId, UUID userId) {
-        ServiceRecordEntity serviceRecordEntity = serviceRecordRepository.findByIdAndUserId(recordId,userId)
+        ServiceRecordEntity serviceRecordEntity = serviceRecordRepository.findByIdAndUserId(recordId, userId)
                 .orElseThrow(
                         () -> new ServiceRecordNotFoundException("Service Record not found")
                 );
@@ -64,6 +65,7 @@ public class ServiceRecordService {
                 .map(this::mapToResponse)
                 .toList();
     }
+
     @Transactional
     public ServiceRecordResponse update(UUID recordId, UUID userId, UpdateServiceRecordRequest request) {
         ServiceRecordEntity serviceRecordEntity = serviceRecordRepository.findByIdAndUserId(recordId, userId).orElseThrow(() -> new ServiceRecordNotFoundException("Service Record not found"));
@@ -81,16 +83,23 @@ public class ServiceRecordService {
         serviceRecordRepository.delete(serviceRecordEntity);
         return mapToResponse(serviceRecordEntity);
     }
-//
-//    public Integer getCount() {
-//        List<ServiceRecordEntity> all = recordRepositoryAdapter.findAll();
-//        return all.size();
-//    }
-//
-//    public BigDecimal totalCost() {
-//        List<ServiceRecordEntity> all = recordRepositoryAdapter.findAll();
-//        return all.stream().map(ServiceRecordEntity::getCost).reduce(BigDecimal.ZERO, BigDecimal::add);
-//    }
+
+    public Integer getCount() {
+        List<ServiceRecordEntity> all = serviceRecordRepository.findAll();
+        return all.size();
+    }
+
+    public BigDecimal totalCost() {
+        List<ServiceRecordEntity> all = serviceRecordRepository.findAll();
+        if (all.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal totalCost = BigDecimal.ZERO;
+        for (ServiceRecordEntity record : all) {
+            totalCost = totalCost.add(record.getCost());
+        }
+        return totalCost;
+    }
 
 }
 

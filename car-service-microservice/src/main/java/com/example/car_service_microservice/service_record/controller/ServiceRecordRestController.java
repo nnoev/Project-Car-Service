@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,16 +51,17 @@ public class ServiceRecordRestController {
         ServiceRecordResponse serviceRecordResponse = serviceRecordService.delete(recordId, userId);
         return ResponseEntity.ok(serviceRecordResponse);
     }
-//
-//    @GetMapping("/count")
-//    public ResponseEntity<Integer> getCount() {
-//        Integer count = serviceRecordService.getCount();
-//        return ResponseEntity.ok(count);
-//    }
-//
-//    @GetMapping("/total-cost")
-//    public ResponseEntity<BigDecimal> totalCost() {
-//        return ResponseEntity.ok(serviceRecordService.totalCost());
-//    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCount() {
+        Integer count = serviceRecordService.getCount();
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/total-cost")
+    public ResponseEntity<BigDecimal> totalCost() {
+        BigDecimal totalCost = serviceRecordService.totalCost();
+        return ResponseEntity.ok(totalCost);
+    }
 
 }

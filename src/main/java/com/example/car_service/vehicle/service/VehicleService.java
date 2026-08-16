@@ -3,6 +3,7 @@ package com.example.car_service.vehicle.service;
 import com.example.car_service.exceptions.DuplicateException;
 import com.example.car_service.exceptions.LimitException;
 import com.example.car_service.exceptions.NothingFoundException;
+import com.example.car_service.exceptions.UnauthorizedActionException;
 import com.example.car_service.user.model.User;
 import com.example.car_service.user.model.UserRole;
 import com.example.car_service.vehicle.model.Vehicle;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.security.UnrecoverableEntryException;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,4 +61,12 @@ public class VehicleService {
     public List<Vehicle> getAllVehicles() {
        return vehicleRepository.findAll();
     }
+
+
+    public void checkOwnership(Vehicle vehicle, User user) {
+        if (!vehicle.getOwner().getId().equals(user.getId())) {
+            throw new UnauthorizedActionException("You do not have permission to manage this vehicle");
+        }
+    }
+
 }

@@ -25,6 +25,7 @@ import java.util.UUID;
 public class VehicleController {
 
     private final VehicleService vehicleService;
+
     private final UserService userService;
 
     @Autowired
@@ -61,12 +62,7 @@ public class VehicleController {
     public ModelAndView deleteVehicle(@PathVariable UUID id, @AuthenticationPrincipal UserData principal, RedirectAttributes redirectAttributes) {
         User user = userService.getById(principal.getId());
         Vehicle vehicle = vehicleService.getById(id);
-        boolean ownsVehicle = user.getVehicles()
-                .stream()
-                .anyMatch(v -> v.equals(vehicle));
-        if (!ownsVehicle) {
-            throw new UnauthorizedActionException("No permission");
-        }
+        vehicleService.checkOwnership(vehicle,user);
         vehicleService.deleteVehicle(vehicle);
         redirectAttributes.addFlashAttribute("message", "Vehicle deleted successfully");
         return new ModelAndView("redirect:/vehicles");
@@ -78,9 +74,7 @@ public class VehicleController {
         modelAndView.setViewName("vehicle-form");
         Vehicle vehicle = vehicleService.getById(id);
         User user = userService.getById(principal.getId());
-        if (!user.getVehicles().contains(vehicle)) {
-            throw new UnauthorizedActionException("No permission");
-        }
+        vehicleService.checkOwnership(vehicle,user);
         VehicleAddRequest vehicleAddRequest = new VehicleAddRequest();
         vehicleAddRequest.setModel(vehicle.getModel());
         vehicleAddRequest.setMake(vehicle.getMake());
@@ -96,6 +90,7 @@ public class VehicleController {
     @PostMapping("/vehicles/edit/{id}")
     public ModelAndView editVehicle(@Valid @ModelAttribute("vehicle") VehicleAddRequest vehicleAddRequest, BindingResult bindingResult, @PathVariable UUID id, @AuthenticationPrincipal UserData principal, RedirectAttributes redirectAttributes) {
         User user = userService.getById(principal.getId());
+        Vehicle vehicle = vehicleService.getById(id);
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("vehicle-form");
             modelAndView.addObject("vehicle", vehicleAddRequest);
@@ -103,10 +98,7 @@ public class VehicleController {
             modelAndView.addObject("vehicles", user.getVehicles());
             return modelAndView;
         }
-        if (user.getVehicles().stream().noneMatch(v -> v.getId().equals(id))) {
-            throw new UnauthorizedActionException("No permission");
-        }
-        Vehicle vehicle = vehicleService.getById(id);
+        vehicleService.checkOwnership(vehicle,user);
         vehicle.setModel(vehicleAddRequest.getModel());
         vehicle.setMake(vehicleAddRequest.getMake());
         vehicle.setYear(vehicleAddRequest.getYear());

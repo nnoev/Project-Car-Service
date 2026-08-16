@@ -2,6 +2,7 @@ package com.example.car_service.service_reminder.service;
 
 import com.example.car_service.exceptions.LimitException;
 import com.example.car_service.exceptions.NothingFoundException;
+import com.example.car_service.exceptions.UnauthorizedActionException;
 import com.example.car_service.service_reminder.model.ServiceReminder;
 import com.example.car_service.service_reminder.repo.ServiceReminderRepository;
 import com.example.car_service.user.model.User;

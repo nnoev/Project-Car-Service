@@ -1,6 +1,5 @@
 package com.example.car_service.web.controllers;
 
-import com.example.car_service.exceptions.UnauthorizedActionException;
 import com.example.car_service.security.UserData;
 import com.example.car_service.service_reminder.model.ServiceReminder;
 import com.example.car_service.service_reminder.service.ServiceReminderService;
@@ -59,7 +58,8 @@ public class ReminderController {
         }
         User user = userService.getById(principal.getId());
         Vehicle vehicle = vehicleService.getById(reminderDto.getVehicleId());
-        serviceReminderService.addReminder(reminderDto,vehicle,user);
+        vehicleService.checkOwnership(vehicle, user);
+        serviceReminderService.addReminder(reminderDto, vehicle, user);
         redirectAttributes.addFlashAttribute("message", "Reminder added successfully");
         return new ModelAndView("redirect:/reminders");
     }
@@ -69,9 +69,7 @@ public class ReminderController {
         ServiceReminder serviceReminder = serviceReminderService.getById(id);
         User user = userService.getById(principal.getId());
         Vehicle vehicle = serviceReminder.getVehicle();
-        if(!vehicle.getOwner().equals(user)){
-            throw new UnauthorizedActionException("No permission");
-        }
+        vehicleService.checkOwnership(vehicle, user);
         serviceReminderService.deleteServiceReminder(serviceReminder);
         redirectAttributes.addFlashAttribute("message", "Service Reminder deleted successfully");
         return new ModelAndView("redirect:/reminders");
@@ -84,9 +82,7 @@ public class ReminderController {
                                  @AuthenticationPrincipal UserData principal) {
         ServiceReminder reminder = serviceReminderService.getById(id);
         User user = userService.getById(principal.getId());
-        if(!reminder.getVehicle().getOwner().equals(user)){
-            throw new UnauthorizedActionException("No permission");
-        }
+        vehicleService.checkOwnership(reminder.getVehicle(), user);
         reminder.setCompleted(completed);
         serviceReminderService.save(reminder);
         redirectAttributes.addFlashAttribute("message", "Reminder updated");
