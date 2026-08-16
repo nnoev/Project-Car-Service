@@ -1,217 +1,125 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title th:text="|${status} - ${title}|">
-        Error - Car Service
+    <title th:text="|${status != null ? status : 500} - Car Service|">
+        Error | Car Service
     </title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .navbar {
-            height: 60px;
-            padding: 0 30px;
-            background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .page-container {
-            flex: 1;
-            padding: 30px 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .error-card {
-            width: 100%;
-            max-width: 600px;
-            background: white;
-            border-radius: 14px;
-            padding: 45px;
-            text-align: center;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
-            border-top: 5px solid #667eea;
-        }
-
-        .error-icon {
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 42px;
-        }
-
-        .status-code {
-            font-size: 72px;
-            line-height: 1;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
-        }
-
-        .error-title {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .error-message {
-            color: #777;
-            font-size: 23px;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .btn {
-            min-width: 150px;
-            padding: 12px 22px;
-            border: none;
-            border-radius: 7px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            color: white;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            color: #667eea;
-            background: white;
-            border: 1px solid #667eea;
-        }
-
-        .btn-secondary:hover {
-            color: white;
-            background: #667eea;
-        }
-
-        .footer-text {
-            margin-top: 30px;
-            color: #aaa;
-            font-size: 13px;
-        }
-
-        @media (max-width: 600px) {
-            .navbar {
-                padding: 0 18px;
-            }
-
-            .error-card {
-                padding: 35px 20px;
-            }
-
-            .status-code {
-                font-size: 58px;
-            }
-
-            .error-title {
-                font-size: 23px;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet"
+          th:href="@{/css/app.css}"
+          href="/css/app.css">
 </head>
 
-<body>
+<body class="page-error">
 
-<nav class="navbar">
-    <a class="navbar-logo" th:href="@{/}">
-        🚗 Car Service
-    </a>
+<nav class="error-navbar">
+    <div class="error-navbar-inner">
+        <a class="brand"
+           th:href="@{/}"
+           href="/">
+            <span class="brand-mark">CS</span>
+            <span>Car Service</span>
+        </a>
+
+        <span class="system-status">
+            System diagnostics
+        </span>
+    </div>
 </nav>
 
-<main class="page-container">
-    <section class="error-card">
+<main class="error-main">
 
-        <div class="error-icon">!</div>
+    <section class="error-panel">
 
-        <div class="status-code"
-             th:text="${status != null ? status : 500}">
-            500
+        <div class="error-visual">
+            <div class="scanner-ring">
+                <span>!</span>
+            </div>
+
+            <div class="diagnostic-line">
+                Request interrupted
+            </div>
         </div>
 
-        <h1 class="error-title"
-            th:text="${title != null ? title : 'Something went wrong'}">
-            Something went wrong
-        </h1>
+        <div class="error-content">
 
-        <p class="error-message"
-           th:text="${message != null
-               ? message
-               : 'The requested operation could not be completed.'}">
-            The requested operation could not be completed.
-        </p>
+            <p class="eyebrow">
+                System response / operation failed
+            </p>
 
-        <div class="actions">
-            <a class="btn btn-primary"
-               th:href="@{/dashboard}">
-                Go to Dashboard
-            </a>
+            <div class="status-code"
+                 th:text="${status != null ? status : 500}">
+                500
+            </div>
+
+            <h1 th:text="${title != null
+                    ? title
+                    : 'Something went wrong'}">
+                Something went wrong
+            </h1>
+
+            <p class="error-message"
+               th:text="${message != null
+                    ? message
+                    : 'The requested operation could not be completed.'}">
+                The requested operation could not be completed.
+            </p>
+
+            <div class="diagnostic-data">
+                <div>
+                    <small>Status</small>
+
+                    <strong th:text="${status != null
+                            ? status
+                            : 500}">
+                        500
+                    </strong>
+                </div>
+
+                <div>
+                    <small>Application</small>
+                    <strong>CAR SERVICE</strong>
+                </div>
+
+                <div>
+                    <small>State</small>
+                    <strong class="state-error">INTERRUPTED</strong>
+                </div>
+            </div>
+
+            <div class="error-actions">
+
+                <a class="button primary"
+                   sec:authorize="isAuthenticated()"
+                   th:href="@{/dashboard}"
+                   href="/dashboard">
+                    Return to dashboard
+                </a>
+
+                <a class="button secondary"
+                   th:href="@{/}"
+                   href="/">
+                    Return home
+                </a>
+
+            </div>
+
+            <p class="support-copy">
+                If the problem continues, return to the previous page
+                and try the operation again.
+            </p>
+
         </div>
-
-        <p class="footer-text">
-            If the problem continues, please try again later.
-        </p>
 
     </section>
+
 </main>
 
 </body>

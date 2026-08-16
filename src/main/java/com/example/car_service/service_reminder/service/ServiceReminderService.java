@@ -2,7 +2,6 @@ package com.example.car_service.service_reminder.service;
 
 import com.example.car_service.exceptions.LimitException;
 import com.example.car_service.exceptions.NothingFoundException;
-import com.example.car_service.exceptions.UnauthorizedActionException;
 import com.example.car_service.service_reminder.model.ServiceReminder;
 import com.example.car_service.service_reminder.repo.ServiceReminderRepository;
 import com.example.car_service.user.model.User;
@@ -11,6 +10,7 @@ import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.web.dtos.ServiceReminderDto;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -58,8 +58,15 @@ public class ServiceReminderService {
         serviceReminderRepository.delete(serviceReminder);
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public Integer deleteAllByUserId(UUID userId) {
         return serviceReminderRepository.deleteAllByUserId(userId);
     }
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    public Integer deleteAllByVehicleId(UUID id) {
+        return  serviceReminderRepository.deleteAllByVehicleId(id);
+    }
+
 }

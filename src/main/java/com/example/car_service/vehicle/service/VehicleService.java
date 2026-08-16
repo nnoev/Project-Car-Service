@@ -12,8 +12,8 @@ import com.example.car_service.web.dtos.VehicleAddRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.security.UnrecoverableEntryException;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,12 +45,13 @@ public class VehicleService {
         vehicleRepository.save(vehicle);
 
     }
+
     public void deleteVehicle(Vehicle vehicle) {
         vehicleRepository.delete(vehicle);
     }
 
     public Vehicle getById(UUID id) {
-        return vehicleRepository.findById(id).orElseThrow(()->new NothingFoundException("Vehicle does not exist"));
+        return vehicleRepository.findById(id).orElseThrow(() -> new NothingFoundException("Vehicle does not exist"));
     }
 
     public void save(Vehicle vehicle) {
@@ -59,7 +60,7 @@ public class VehicleService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<Vehicle> getAllVehicles() {
-       return vehicleRepository.findAll();
+        return vehicleRepository.findAll();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -67,6 +68,7 @@ public class VehicleService {
         vehicleRepository.delete(vehicle);
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public Integer deleteAllByUserId(UUID userId) {
         return vehicleRepository.deleteAllByOwnerId(userId);

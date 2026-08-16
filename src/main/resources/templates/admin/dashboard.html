@@ -21,7 +21,9 @@
             <a th:href="@{/admin/services}" href="/admin/services">Services</a>
             <a th:href="@{/admin/reminders}" href="/admin/reminders">Reminders</a>
             <a class="return-link" th:href="@{/dashboard}" href="/dashboard">Main app</a>
-            <form class="logout-form" th:action="@{/logout}" method="post"><button type="submit" class="btn-logout">Logout</button></form>
+            <form class="logout-form" th:action="@{/logout}" method="post">
+                <button type="submit" class="btn-logout">Logout</button>
+            </form>
         </div>
     </div>
 </nav>
@@ -31,7 +33,8 @@
         <div>
             <p class="eyebrow">Privileged access / system overview</p>
             <h1>Administrative <span>control.</span></h1>
-            <p class="header-copy">Monitor domain activity and manage user access from the protected administration area.</p>
+            <p class="header-copy">Monitor domain activity and manage user access from the protected administration
+                area.</p>
         </div>
         <aside class="system-status">
             <div class="status-line">Control layer online</div>
@@ -49,31 +52,38 @@
                 <div class="card-description">Registered accounts and assigned roles</div>
             </article>
         </a>
-        <article class="stat-card" data-code="V">
-            <div class="card-top"><span class="card-icon">VHC</span><span class="card-state">LIVE</span></div>
-            <div class="card-value" th:text="${vehicles}">0</div>
-            <div class="card-title">Vehicles</div>
-            <div class="card-description">Domain vehicles stored in the main database</div>
-        </article>
-        <article class="stat-card" data-code="S">
-            <div class="card-top"><span class="card-icon">SRV</span><span class="card-state">REMOTE</span></div>
-            <div class="card-value" th:text="${records}">0</div>
-            <div class="card-title">Service records</div>
-            <div class="card-description">Records reported by the REST microservice</div>
-        </article>
-        <article class="stat-card" data-code="R">
-            <div class="card-top"><span class="card-icon">RMD</span><span class="card-state">LIVE</span></div>
-            <div class="card-value" th:text="${reminders}">0</div>
-            <div class="card-title">Reminders</div>
-            <div class="card-description">Maintenance tasks monitored in the system</div>
-        </article>
+        <a class="card-link" th:href="@{/admin/vehicles}" href="/admin/vehicles">
+            <article class="stat-card" data-code="V">
+                <div class="card-top"><span class="card-icon">VHC</span><span class="card-state">LIVE</span></div>
+                <div class="card-value" th:text="${vehicles}">0</div>
+                <div class="card-title">Vehicles</div>
+                <div class="card-description">Domain vehicles stored in the main database</div>
+            </article>
+        </a>
+        <a class="card-link" th:href="@{/admin/services}" href="/admin/services">
+            <article class="stat-card" data-code="S">
+                <div class="card-top"><span class="card-icon">SRV</span><span class="card-state">REMOTE</span></div>
+                <div class="card-value" th:text="${records}">0</div>
+                <div class="card-title">Service records</div>
+                <div class="card-description">Records reported by the REST microservice</div>
+            </article>
+        </a>
+        <a class="card-link" th:href="@{/admin/reminders}" href="/admin/reminders">
+            <article class="stat-card" data-code="R">
+                <div class="card-top"><span class="card-icon">RMD</span><span class="card-state">LIVE</span></div>
+                <div class="card-value" th:text="${reminders}">0</div>
+                <div class="card-title">Reminders</div>
+                <div class="card-description">Maintenance tasks monitored in the system</div>
+            </article>
+        </a>
     </section>
 
     <section class="management">
         <div>
             <p>Access management</p>
             <h2>Manage users and privileges</h2>
-            <p class="management-copy">Review registered accounts, change assigned roles, or remove users when required.</p>
+            <p class="management-copy">Review registered accounts, change assigned roles, or remove users when
+                required.</p>
         </div>
         <a class="button" th:href="@{/admin/users}" href="/admin/users">Open user management</a>
     </section>

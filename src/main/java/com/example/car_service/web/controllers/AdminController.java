@@ -2,6 +2,7 @@ package com.example.car_service.web.controllers;
 
 import com.example.car_service.client.ServiceRecordClient;
 import com.example.car_service.service_reminder.service.ServiceReminderService;
+import com.example.car_service.user.model.User;
 import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.service.UserService;
 import com.example.car_service.vehicle.service.VehicleService;
@@ -60,12 +61,11 @@ public class AdminController {
     public String deleteUser(
             @PathVariable UUID id, RedirectAttributes redirectAttributes
     ) {
-        serviceReminderService.deleteAllByUserId(userService.getById(id).getId());
-        serviceRecordClient.deleteAllByUserId(userService.getById(id).getId());
-        vehicleService.deleteAllByUserId(userService.getById(id).getId());
-        userService.deleteUser(
-                userService.getById(id)
-        );
+        User user = userService.getById(id);
+        serviceReminderService.deleteAllByUserId(id);
+        serviceRecordClient.deleteAllByUserId(id);
+        vehicleService.deleteAllByUserId(id);
+        userService.deleteUser(user);
         redirectAttributes.addFlashAttribute("message", "User deleted successfully");
         return "redirect:/admin/users";
     }
@@ -83,9 +83,9 @@ public class AdminController {
 
     @PostMapping("/vehicles/{id}/delete")
     public ModelAndView deleteVehicle(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
-        vehicleService.deleteVehicleAdmin(vehicleService.getById(id));
-        serviceReminderService.deleteAllByUserId(vehicleService.getById(id).getOwner().getId());
+        serviceReminderService.deleteAllByVehicleId(vehicleService.getById(id).getOwner().getId());
         serviceRecordClient.deleteAllByVehicleId(vehicleService.getById(id).getId());
+        vehicleService.deleteVehicleAdmin(vehicleService.getById(id));
         redirectAttributes.addFlashAttribute("message", "Vehicle deleted successfully");
         return new ModelAndView("redirect:/admin/vehicles");
     }
