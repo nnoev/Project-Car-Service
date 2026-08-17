@@ -11,6 +11,7 @@ import com.example.car_service.vehicle.service.VehicleService;
 import com.example.car_service.web.dtos.AdminCaching;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -65,6 +66,7 @@ public class AdminController {
         return new ModelAndView("redirect:/admin/users");
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @PostMapping("/users/{id}/delete")
     public String deleteUser(
             @PathVariable UUID id, RedirectAttributes redirectAttributes
@@ -90,6 +92,7 @@ public class AdminController {
         return modelAndView;
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @PostMapping("/vehicles/{id}/delete")
     public ModelAndView deleteVehicle(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
         Vehicle vehicle = vehicleService.getById(id);
@@ -109,6 +112,7 @@ public class AdminController {
         return modelAndView;
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @PostMapping("/reminders/{id}/delete")
     public ModelAndView deleteReminder(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
         serviceReminderService.deleteReminder(serviceReminderService.getById(id));
@@ -126,6 +130,7 @@ public class AdminController {
         return modelAndView;
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/services/{id}/delete")
     public ModelAndView deleteRecord(@PathVariable UUID id, @RequestParam UUID userId, RedirectAttributes redirectAttributes) {

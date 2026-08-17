@@ -13,6 +13,7 @@ import com.example.car_service.vehicle.repo.VehicleRepository;
 import com.example.car_service.web.dtos.VehicleAddRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ public class VehicleService {
         this.serviceRecordClient = serviceRecordClient;
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     public void addVehicle(VehicleAddRequest vehicleAddRequest, User user) {
         if (vehicleRepository.findByVin(vehicleAddRequest.getVin()).isPresent()) {
             log.warn("Registration failed: Vehicle {} already exists", vehicleAddRequest.getVin());
@@ -59,6 +61,7 @@ public class VehicleService {
 
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     public void deleteVehicle(Vehicle vehicle) {
         serviceReminderService.deleteAllByVehicleId(vehicle.getId());
         serviceRecordClient.deleteAllByVehicleId(vehicle.getId());
@@ -80,6 +83,7 @@ public class VehicleService {
         return vehicleRepository.findAll();
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteVehicleAdmin(Vehicle vehicle) {
         vehicleRepository.delete(vehicle);
@@ -101,10 +105,10 @@ public class VehicleService {
     }
 
     public void checkForDuplication(String vin) {
-       if (vehicleRepository.findByVin(vin).isPresent()) {
-           log.warn("Registration failed: Vehicle {} already exists", vin);
-           throw new DuplicateException("Vehicle already exists");
-       }
+        if (vehicleRepository.findByVin(vin).isPresent()) {
+            log.warn("Registration failed: Vehicle {} already exists", vin);
+            throw new DuplicateException("Vehicle already exists");
+        }
     }
 
 }

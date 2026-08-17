@@ -10,6 +10,7 @@ import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.web.dtos.ServiceReminderDto;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +30,8 @@ public class ServiceReminderService {
     }
 
     public void save(ServiceReminder reminder) {
+        log.info("Saving reminder {}", reminder.getId());
         serviceReminderRepository.save(reminder);
-        log.info("Reminder {} saved successfully", reminder.getId());
     }
 
     public ServiceReminder getById(UUID id) {
@@ -38,11 +39,13 @@ public class ServiceReminderService {
                 .orElseThrow(() -> new NothingFoundException("Reminder does not exist"));
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     public void deleteServiceReminder(ServiceReminder serviceReminder) {
         serviceReminderRepository.delete(serviceReminder);
         log.info("Reminder {} deleted successfully", serviceReminder.getId());
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     public void addReminder(@Valid ServiceReminderDto reminderDto, Vehicle vehicle, User user) {
         if (user.getRole() == UserRole.GUEST && vehicle.getServiceReminders().size() >= 3) {
             log.warn("Service reminder failed: Vehicle {} has reached maximum number of service reminders", vehicle.getVin());
@@ -57,7 +60,7 @@ public class ServiceReminderService {
                 .completed(false)
                 .build();
         serviceReminderRepository.save(serviceReminder);
-        log.info("Service reminder added successfully for vehicle {}",vehicle.getVin());
+        log.info("Service reminder added successfully for vehicle {}", vehicle.getVin());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -65,12 +68,14 @@ public class ServiceReminderService {
         return serviceReminderRepository.findAll();
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteReminder(ServiceReminder serviceReminder) {
         serviceReminderRepository.delete(serviceReminder);
         log.info("Reminder {} deleted successfully by administrator", serviceReminder.getId());
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteAllByUserId(UUID userId) {
@@ -78,6 +83,7 @@ public class ServiceReminderService {
         log.info("All reminders of user {} deleted successfully by administrator", userId);
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteAllByVehicleId(UUID id) {
@@ -85,7 +91,7 @@ public class ServiceReminderService {
         log.info("All reminders of vehicle {} deleted successfully by administrator", id);
     }
 
-    public int markOverdueReminders(){
+    public int markOverdueReminders() {
         List<ServiceReminder> overdueReminders = serviceReminderRepository
                 .findAllByCompletedFalseAndOverdueFalseAndDueDateBefore(LocalDate.now());
         overdueReminders.forEach(reminder -> {

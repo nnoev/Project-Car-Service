@@ -14,6 +14,7 @@ import com.example.car_service.vehicle.service.VehicleService;
 import com.example.car_service.web.dtos.ServiceRecordDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -53,6 +54,7 @@ public class ServiceRecordController {
         return modelAndView;
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @PostMapping("/service-records/add")
     public ModelAndView addServiceRecord(@Valid ServiceRecordDto serviceRecordDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserData principal) {
         User user = userService.getById(principal.getId());
@@ -132,6 +134,7 @@ public class ServiceRecordController {
         return new ModelAndView("redirect:/service-records");
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @PostMapping("/service-records/delete/{id}")
     public ModelAndView deleteServiceRecord(@PathVariable UUID id, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserData principal) {
         User user = userService.getById(principal.getId());

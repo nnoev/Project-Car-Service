@@ -12,6 +12,7 @@ import com.example.car_service.web.dtos.UserRegistration;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -39,6 +40,7 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @Transactional
     public void registerUser(UserRegistration userRegistration) {
         Optional<User> optionalUser = userRepository.findByUsername(userRegistration.getUsername());
@@ -72,7 +74,7 @@ public class UserService implements UserDetailsService {
     public void save(User user) {
         userRepository.save(user);
     }
-
+    @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(User user) {
         userRepository.delete(user);
@@ -123,11 +125,11 @@ public class UserService implements UserDetailsService {
         int count = 0;
         for (User user : users) {
             long age = accountAge(user.getCreatedAt());
-            if(age>= 30 && age<365 && user.getClassType()==UserClass.NEW) {
+            if (age >= 30 && age < 365 && user.getClassType() == UserClass.NEW) {
                 user.setClassType(UserClass.REGULAR);
                 count++;
             }
-            if(age>=365 && user.getClassType()==UserClass.REGULAR) {
+            if (age >= 365 && user.getClassType() == UserClass.REGULAR) {
                 user.setClassType(UserClass.VIP);
                 count++;
             }
