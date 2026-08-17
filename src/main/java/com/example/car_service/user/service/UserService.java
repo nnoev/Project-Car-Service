@@ -10,8 +10,6 @@ import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.repo.UserRepository;
 import com.example.car_service.web.dtos.UserRegistration;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +30,7 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -62,7 +62,7 @@ public class UserService implements UserDetailsService {
                 .classType(UserClass.NEW)
                 .active(true).build();
         userRepository.save(user);
-        log.info("User {} registered successfully",userRegistration.getUsername());
+        log.info("User {} registered successfully", userRegistration.getUsername());
     }
 
     public User getById(UUID id) {
@@ -95,6 +95,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
         log.info("User {} role changed to {} by administrator", user.getUsername(), role);
     }
+
     public User getDeletableUser(UUID id) {
         User user = getById(id);
         if (user.getRole() == UserRole.ADMIN) {
@@ -115,6 +116,29 @@ public class UserService implements UserDetailsService {
             log.warn("Registration failed: Email {} already exists", email);
             throw new DuplicateException("Email already exists");
         }
+    }
+
+    public int updateUserClass() {
+        List<User> users = userRepository.findAllByRole(UserRole.USER);
+        int count = 0;
+        for (User user : users) {
+            long age = accountAge(user.getCreatedAt());
+            if(age>= 30 && age<365 && user.getClassType()==UserClass.NEW) {
+                user.setClassType(UserClass.REGULAR);
+                count++;
+            }
+            if(age>=365 && user.getClassType()==UserClass.REGULAR) {
+                user.setClassType(UserClass.VIP);
+                count++;
+            }
+        }
+        userRepository.saveAll(users);
+        log.info("{} users class type updated successfully", count);
+        return count;
+    }
+
+    public long accountAge(LocalDate date) {
+        return ChronoUnit.DAYS.between(date, LocalDate.now());
     }
 
 }

@@ -76,7 +76,7 @@ public class ReminderController {
     }
 
     @PostMapping("/reminders/toggle/{id}")
-    public String toggleReminder(@PathVariable UUID id,
+    public ModelAndView toggleReminder(@PathVariable UUID id,
                                  @RequestParam boolean completed,
                                  RedirectAttributes redirectAttributes,
                                  @AuthenticationPrincipal UserData principal) {
@@ -86,7 +86,7 @@ public class ReminderController {
         reminder.setCompleted(completed);
         serviceReminderService.save(reminder);
         redirectAttributes.addFlashAttribute("message", "Reminder updated");
-        return "redirect:/reminders";
+        return new ModelAndView("redirect:/reminders");
     }
 
 }

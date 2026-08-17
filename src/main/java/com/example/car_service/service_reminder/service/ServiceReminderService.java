@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -82,6 +83,17 @@ public class ServiceReminderService {
     public void deleteAllByVehicleId(UUID id) {
         serviceReminderRepository.deleteAllByVehicleId(id);
         log.info("All reminders of vehicle {} deleted successfully by administrator", id);
+    }
+
+    public int markOverdueReminders(){
+        List<ServiceReminder> overdueReminders = serviceReminderRepository
+                .findAllByCompletedFalseAndOverdueFalseAndDueDateBefore(LocalDate.now());
+        overdueReminders.forEach(reminder -> {
+            reminder.setOverdue(true);
+            serviceReminderRepository.save(reminder);
+        });
+        log.info("Marked {} overdue reminders", overdueReminders.size());
+        return overdueReminders.size();
     }
 
 }

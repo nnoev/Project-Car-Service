@@ -41,4 +41,7 @@ public class ServiceReminder {
     @Column
     private boolean completed = false;
 
+    @Column(nullable = false)
+    private boolean overdue = false;
+
 }

@@ -1,5 +1,6 @@
 package com.example.car_service.web.controllers;
 
+import com.example.car_service.admin.AdminService;
 import com.example.car_service.client.ServiceRecordClient;
 import com.example.car_service.service_reminder.service.ServiceReminderService;
 import com.example.car_service.user.model.User;
@@ -7,6 +8,7 @@ import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.service.UserService;
 import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.vehicle.service.VehicleService;
+import com.example.car_service.web.dtos.AdminCaching;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,14 +32,17 @@ public class AdminController {
 
     private final ServiceRecordClient serviceRecordClient;
 
+    private final AdminService adminService;
+
     @GetMapping("")
     public ModelAndView getAdminPage() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("admin/dashboard");
-        modelAndView.addObject("users", userService.getAllUsers().size());
-        modelAndView.addObject("vehicles", vehicleService.getAllVehicles().size());
-        modelAndView.addObject("reminders", serviceReminderService.getAllReminders().size());
-        modelAndView.addObject("records", serviceRecordClient.count());
+        AdminCaching summary = adminService.getSummary();
+        modelAndView.addObject("users", summary.getUsers());
+        modelAndView.addObject("vehicles", summary.getVehicles());
+        modelAndView.addObject("reminders", summary.getReminders());
+        modelAndView.addObject("records", summary.getServices());
         return modelAndView;
     }
 
@@ -50,14 +55,14 @@ public class AdminController {
     }
 
     @PostMapping("/users/{id}/role")
-    public String changeRole(
+    public ModelAndView changeRole(
             @PathVariable UUID id,
             @RequestParam UserRole role, RedirectAttributes redirectAttributes
     ) {
         userService.changeRole(id, role);
         redirectAttributes.addFlashAttribute("message", "Role changed successfully");
         log.info("Role changed for user {} by administrator", id);
-        return "redirect:/admin/users";
+        return new ModelAndView("redirect:/admin/users");
     }
 
     @PostMapping("/users/{id}/delete")

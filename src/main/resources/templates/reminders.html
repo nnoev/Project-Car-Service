@@ -9,7 +9,8 @@
 <body class="page-reminders">
 <nav class="navbar">
     <div class="navbar-inner wrap">
-        <a class="brand" th:href="@{/dashboard}" href="/dashboard"><span class="brand-mark">CS</span><span>Car Service</span></a>
+        <a class="brand" th:href="@{/dashboard}" href="/dashboard"><span
+                class="brand-mark">CS</span><span>Car Service</span></a>
         <div class="nav-links">
             <a class="admin-link" sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" href="/admin">Admin</a>
             <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
@@ -17,7 +18,9 @@
             <a th:href="@{/service-records}" href="/service-records">Services</a>
             <a class="active" th:href="@{/reminders}" href="/reminders">Reminders</a>
             <a th:href="@{/profile}" href="/profile">Profile</a>
-            <form class="logout-form" th:action="@{/logout}" method="post"><button type="submit" class="btn-logout">Logout</button></form>
+            <form class="logout-form" th:action="@{/logout}" method="post">
+                <button type="submit" class="btn-logout">Logout</button>
+            </form>
         </div>
     </div>
 </nav>
@@ -35,16 +38,20 @@
     <div class="alert" th:if="${message}"><span th:text="${message}">Operation completed successfully.</span></div>
 
     <section class="reminders-grid" th:if="${!user.serviceReminders.isEmpty()}" aria-label="Service reminders">
-        <article class="reminder-card" th:each="reminder : ${user.serviceReminders}" th:classappend="${reminder.completed ? 'completed' : ''}">
+        <article class="reminder-card" th:each="reminder : ${user.serviceReminders}"
+                 th:classappend="${reminder.completed ? 'completed' : ''}">
             <div class="card-head">
                 <div>
                     <p class="reminder-code">Maintenance task</p>
                     <h2 class="reminder-title" th:text="${reminder.title}">Reminder title</h2>
                 </div>
                 <span class="reminder-status status-completed" th:if="${reminder.completed}">Completed</span>
-                <span class="reminder-status status-overdue" th:if="${!reminder.completed and reminder.dueDate != null and reminder.dueDate.isBefore(T(java.time.LocalDate).now())}">Overdue</span>
-                <span class="reminder-status status-today" th:if="${!reminder.completed and reminder.dueDate != null and reminder.dueDate.equals(T(java.time.LocalDate).now())}">Due today</span>
-                <span class="reminder-status status-pending" th:if="${!reminder.completed and (reminder.dueDate == null or reminder.dueDate.isAfter(T(java.time.LocalDate).now()))}">Pending</span>
+                <span class="reminder-status status-overdue"
+                      th:if="${!reminder.completed and reminder.overdue}">Overdue</span>
+                <span class="reminder-status status-today"
+                      th:if="${!reminder.completed and reminder.dueDate != null and reminder.dueDate.equals(T(java.time.LocalDate).now())}">Due today</span>
+                <span class="reminder-status status-pending"
+                      th:if="${!reminder.completed and (reminder.dueDate == null or reminder.dueDate.isAfter(T(java.time.LocalDate).now()))}">Pending</span>
             </div>
 
             <div class="reminder-vehicle">
@@ -55,7 +62,8 @@
             <div class="reminder-details">
                 <div class="detail-item" th:if="${reminder.dueDate != null}">
                     <span class="detail-label">Due date</span>
-                    <span class="detail-value" th:text="${#temporals.format(reminder.dueDate, 'dd MMM yyyy')}">Date</span>
+                    <span class="detail-value"
+                          th:text="${#temporals.format(reminder.dueDate, 'dd MMM yyyy')}">Date</span>
                 </div>
                 <div class="detail-item" th:if="${reminder.dueDate == null}">
                     <span class="detail-label">Due date</span>
@@ -80,7 +88,9 @@
                     </label>
                 </form>
                 <form th:action="@{/reminders/delete/{id}(id=${reminder.id})}" method="post">
-                    <button type="submit" class="btn-danger" onclick="return confirm('Are you sure you want to delete this reminder?')">Delete</button>
+                    <button type="submit" class="btn-danger"
+                            onclick="return confirm('Are you sure you want to delete this reminder?')">Delete
+                    </button>
                 </form>
             </div>
         </article>

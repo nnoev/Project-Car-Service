@@ -11,8 +11,6 @@ import com.example.car_service.user.model.UserRole;
 import com.example.car_service.vehicle.model.Vehicle;
 import com.example.car_service.vehicle.repo.VehicleRepository;
 import com.example.car_service.web.dtos.VehicleAddRequest;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
