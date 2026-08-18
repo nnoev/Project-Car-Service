@@ -45,14 +45,14 @@ public class UserServiceUTest {
     @Test
     void whenRegisteringUser_andEmailAlreadyExists_thenThrowException() {
         UserRegistration dto = new UserRegistration();
-        dto.setUsername("username");
-        dto.setPassword("user@car-service.com");
+        dto.setUsername("newUsername");
+        dto.setEmail("user@car-service.com");
         User user = User.builder()
                 .id(UUID.randomUUID())
-                .username("username")
+                .username("existingUsername")
                 .email("user@car-service.com")
                 .build();
-        when(userRepository.findByUsername(any())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
         assertThrows(DuplicateException.class, () -> userService.registerUser(dto));
 
     }
