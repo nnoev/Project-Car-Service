@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -25,15 +24,11 @@ public class UserServiceUTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
-
     @InjectMocks
     private UserService userService;
 
     @Test
     void whenRegisteringUser_andUserAlreadyExists_thenThrowException() {
-
         UserRegistration dto = new UserRegistration();
         dto.setUsername("username");
         dto.setPassword("user@car-service.com");
@@ -43,25 +38,23 @@ public class UserServiceUTest {
                 .email("user@car-service.com")
                 .build();
         when(userRepository.findByUsername(any())).thenReturn(Optional.of(user));
-
-        assertThrows(DuplicateException.class, () -> userService.registerUser(dto));
-
-    }     @Test
-    void whenRegisteringUser_andAlreadyExists_thenThrowException() {
-
-        UserRegistration dto = new UserRegistration();
-        dto.setUsername("username");
-        dto.setPassword("user@car-service.com");
-        User user = User.builder()
-                .id(UUID.randomUUID())
-                .username("username")
-                .email("user@car-service.com")
-                .build();
-        when(userRepository.findByUsername(any())).thenReturn(Optional.of(user));
-
         assertThrows(DuplicateException.class, () -> userService.registerUser(dto));
 
     }
 
+    @Test
+    void whenRegisteringUser_andEmailAlreadyExists_thenThrowException() {
+        UserRegistration dto = new UserRegistration();
+        dto.setUsername("username");
+        dto.setPassword("user@car-service.com");
+        User user = User.builder()
+                .id(UUID.randomUUID())
+                .username("username")
+                .email("user@car-service.com")
+                .build();
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(user));
+        assertThrows(DuplicateException.class, () -> userService.registerUser(dto));
+
+    }
 
 }
