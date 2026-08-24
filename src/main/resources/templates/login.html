@@ -45,10 +45,7 @@
                                                                                      th:field="*{password}"></div>
                 <button type="submit" class="btn-login">Enter garage</button>
             </form>
-            <form th:action="@{/login}" method="post" class="guest-login-form">
-                <input type="hidden" name="username" value="guest">
-                <input type="hidden" name="password" value="guest123">
-
+            <form th:action="@{/guest}" method="post" class="guest-login-form">
                 <button type="submit" class="btn-guest">
                     Continue as guest
                 </button>

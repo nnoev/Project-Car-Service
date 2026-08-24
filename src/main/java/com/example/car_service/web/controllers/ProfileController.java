@@ -8,6 +8,7 @@ import com.example.car_service.web.dtos.ChangeProfile;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 @Slf4j
 @Controller
 public class ProfileController {
@@ -25,7 +27,7 @@ public class ProfileController {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ProfileController(UserService userService,PasswordEncoder passwordEncoder) {
+    public ProfileController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -52,6 +54,7 @@ public class ProfileController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/profile/change-password")
     public ModelAndView changePassword(@Valid ChangePassword changePassword,
                                        BindingResult bindingResult,
@@ -106,10 +109,10 @@ public class ProfileController {
         modelAndView.addObject("changeProfile", changeProfile);
         modelAndView.addObject("changePassword", new ChangePassword());
         modelAndView.addObject("activeTab", "edit-profile");
-        log.info("User {} is updated successfully", user.getUsername());
         return modelAndView;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/profile/edit")
     public ModelAndView changeProfile(@Valid ChangeProfile changeProfile,
                                       BindingResult bindingResult,

@@ -4,11 +4,15 @@ import com.example.car_service.client.ServiceRecordClient;
 import com.example.car_service.client.dto.ServiceRecordResponse;
 import com.example.car_service.security.UserData;
 import com.example.car_service.user.model.User;
+import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.service.UserService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
@@ -44,6 +48,12 @@ public class IndexController {
         modelAndView.addObject("serviceRecords", serviceRecords.size());
         modelAndView.addObject("totalCost", totalCost);
         return modelAndView;
+    }
+    @PostMapping("/guest")
+    public ModelAndView getGuest(HttpServletRequest request) throws ServletException {
+        User guest = userService.getGuest();
+       request.login(guest.getUsername(),guest.getUsername());
+        return new ModelAndView("redirect:/dashboard");
     }
 
 }

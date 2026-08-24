@@ -85,7 +85,6 @@ public class ServiceReminderService {
 
     @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
     public void deleteAllByVehicleId(UUID id) {
         serviceReminderRepository.deleteAllByVehicleId(id);
         log.info("All reminders of vehicle {} deleted successfully by administrator", id);

@@ -63,6 +63,9 @@ public class UserService implements UserDetailsService {
                 .createdAt(LocalDate.now())
                 .classType(UserClass.NEW)
                 .active(true).build();
+        if (userRegistration.getFirstName().equals("Guest")) {
+            user.setRole(UserRole.GUEST);
+        }
         userRepository.save(user);
         log.info("User {} registered successfully", userRegistration.getUsername());
     }
@@ -74,6 +77,7 @@ public class UserService implements UserDetailsService {
     public void save(User user) {
         userRepository.save(user);
     }
+
     @CacheEvict(cacheNames = "adminSummary", allEntries = true)
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(User user) {
@@ -141,6 +145,21 @@ public class UserService implements UserDetailsService {
 
     public long accountAge(LocalDate date) {
         return ChronoUnit.DAYS.between(date, LocalDate.now());
+    }
+    @Transactional
+    public User getGuest() {
+        UserRegistration userRegistration = new UserRegistration();
+        long guestNumber = 0;
+        while (userRepository.findByUsername("guest%d".formatted(guestNumber)).isPresent()) {
+            guestNumber++;
+        }
+        userRegistration.setUsername("guest" + guestNumber);
+        userRegistration.setEmail("guest" + guestNumber + "@car-service.com");
+        userRegistration.setPassword("guest" + guestNumber);
+        userRegistration.setFirstName("Guest");
+        userRegistration.setLastName("User" + guestNumber);
+        registerUser(userRegistration);
+        return userRepository.findByUsername("guest" + guestNumber).get();
     }
 
 }
