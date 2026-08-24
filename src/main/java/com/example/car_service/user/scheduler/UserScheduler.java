@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class UserClassScheduler {
+public class UserScheduler {
 
     private final UserService userService;
 
     @Autowired
-    public UserClassScheduler(UserService userService) {
+    public UserScheduler(UserService userService) {
         this.userService = userService;
     }
 
