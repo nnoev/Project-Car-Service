@@ -55,7 +55,7 @@
                 <td>
                     <div class="vehicle-cell">
                         <span class="vehicle-mark">VHC</span>
-                        <span class="record-vehicle" th:if="${vehicle != null}" th:text="${vehicle.year + ' ' + vehicle.make + ' ' + vehicle.model}">Vehicle</span>
+                        <span class="record-vehicle" th:if="${vehicle != null}" th:text="${vehicle.productionYear + ' ' + vehicle.make + ' ' + vehicle.model}">Vehicle</span>
                         <span class="record-vehicle" th:if="${vehicle == null}">Vehicle unavailable</span>
                     </div>
                 </td>

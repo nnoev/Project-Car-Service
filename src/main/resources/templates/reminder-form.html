@@ -49,7 +49,7 @@
                 <label for="vehicleId">Vehicle</label>
                 <select id="vehicleId" required th:field="*{vehicleId}" th:classappend="${#fields.hasErrors('vehicleId')} ? 'field-error' : ''">
                     <option value="">Select a vehicle</option>
-                    <option th:each="vehicleOption : ${vehicles}" th:value="${vehicleOption.id}" th:text="${vehicleOption.year + ' ' + vehicleOption.make + ' ' + vehicleOption.model}">Vehicle</option>
+                    <option th:each="vehicleOption : ${vehicles}" th:value="${vehicleOption.id}" th:text="${vehicleOption.productionYear + ' ' + vehicleOption.make + ' ' + vehicleOption.model}">Vehicle</option>
                 </select>
                 <span class="error-message" th:if="${#fields.hasErrors('vehicleId')}" th:errors="*{vehicleId}">Vehicle is required.</span>
             </div>
