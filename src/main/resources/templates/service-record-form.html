@@ -46,14 +46,14 @@
                 <label for="vehicleId">Vehicle</label>
                 <select id="vehicleId" required th:field="*{vehicleId}" th:classappend="${#fields.hasErrors('vehicleId')} ? 'field-error' : ''">
                     <option value="">Select a vehicle</option>
-                    <option th:each="vehicleOption : ${vehicles}" th:value="${vehicleOption.id}" th:text="${vehicleOption.year + ' ' + vehicleOption.make + ' ' + vehicleOption.model}">Vehicle</option>
+                    <option th:each="vehicleOption : ${vehicles}" th:value="${vehicleOption.id}" th:text="${vehicleOption.productionYear + ' ' + vehicleOption.make + ' ' + vehicleOption.model}">Vehicle</option>
                 </select>
                 <span class="error-message" th:if="${#fields.hasErrors('vehicleId')}" th:errors="*{vehicleId}">Vehicle is required.</span>
             </div>
 
             <div class="form-group" th:if="${isEdit}">
                 <label for="vehicleDisplay">Vehicle <span class="hint">locked for this record</span></label>
-                <input type="text" id="vehicleDisplay" th:value="${vehicle.year + ' ' + vehicle.make + ' ' + vehicle.model}" readonly>
+                <input type="text" id="vehicleDisplay" th:value="${vehicle.productionYear + ' ' + vehicle.make + ' ' + vehicle.model}" readonly>
                 <input type="hidden" th:field="*{vehicleId}">
             </div>
 

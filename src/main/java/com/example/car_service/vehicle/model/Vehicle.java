@@ -36,7 +36,7 @@ public class Vehicle {
     @Min(value = 1900, message = "Year must be between 1900 and 2100")
     @Max(value = 2100, message = "Year must be between 1900 and 2100")
     @Column(nullable = false)
-    private int year;
+    private int productionYear;
 
     @NotBlank(message = "VIN is required")
     @Column(nullable = false)

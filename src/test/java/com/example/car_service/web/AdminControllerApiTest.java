@@ -65,5 +65,16 @@ public class AdminControllerApiTest {
         MockHttpServletRequestBuilder requestBuilder = get("/admin/services").with(user(user)).with(csrf());
         mockMvc.perform(requestBuilder).andExpect(status().is(403));
     }
+    @Test
+    void getServiceRecords_shouldReturn200() throws Exception {
+        UserData user = new UserData(UUID.randomUUID(), "username", "password", UserRole.ADMIN, true);
+        MockHttpServletRequestBuilder requestBuilder = get("/admin/services").with(user(user)).with(csrf());
+        mockMvc.perform(requestBuilder).andExpect(status().is(200));
+    }
+@Test
+    void getUsers_shouldReturn200() throws Exception {
+        UserData user = new UserData(UUID.randomUUID(), "username", "password", UserRole.ADMIN, true);
+        MockHttpServletRequestBuilder requestBuilder = get("/admin/users").with(user(user)).with(csrf());
+    }
 
 }

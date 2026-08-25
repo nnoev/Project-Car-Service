@@ -51,7 +51,7 @@ public class VehicleService {
         Vehicle vehicle = Vehicle.builder()
                 .model(vehicleAddRequest.getModel())
                 .make(vehicleAddRequest.getMake())
-                .year(vehicleAddRequest.getYear())
+                .productionYear(vehicleAddRequest.getYear())
                 .vin(vehicleAddRequest.getVin())
                 .mileage(vehicleAddRequest.getMileage())
                 .owner(user)

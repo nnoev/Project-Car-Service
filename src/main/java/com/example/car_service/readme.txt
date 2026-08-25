@@ -1,64 +1,93 @@
-# Car Service Record Microservice
+# Car Service Management System
 
-REST microservice responsible for storing and managing vehicle service records for the [Car Service Management System](https://github.com/nnoev/Project-Car-Service).
+A Spring Boot MVC application for managing vehicles, maintenance reminders, and vehicle service history.
 
-The microservice is an independent Spring Boot application. The main MVC application communicates with it through a Spring Cloud OpenFeign client.
+The project consists of two independent Spring Boot applications. This repository contains the main MVC application. Service records are managed by a separate [REST microservice](https://github.com/nnoev/Car-Service-Microservice) and accessed through Spring Cloud OpenFeign.
+
+## System architecture
+
+| Application | Responsibility | Port | Repository |
+|---|---|---:|---|
+| Main application | Web UI, users, vehicles, reminders and security | `8080` | [Project-Car-Service](https://github.com/nnoev/Project-Car-Service) |
+| REST microservice | Service record management | `8081` | [Car-Service-Microservice](https://github.com/nnoev/Car-Service-Microservice) |
+
+The applications run independently and use separate MySQL databases:
+
+- Main application: `car_maintenance`
+- REST microservice: `car_service_record`
+
+## Features
+
+### User functionality
+
+- User registration and authentication
+- Guest access
+- View and edit personal profile
+- Change password
+- Add, edit and delete vehicles
+- Add, edit and delete service records
+- Add and delete maintenance reminders
+- Mark reminders as completed or pending
+- View service history and total service cost
+
+### Administration
+
+Administrators can:
+
+- View the administration dashboard
+- View all users, vehicles, reminders and service records
+- Change user roles
+- Delete users and their related data
+- Delete vehicles, reminders and service records
+- View cached application statistics
+
+### Additional functionality
+
+- Spring Security authentication and role-based authorization
+- CSRF protection
+- DTO and entity validation
+- Global exception handling
+- Scheduled overdue-reminder processing using a cron expression
+- Scheduled user-class updates using a fixed delay
+- Spring caching for administration statistics
+- Application logging
+- Responsive Thymeleaf interface
 
 ## Technologies
 
+### Backend
+
 - Java 17+
-- Spring Boot 4.1.0
-- Spring Web
+- Spring Boot 3.5.15
+- Spring MVC
+- Spring Security
 - Spring Data JPA
-- Jakarta Bean Validation
+- Hibernate
+- Spring Cloud OpenFeign
+- Spring Validation
+- Spring Cache
+- Spring Scheduling
+- Spring Boot Actuator
+
+### Frontend
+
+- Thymeleaf
+- HTML5
+- CSS3
+
+### Database and build
+
 - MySQL
 - Maven
-- JUnit and Mockito
-- Lombok
+- Maven Wrapper
 
-## Architecture
+### Testing
 
-The complete system consists of two independent applications:
-
-- [Main MVC application](https://github.com/nnoev/Project-Car-Service) — port `8080`
-- Service Record REST microservice — port `8081`
-
-The microservice uses its own MySQL database named `car_service_record`.
-
-## Functionality
-
-The API supports:
-
-- Creating service records
-- Retrieving all service records
-- Retrieving records belonging to a user
-- Retrieving an individual record
-- Updating service records
-- Deleting individual records
-- Deleting records by user or vehicle
-- Calculating the total service cost
-- Returning the total record count
-
-## REST API
-
-Base URL:
-
-```text
-http://localhost:8081/api/v1/service-records
-```
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/` | Get all service records |
-| `GET` | `/{recordId}?userId={userId}` | Get a record belonging to a user |
-| `GET` | `/users/{userId}` | Get all records for a user |
-| `GET` | `/count` | Get the number of records |
-| `GET` | `/total-cost` | Get the total service cost |
-| `POST` | `/` | Create a service record |
-| `PUT` | `/{recordId}?userId={userId}` | Update a record belonging to a user |
-| `DELETE` | `/{recordId}?userId={userId}` | Delete an individual record |
-| `DELETE` | `/users/{userId}` | Delete all records for a user |
-| `DELETE` | `/vehicles/{vehicleId}` | Delete all records for a vehicle |
+- JUnit 5
+- Mockito
+- Spring Boot Test
+- MockMvc
+- Spring Security Test
 
 ## Prerequisites
 
@@ -68,34 +97,60 @@ Install:
 - MySQL
 - Git
 
-The repository includes Maven Wrapper, so a separate Maven installation is not required.
+A separate Maven installation is not required because Maven Wrapper is included.
 
 ## Configuration
 
-The application runs with:
-
-```properties
-server.address=127.0.0.1
-server.port=8081
-spring.datasource.url=jdbc:mysql://localhost:3306/car_service_record?createDatabaseIfNotExist=true
-```
-
-Set the database credentials through environment variables:
+The main application runs on:
 
 ```text
-SPRING_DATASOURCE_USERNAME
-SPRING_DATASOURCE_PASSWORD
+http://localhost:8080
 ```
 
-Do not commit real passwords to the repository.
+Its MySQL connection is:
 
-## Running the application
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/car_maintenance?createDatabaseIfNotExist=true
+```
 
-Clone the repository:
+Configure sensitive values using environment variables:
+
+The application expects the REST microservice at:
+
+```text
+http://localhost:8081
+```
+
+## Running the complete system
+
+### 1. Start MySQL
+
+Ensure the MySQL server is running and the configured user can create or access both databases.
+
+### 2. Start the REST microservice
+
+Clone and open the microservice:
 
 ```bash
 git clone https://github.com/nnoev/Car-Service-Microservice.git
 cd Car-Service-Microservice
+```
+
+On Windows:
+
+```powershell
+.\mvnw.cmd spring-vnw.cmd spring-boot:run
+```
+
+The REST API starts on port `8081`.
+
+### 3. Start the main application
+
+Clone this repository:
+
+```bash
+git clone https://github.com/nnoev/Project-Car-Service.git
+cd Project-Car-Service
 ```
 
 On Windows:
@@ -110,15 +165,15 @@ On Linux or macOS:
 ./mvnw spring-boot:run
 ```
 
-The API will be available at:
+Open:
 
 ```text
-http://localhost:8081/api/v1/service-records
+http://localhost:8080
 ```
 
-Start this microservice before using functionality in the main application that depends on service records.
+The microservice should be started before using service-record functionality.
 
-## Running the tests
+## Running tests
 
 On Windows:
 
@@ -131,3 +186,37 @@ On Linux or macOS:
 ```bash
 ./mvnw test
 ```
+
+Tests should use a separate test database and must not modify production or development data.
+
+## Main web pages
+
+The application provides dynamic pages for:
+
+- Home
+- Login
+- Registration
+- User dashboard
+- Profile
+- Vehicles
+- Vehicle form
+- Service records
+- Service record form
+- Maintenance reminders
+- Reminder form
+- Administration dashboard
+- Administration users
+- Administration vehicles
+- Administration reminders
+- Administration service records
+- Error handling
+
+## Repository links
+
+- [Main application](https://github.com/nnoev/Project-Car-Service)
+- [REST microservice](https://github.com/nnoev/Car-Service-Microservice)
+- [Author GitHub profile](https://github.com/nnoev)
+
+## Author
+
+Nikolay Noev

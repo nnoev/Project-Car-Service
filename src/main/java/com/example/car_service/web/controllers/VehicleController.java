@@ -77,7 +77,7 @@ public class VehicleController {
         VehicleAddRequest vehicleAddRequest = new VehicleAddRequest();
         vehicleAddRequest.setModel(vehicle.getModel());
         vehicleAddRequest.setMake(vehicle.getMake());
-        vehicleAddRequest.setYear(vehicle.getYear());
+        vehicleAddRequest.setYear(vehicle.getProductionYear());
         vehicleAddRequest.setMileage(vehicle.getMileage());
         vehicleAddRequest.setVin(vehicle.getVin());
         vehicleAddRequest.setId(vehicle.getId());
@@ -100,7 +100,7 @@ public class VehicleController {
         vehicleService.checkOwnership(vehicle,user);
         vehicle.setModel(vehicleAddRequest.getModel());
         vehicle.setMake(vehicleAddRequest.getMake());
-        vehicle.setYear(vehicleAddRequest.getYear());
+        vehicle.setProductionYear(vehicleAddRequest.getYear());
         vehicle.setMileage(vehicleAddRequest.getMileage());
         vehicle.setVin(vehicleAddRequest.getVin());
         vehicleService.save(vehicle);
