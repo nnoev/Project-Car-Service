@@ -4,7 +4,6 @@ import com.example.car_service.client.ServiceRecordClient;
 import com.example.car_service.client.dto.ServiceRecordResponse;
 import com.example.car_service.security.UserData;
 import com.example.car_service.user.model.User;
-import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
