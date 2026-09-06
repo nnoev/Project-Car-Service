@@ -68,12 +68,20 @@ public class UserController {
     @GetMapping("/vehicles")
     public ModelAndView getVehicles(@AuthenticationPrincipal UserData principal) {
         ModelAndView modelAndView = new ModelAndView();
-        List<ServiceRecordResponse> serviceRecords = serviceRecordClient.getAllByUserId(principal.getId());
+        List<ServiceRecordResponse> serviceRecords = List.of();
+        boolean microserviceIsActive = true;
+        try {
+             serviceRecords = serviceRecordClient.getAllByUserId(principal.getId());
+        }catch (Exception e){
+            System.out.println("Error fetching service records: " + e.getMessage());
+            microserviceIsActive = false;
+        }
         Map<UUID, Long> recordCountByVehicle = serviceRecords.stream().collect(Collectors.groupingBy(ServiceRecordResponse::getVehicleId, Collectors.counting()));
         User user = userService.getById(principal.getId());
         modelAndView.setViewName("vehicles");
         modelAndView.addObject("records", recordCountByVehicle);
         modelAndView.addObject("user", user);
+        modelAndView.addObject("microserviceIsActive", microserviceIsActive);
         return modelAndView;
     }
 

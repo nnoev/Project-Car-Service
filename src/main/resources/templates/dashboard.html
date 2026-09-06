@@ -41,7 +41,9 @@
     <section class="dashboard-grid" aria-label="Garage summary">
         <a th:href="@{/vehicles}" href="/vehicles" class="card-link">
             <article class="stat-card" data-code="V">
-                <div class="card-top"><div class="card-icon">VHC</div><span class="card-signal"></span></div>
+                <div class="card-top">
+                    <div class="card-icon">VHC</div>
+                    <span class="card-signal"></span></div>
                 <div class="card-value" th:text="${user.vehicles.size()}">0</div>
                 <div class="card-title">Vehicles</div>
                 <div class="card-description">Registered in your garage</div>
@@ -49,23 +51,35 @@
         </a>
         <a th:href="@{/service-records}" href="/service-records" class="card-link">
             <article class="stat-card" data-code="S">
-                <div class="card-top"><div class="card-icon">SRV</div><span class="card-signal"></span></div>
-                <div class="card-value" th:text="${serviceRecords}">0</div>
+                <div class="card-top">
+                    <div class="card-icon">SRV</div>
+                    <span class="card-signal"></span></div>
+                <div class="card-value">
+                    <span th:if="${microserviceIsActive}" th:text="${serviceRecords}"></span>
+                    <span th:unless="${microserviceIsActive}">Not available right now</span>
+                </div>
                 <div class="card-title">Service records</div>
                 <div class="card-description">Maintenance events tracked</div>
             </article>
         </a>
         <a th:href="@{/reminders}" href="/reminders" class="card-link">
             <article class="stat-card" data-code="R">
-                <div class="card-top"><div class="card-icon">RMD</div><span class="card-signal"></span></div>
+                <div class="card-top">
+                    <div class="card-icon">RMD</div>
+                    <span class="card-signal"></span></div>
                 <div class="card-value" th:text="${user.serviceReminders.size()}">0</div>
                 <div class="card-title">Reminders</div>
                 <div class="card-description">Maintenance tasks monitored</div>
             </article>
         </a>
         <article class="stat-card" data-code="€">
-            <div class="card-top"><div class="card-icon">CST</div><span class="card-signal"></span></div>
-            <div class="card-value" th:text="${totalCost}">0.00</div>
+            <div class="card-top">
+                <div class="card-icon">CST</div>
+                <span class="card-signal"></span></div>
+            <div class="card-value">
+                <span th:if="${microserviceIsActive}" th:text="${serviceRecords}"></span>
+                <span th:unless="${microserviceIsActive}">Not available right now</span>
+            </div>
             <div class="card-title">Total spent</div>
             <div class="card-description">Recorded maintenance cost</div>
         </article>

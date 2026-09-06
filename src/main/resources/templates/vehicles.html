@@ -61,8 +61,16 @@
                     <span class="detail-value" th:text="${vehicle.mileage + ' km'}">0 km</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Service records</span>
-                    <span class="detail-value signal" th:text="${records[vehicle.id] ?: 0}">0</span>
+                    <span class="detail-label">Service records0</span>
+                    <span class="detail-value signal">
+        <span th:if="${microserviceIsActive}"
+              th:text="${vehicle.serviceReminders.size()}">
+        </span>
+
+        <span th:unless="${microserviceIsActive}">
+            Not available right now
+        </span>
+    </span>
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">Reminders</span>

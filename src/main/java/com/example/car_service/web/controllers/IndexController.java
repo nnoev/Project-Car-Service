@@ -8,6 +8,7 @@ import com.example.car_service.user.model.UserRole;
 import com.example.car_service.user.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.math.BigDecimal;
 import java.util.List;
 
+@Slf4j
 @Controller
 public class IndexController {
 
@@ -42,11 +44,25 @@ public class IndexController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("dashboard");
         User user = userService.getById(principal.getId());
-        List<ServiceRecordResponse> serviceRecords = serviceRecordClient.getAllByUserId(principal.getId());
-        BigDecimal totalCost = serviceRecords.stream().map(ServiceRecordResponse::getCost).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalCost = BigDecimal.ZERO;
+        List<ServiceRecordResponse> serviceRecords = List.of();
+        boolean microserviceIsActive = true;
+        try {
+            serviceRecords = serviceRecordClient.getAllByUserId(principal.getId());
+        }catch (Exception e){
+            log.error("Error fetching service records: {}", e.getMessage());
+            microserviceIsActive = false;
+        }
+        try {
+        totalCost = serviceRecords.stream().map(ServiceRecordResponse::getCost).reduce(BigDecimal.ZERO, BigDecimal::add);
+        }catch (Exception e){
+            log.error("Error calculating total cost: {}", e.getMessage());
+            microserviceIsActive = false;
+        }
         modelAndView.addObject("user", user);
         modelAndView.addObject("serviceRecords", serviceRecords.size());
         modelAndView.addObject("totalCost", totalCost);
+        modelAndView.addObject("microserviceIsActive", microserviceIsActive);
         return modelAndView;
     }
     @PostMapping("/guest")
